@@ -88,16 +88,19 @@ def draw_results_squares(board_img: ndarray, rects: List):
 
 
 def detect_pieces(screenshot: ndarray, piece_imgs: List[ndarray]):
+    screenshot_gray = grayscale_img(screenshot)
+    screenshot_grad = morph_grad_img(screenshot_gray)
+
     piece_img_gray = [grayscale_img(img) for img in piece_imgs]
     piece_imgs_grad = [morph_grad_img(img) for img in piece_img_gray]
 
     only_pieces = piece_imgs_grad[1:]
 
-    rects = [find_template_multiple(piece_imgs_grad[0], img) for img in only_pieces]
+    rects = [find_template_multiple(screenshot_grad, img) for img in only_pieces]
 
     only_pieces = piece_img_gray[1:]
 
-    colors_list = match_colors(piece_img_gray[0], only_pieces, rects)
+    colors_list = match_colors(screenshot_gray, only_pieces, rects)
     matching_color_rects = match_color_rect(rects, colors_list)
     draw_results_squares(screenshot, matching_color_rects)
     return matching_color_rects
@@ -165,6 +168,7 @@ def resize_img(img: ndarray, scale=0.4) -> ndarray:
 
 if __name__ == "__main__":
     # Load the chessEngine board and chessEngine piece images
+    screenshot_image = cv2.imread('chessPiecesImg/Screenshot_1.png')
     piece_images = [
         cv2.imread('chessPiecesImg/Screenshot_1.png'),
         cv2.imread('chessPiecesImg/white_pawn.png'),
@@ -182,10 +186,11 @@ if __name__ == "__main__":
         cv2.imread('chessPiecesImg/screenshot_emptyboard.png')
     ]
 
+    screenshot_image = resize_img(screenshot_image)
     piece_images = [resize_img(img) for img in piece_images]
 
-    rectangles = detect_pieces(piece_images[0], piece_images)
-    cv2.imshow('Result', piece_images[0])
+    rectangles = detect_pieces(screenshot_image, piece_images)
+    cv2.imshow('Result', screenshot_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     # piece_coordinate_dict = determine_pieces_squares(rectangles)
