@@ -192,7 +192,7 @@ def resize_imgs(pieces, scale_percent):
 
 
 if __name__ == "__main__":
-    # Load the chess board and chess piece images
+    # Load the chessEngine board and chessEngine piece images
     screenshot = cv2.imread('../chessPiecesImg/Screenshot_1.png')
     white_pawn = cv2.imread('../chessPiecesImg/white_pawn.png')
     white_rook = cv2.imread('../chessPiecesImg/white_rook.png')
