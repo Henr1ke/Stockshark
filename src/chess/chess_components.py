@@ -4,7 +4,7 @@ from copy import copy
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional, Type, Union, Tuple
 
-
+#
 class ChessException(Exception):
     pass
 
