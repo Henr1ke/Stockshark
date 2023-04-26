@@ -33,7 +33,7 @@ class Position:
                 Columns (First index) --->                                Files (Letters) --->
     """
 
-    def __init__(self, col: int, row: int) -> None:  # TODO mudar a ordem no fim
+    def __init__(self, col: int, row: int) -> None:
         if not (0 <= col < 8):
             raise ChessException(f"Column must be from 0 to {8}, got {col}")
         if not (0 <= row < 8):
@@ -61,7 +61,7 @@ class Position:
     def __gt__(self, pos: Position) -> bool:
         return pos < self
 
-    def __add__(self, inc: Tuple[int, int]) -> Position:  # TODO mudar a ordem no fim
+    def __add__(self, inc: Tuple[int, int]) -> Position:
         if not (isinstance(inc, tuple) and len(inc) == 2 and
                 isinstance(inc[0], int) and isinstance(inc[1], int)):
             raise ChessException(f"Expected a tuple containing 2 integers, got {inc}")
