@@ -94,13 +94,11 @@ def detect_pieces(screenshot: ndarray, piece_imgs: List[ndarray]):
     piece_img_gray = [grayscale_img(img) for img in piece_imgs]
     piece_imgs_grad = [morph_grad_img(img) for img in piece_img_gray]
 
-    only_pieces = piece_imgs_grad[1:]
 
-    rects = [find_template_multiple(screenshot_grad, img) for img in only_pieces]
+    rects = [find_template_multiple(screenshot_grad, img) for img in piece_imgs_grad]
 
-    only_pieces = piece_img_gray[1:]
 
-    colors_list = match_colors(screenshot_gray, only_pieces, rects)
+    colors_list = match_colors(screenshot_gray, piece_img_gray, rects)
     matching_color_rects = match_color_rect(rects, colors_list)
     draw_results_squares(screenshot, matching_color_rects)
     return matching_color_rects
@@ -170,7 +168,6 @@ if __name__ == "__main__":
     # Load the chessEngine board and chessEngine piece images
     screenshot_image = cv2.imread('chessPiecesImg/Screenshot_1.png')
     piece_images = [
-        cv2.imread('chessPiecesImg/Screenshot_1.png'),
         cv2.imread('chessPiecesImg/white_pawn.png'),
         cv2.imread('chessPiecesImg/white_rook.png'),
         cv2.imread('chessPiecesImg/white_bishop.png'),
