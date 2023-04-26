@@ -94,9 +94,7 @@ def detect_pieces(screenshot: ndarray, piece_imgs: List[ndarray]):
     piece_img_gray = [grayscale_img(img) for img in piece_imgs]
     piece_imgs_grad = [morph_grad_img(img) for img in piece_img_gray]
 
-
     rects = [find_template_multiple(screenshot_grad, img) for img in piece_imgs_grad]
-
 
     colors_list = match_colors(screenshot_gray, piece_img_gray, rects)
     matching_color_rects = match_color_rect(rects, colors_list)
