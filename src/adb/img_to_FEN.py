@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List
 
 import cv2
 import numpy as np
@@ -15,7 +15,7 @@ def morph_grad_img(img: ndarray) -> ndarray:
     return cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
 
 
-def find_template_multiple(board, piece):
+def find_template_multiple(board: ndarray, piece: ndarray):
     # Este método apenas dá atenção ao formato da peça, não interessa a cor
     rects = []
     w, h = piece.shape[1], piece.shape[0]
@@ -24,7 +24,7 @@ def find_template_multiple(board, piece):
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
     res = cv2.matchTemplate(board, piece, cv2.TM_CCOEFF_NORMED)
-    threshold = 0.53  # matching threshold, relatively stable.
+    threshold = 0.55  # matching threshold, relatively stable.
     loc = np.where(res >= threshold)
 
     for pt in zip(*loc[::-1]):
@@ -39,20 +39,36 @@ def find_template_multiple(board, piece):
     return rects
 
 
-def get_board_coords(screen=cv2.imread('Screenshot_1.png'), board=cv2.imread('../screenshot_emptyboard.png')):
+def crop_board(screen: ndarray = cv2.imread('chessPiecesImg/Screenshot_1.png'),
+               board: ndarray = cv2.imread('chessPiecesImg/screenshot_emptyboard.png')):
+    # board_coords = [int(a) for a in get_board_coords() * .4]
+    board_coords = get_board_coords(screen, board)
+    # board_coords = np.array([14, 313, 26, 35])
+    print(board_coords)
+    x0, x1, y0, y1 = board_coords[0], board_coords[0] + board_coords[2], board_coords[1], board_coords[1] + \
+                                      board_coords[3]
+    screen_cropped = (screen[y0: y1, x0: x1]).copy()
+
+    return screen_cropped, board_coords[:2]
+
+
+def get_board_coords(screen: ndarray = cv2.imread('chessPiecesImg/Screenshot_1.png'),
+                     board: ndarray = cv2.imread('chessPiecesImg/screenshot_emptyboard.png')):
     return find_template_multiple(screen, board)[0]
 
 
-def check_color(board_img, piece_img, rect):
-    y0, y1, x0, x1 = rect[1], rect[1] + rect[3], rect[0], rect[0] + rect[2]
+def check_color(board_img: ndarray, piece_img: ndarray, rect: List) -> bool:
+    # print(rect)
+    x0, x1, y0, y1 = rect[0], rect[0] + rect[2], rect[1], rect[1] + rect[3]
     # Dá crop na board apenas no lugar da peça
     crop = (board_img[y0: y1, x0: x1]).copy()
+
     diff = cv2.absdiff(piece_img, crop)
     avg_diff = cv2.mean(diff)[0] / 255
     return avg_diff < 0.3  # Baixo do limiar é peça preta
 
 
-def match_colors(board, piece_imgs: List[ndarray], rects: List) -> List:
+def match_colors(board: ndarray, piece_imgs: List[ndarray], rects: List) -> List:
     pairs = zip(piece_imgs, rects)
     return [[check_color(board, img, r) for r in rect] for img, rect in pairs]
 
@@ -91,12 +107,16 @@ def detect_pieces(screenshot: ndarray, piece_imgs: List[ndarray]):
     screenshot_gray = grayscale_img(screenshot)
     screenshot_grad = morph_grad_img(screenshot_gray)
 
-    piece_img_gray = [grayscale_img(img) for img in piece_imgs]
-    piece_imgs_grad = [morph_grad_img(img) for img in piece_img_gray]
+    piece_imgs_gray = [grayscale_img(img) for img in piece_imgs]
+    piece_imgs_grad = [morph_grad_img(img) for img in piece_imgs_gray]
 
-    rects = [find_template_multiple(screenshot_grad, img) for img in piece_imgs_grad]
+    crp_screen, tl_board = crop_board(screenshot_grad, piece_imgs_grad[-1])
 
-    colors_list = match_colors(screenshot_gray, piece_img_gray, rects)
+    rects = [find_template_multiple(crp_screen, img) for img in piece_imgs_grad]
+    """ Adicionar a posição da board na screenshot original para os quadrados ficarem alinhados"""
+    rects = [[r + np.hstack((tl_board, [0, 0])) for r in rect] for rect in rects]
+
+    colors_list = match_colors(screenshot_gray, piece_imgs_gray, rects)
     matching_color_rects = match_color_rect(rects, colors_list)
     draw_results_squares(screenshot, matching_color_rects)
     return matching_color_rects
