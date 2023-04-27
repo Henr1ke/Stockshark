@@ -1,22 +1,18 @@
-from typing import List
+from typing import List, Dict
 
 import cv2
 import numpy as np
 from numpy import ndarray
 
 
-def convert_to_gray(pieces):
-    gray_pieces = {}
-    for i, img in pieces.items():
-        gray_pieces[i] = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return gray_pieces
+def grayscale_img(img: ndarray) -> ndarray:
+    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
-def morph_gray_grad(pieces, kernel):
-    grad_pieces = {}
-    for i, img in pieces.items():
-        grad_pieces[i] = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
-    return grad_pieces
+def morph_grad_img(img: ndarray) -> ndarray:
+    s = 3
+    kernel = np.ones((s, s), np.uint8)
+    return cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
 
 
 def find_template_multiple(board, piece):
@@ -47,13 +43,6 @@ def get_board_coords(screen=cv2.imread('Screenshot_1.png'), board=cv2.imread('..
     return find_template_multiple(screen, board)[0]
 
 
-def find_multiple_temp_multiple(board, pieces):
-    rects = {}
-    for i, img in pieces.items():
-        rects[i] = find_template_multiple(board, img)
-    return rects
-
-
 def check_color(board_img, piece_img, rect):
     y0, y1, x0, x1 = rect[1], rect[1] + rect[3], rect[0], rect[0] + rect[2]
     # Dá crop na board apenas no lugar da peça
@@ -63,70 +52,60 @@ def check_color(board_img, piece_img, rect):
     return avg_diff < 0.3  # Baixo do limiar é peça preta
 
 
-def match_colors(board, pieces, rects):
-    color_list = {}  # {id_piece: [True|False] # [White|Black]
-    for i, img in pieces.items():
-        rect_list = []
-        for r in rects[i]:
-            rect_list.append(check_color(board, img, r))
-        color_list[i] = rect_list
-    return color_list
+def match_colors(board, piece_imgs: List[ndarray], rects: List) -> List:
+    pairs = zip(piece_imgs, rects)
+    return [[check_color(board, img, r) for r in rect] for img, rect in pairs]
 
 
-def match_color_rect(rects, colors):
-    cr_list = {}
-    for i in rects:
-        cr_list[i] = [r for (r, is_matching) in zip(
-            rects[i], colors[i]) if is_matching]
-    return cr_list
+def match_color_rect(rects: List, colors: List) -> List:
+    return [[r for (r, is_matching) in zip(rect, color) if is_matching] for rect, color in zip(rects, colors)]
 
 
 def draw_results(img, rects, i):
-    n_to_name = {1: "P",  # white_pawn
-                 2: "R",  # white_rook
-                 3: "B",  # white_bishop
-                 4: "N",  # white_knight
-                 5: "K",  # white_king
-                 6: "Q",  # white_queen
-                 7: "p",  # black_pawn
-                 8: "r",  # black_rook
-                 9: "b",  # black_bishop
-                 10: "n",  # black_knight
-                 11: "k",  # black_king
-                 12: "q"}  # black_queen
+    n_to_name = ["P",  # white_pawn
+                 "R",  # white_rook
+                 "B",  # white_bishop
+                 "N",  # white_knight
+                 "K",  # white_king
+                 "Q",  # white_queen
+                 "p",  # black_pawn
+                 "r",  # black_rook
+                 "b",  # black_bishop
+                 "n",  # black_knight
+                 "k",  # black_king
+                 "q"]  # black_queen
     for r in rects:
         # print(r)
-        cv2.rectangle(img, (r[0], r[1]), (r[0] + r[2],
-                                          r[1] + r[3]), (0, 0, 255), 2)
-        if i != 13:
-            cv2.putText(img, n_to_name[i], (r[0] + 5, r[1] + 25),
-                        cv2.FONT_HERSHEY_DUPLEX, 0.9, color=(0, 0, 255), thickness=2)
+        cv2.rectangle(img, (r[0], r[1]), (r[0] + r[2], r[1] + r[3]), (0, 0, 255), 2)
+        if i != 12:
+            cv2.putText(
+                img, n_to_name[i], (r[0] + 5, r[1] + 25), cv2.FONT_HERSHEY_DUPLEX, 0.9, color=(0, 0, 255), thickness=2)
 
 
-def draw_results_squares(board_img, rects):
-    for i, r in rects.items():
-        draw_results(board_img, r, i)
+def draw_results_squares(board_img: ndarray, rects: List):
+    for i, rect in enumerate(rects):
+        draw_results(board_img, rect, i)
 
 
-def detect_pieces(screen, pieces):
-    pieces_gray = convert_to_gray(pieces)
-    s = 3
-    kernel = np.ones((s, s), np.uint8)
-    pieces_gray_grad = morph_gray_grad(pieces_gray, kernel)
-    only_pieces = {k: pieces_gray_grad[k]
-                   for k in pieces_gray_grad.keys() - {0}}
-    rects = find_multiple_temp_multiple(pieces_gray_grad[0], only_pieces)
-    only_pieces = {k: pieces_gray[k] for k in pieces_gray.keys() - {0}}
-    colors_list = match_colors(pieces_gray[0], only_pieces, rects)
+def detect_pieces(screenshot: ndarray, piece_imgs: List[ndarray]):
+    screenshot_gray = grayscale_img(screenshot)
+    screenshot_grad = morph_grad_img(screenshot_gray)
+
+    piece_img_gray = [grayscale_img(img) for img in piece_imgs]
+    piece_imgs_grad = [morph_grad_img(img) for img in piece_img_gray]
+
+    rects = [find_template_multiple(screenshot_grad, img) for img in piece_imgs_grad]
+
+    colors_list = match_colors(screenshot_gray, piece_img_gray, rects)
     matching_color_rects = match_color_rect(rects, colors_list)
-    draw_results_squares(screen, matching_color_rects)
+    draw_results_squares(screenshot, matching_color_rects)
     return matching_color_rects
 
 
 def determine_pieces_squares(rects):
     # dict = {id_piece : (0,0)} # peça com id x, está na posição (0,0) que é top right
     rects_copy = rects.copy()
-    board_rect = rects_copy.pop(13)[0]
+    board_rect = rects_copy.pop(12)[0]
     tl_board = board_rect[:2]
     gap = abs(board_rect[0] - (board_rect[0] + board_rect[2])) / 8
     board_array = [[None for _ in range(8)] for _ in range(8)]
@@ -178,23 +157,15 @@ def fen_string(board_array):
     return "/".join(fen_placement_rows)
 
 
-def resize_imgs(piece_imgs: List[ndarray], scale_percent):
-    piece_imgs = {i: img for i, img in enumerate(piece_imgs)}
-    resized_pieces = {}
-    for i, img in piece_imgs.items():
-        w = int(img.shape[1] * scale_percent / 100)
-        h = int(img.shape[0] * scale_percent / 100)
-        dim = (w, h)
-
-        resized_pieces[i] = cv2.resize(
-            img, dim, interpolation=cv2.INTER_AREA)
-    return resized_pieces
+def resize_img(img: ndarray, scale=0.4) -> ndarray:
+    dim = (int(img.shape[1] * scale), int(img.shape[0] * scale))
+    return cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
 
 
 if __name__ == "__main__":
     # Load the chessEngine board and chessEngine piece images
+    screenshot_image = cv2.imread('chessPiecesImg/Screenshot_1.png')
     piece_images = [
-        cv2.imread('chessPiecesImg/Screenshot_1.png'),
         cv2.imread('chessPiecesImg/white_pawn.png'),
         cv2.imread('chessPiecesImg/white_rook.png'),
         cv2.imread('chessPiecesImg/white_bishop.png'),
@@ -210,11 +181,12 @@ if __name__ == "__main__":
         cv2.imread('chessPiecesImg/screenshot_emptyboard.png')
     ]
 
-    scale = 40
-    piece_images = resize_imgs(piece_images, scale)
-    rectangles = detect_pieces(piece_images[0], piece_images)
-    cv2.imshow('Result', piece_images[0])
+    screenshot_image = resize_img(screenshot_image)
+    piece_images = [resize_img(img) for img in piece_images]
+
+    rectangles = detect_pieces(screenshot_image, piece_images)
+    cv2.imshow('Result', screenshot_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    piece_coordinate_dict = determine_pieces_squares(rectangles)
-    FEN = fen_string(piece_coordinate_dict)
+    # piece_coordinate_dict = determine_pieces_squares(rectangles)
+    # FEN = fen_string(piece_coordinate_dict)

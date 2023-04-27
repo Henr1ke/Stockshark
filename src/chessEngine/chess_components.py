@@ -432,24 +432,27 @@ class Simulator:
         return self.__fullclock
 
     def execute(self, log_game_info=False) -> None:
-        if log_game_info:
-            print(f"Simulator {self} started execution")
-            print()
+        in_progress, draw, win_w, win_b = range(4)
 
-        ended = False
-        while not ended:
+        if log_game_info:
+            print()
+            print(f"Simulator {self} started execution")
+
+        game_state = in_progress
+        while game_state == in_progress:
             player = self.__players[0 if self.__is_white_turn else 1]
 
             if log_game_info:
+                print()
                 print(f"{'White' if self.__is_white_turn else 'Black'} turn to play")
                 print(self.__board)
-                print()
 
             valid_move = False
             while not valid_move:
                 move = player.gen_move(copy(self))
 
                 if log_game_info:
+                    print()
                     print(f"{'White' if self.__is_white_turn else 'Black'} player chose the move [{move}]")
 
                 try:
@@ -465,17 +468,24 @@ class Simulator:
                         print(f"The move was not played")
 
             pieces_pos = self.__board.get_pieces_pos(self.__is_white_turn)
-            ended = True
+            is_check_mated = True
             for pos, piece in pieces_pos.items():
                 if len(self.get_positions(piece, pos)) > 0:
-                    ended = False
+                    is_check_mated = False
                     break
 
-        # TODO TERMINAR ISTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+            if is_check_mated:
+                game_state = win_b if self.__is_white_turn else win_w
+            elif self.__halfclock >= 100:
+                game_state = draw
+
         if log_game_info:
-            winner_side = "white" if self.__is_white_turn else "black"
-            print(f"Game ended between {self.__players[0]} (white) and {self.__players[1]} (black). "
-                  f"The winner is {winner_side}")
+            print()
+            if game_state == draw:
+                print(f"Game ended in a draw")
+            else:
+                winner, loser = ("white", "black") if game_state == win_w else ("black", "white")
+                print(f"Game ended with {winner} player check-mating {loser} player")
 
     def is_legal_move(self, move: Move) -> bool:
         piece = self.__board[move.start_pos]
