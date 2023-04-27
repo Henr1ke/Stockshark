@@ -1,6 +1,6 @@
 from img_to_FEN import get_board_coords
 from ppadb.client import Client as AdbClient
-from chess.chess_components import Move, Position
+from chessEngine.chess_components import Move, Position
 
 
 def connect():

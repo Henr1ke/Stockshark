@@ -1,4 +1,4 @@
-from chess.chess_components import Player, Simulator, Position, ChessException, Move
+from chessEngine.chess_components import Player, Simulator, Position, ChessException, Move
 
 
 class PlayerHuman(Player):
