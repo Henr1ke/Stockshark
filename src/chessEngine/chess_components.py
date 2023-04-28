@@ -480,6 +480,7 @@ class Simulator:
             if log_game_info:
                 print()
                 print(f"{'White' if self.__is_white_turn else 'Black'} turn to play")
+                print(f"halfclock: {self.__halfclock}, fullclock: {self.__fullclock}")
                 print(self.__board)
 
             valid_move = False
@@ -503,14 +504,18 @@ class Simulator:
                         print(f"The move was not played")
 
             pieces_pos = self.__board.get_pieces_pos(self.__is_white_turn)
-            is_check_mated = True
+            can_make_move = False
             for piece, pos in pieces_pos.items():
                 if len(self.get_positions(piece, pos)) > 0:
-                    is_check_mated = False
+                    can_make_move = True
                     break
 
-            if is_check_mated:
-                game_state = win_b if self.__is_white_turn else win_w
+            if not can_make_move:
+                if self.__king_is_under_atk(self.is_white_turn):
+                    game_state = win_b if self.__is_white_turn else win_w
+                else:
+                    game_state = draw
+
             elif self.__halfclock >= 100:
                 game_state = draw
 
@@ -521,6 +526,7 @@ class Simulator:
             else:
                 winner, loser = ("white", "black") if game_state == win_w else ("black", "white")
                 print(f"Game ended with {winner} player check-mating {loser} player")
+            print(f"halfclock: {self.__halfclock}, fullclock: {self.__fullclock}")
             print(self.__board)
 
     def is_legal_move(self, move: Move) -> bool:
@@ -637,7 +643,7 @@ class Simulator:
 
             # Only keeps the position if the move does not leave the king in check
             legal_pos = [end_pos for end_pos in possible_pos
-                         if not self.__leaves_king_under_atk(Move(start_pos, end_pos), piece)]
+                         if not self.__leaves_king_under_atk(Move(start_pos, end_pos), piece.is_white)]
 
             # Updates the dictionary
             self.__pieces_positions[piece] = legal_pos
@@ -647,24 +653,20 @@ class Simulator:
     def get_castlings(self, is_white: bool) -> List[bool]:
         return copy(self.__castlings[is_white])
 
-    def __leaves_king_under_atk(self, move: Move, piece: Piece) -> bool:
+    def __leaves_king_under_atk(self, move: Move, is_white: bool) -> bool:
         # Plays the move in a copy of the simulator
         simulator = copy(self)
         simulator.play(move, False)
 
-        king_pos = simulator.__board.get_king_pos(piece.is_white)
-        pieces_pos = simulator.__board.get_pieces_pos(not piece.is_white)
+        return simulator.__king_is_under_atk(is_white)
+
+    def __king_is_under_atk(self, is_white: bool):
+        king_pos = self.__board.get_king_pos(is_white)
+        pieces_pos = self.__board.get_pieces_pos(not is_white)
 
         for atk_piece, pos in pieces_pos.items():
-            if king_pos in atk_piece.gen_positions(simulator.__board, pos):
+            if king_pos in atk_piece.gen_positions(self.__board, pos):
                 return True
-            # if isinstance(piece, King):
-            #     if king_pos in atk_piece.gen_positions(simulator.__board, pos):
-            #         return True
-            # else:
-            #     if atk_piece.is_slider and king_pos in atk_piece.gen_positions(simulator.__board, pos):
-            #         return True
-
         return False
 
 
