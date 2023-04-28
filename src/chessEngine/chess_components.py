@@ -623,6 +623,14 @@ class Simulator:
 
 
 class Player(ABC):
+
+    @staticmethod
+    def get_available_pieces_pos(simulator: Simulator) -> Dict[Position: Piece]:
+        pieces_pos = simulator.board.get_pieces_pos(simulator.is_white_turn)
+        available_pieces_pos = {pos: piece for pos, piece in pieces_pos.items()
+                                if len(simulator.get_positions(piece, pos)) > 0}
+        return available_pieces_pos
+
     @abstractmethod
     def gen_move(self, simulator: Simulator) -> Move:
         pass

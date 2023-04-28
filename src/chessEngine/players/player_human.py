@@ -1,14 +1,15 @@
-from chessEngine.chess_components import Player, Simulator, Position, ChessException, Move
+from typing import Dict
+
+from chessEngine.chess_components import Player, Simulator, Position, ChessException, Move, Piece
 
 
 class PlayerHuman(Player):
+
     @staticmethod
     def get_start_pos(simulator: Simulator) -> Position:
         board = simulator.board
 
-        pieces_pos = board.get_pieces_pos(simulator.is_white_turn)
-        positions = [pos for pos, piece in pieces_pos.items() if len(simulator.get_positions(piece, pos)) > 0]
-        positions.sort()
+        positions = Player.get_available_pieces_pos(simulator).keys()
 
         while True:
             try:
@@ -56,8 +57,11 @@ class PlayerHuman(Player):
         return Move(start_pos, end_pos)
 
 
-if __name__ == '__main__':
-    s = Simulator((PlayerHuman(), PlayerHuman()))
-    s.execute()
+def __main():
+    simulator = Simulator((PlayerHuman(), PlayerHuman()))
+    simulator.execute()
 
+
+if __name__ == '__main__':
+    __main()
     pass
