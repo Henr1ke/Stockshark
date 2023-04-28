@@ -58,8 +58,15 @@ class PlayerHuman(Player):
 
 
 def __main():
-    simulator = Simulator((PlayerHuman(), PlayerHuman()))
-    simulator.execute()
+    # 8/8/1N6/7p/2q3kP/4R3/1n5B/6q1
+    simulator = Simulator((PlayerHuman(), PlayerHuman()), "k7/8/5Q2/8/4n3/8/3p4/2K5 w - - 0 1")
+    board = simulator.board
+    print(board)
+    w_piece_pos = board.get_pieces_pos(True)
+    for piece, pos in w_piece_pos.items():
+        print(f"{piece}: {pos}, -> {simulator.get_positions(piece, pos)}")
+
+
 
 
 if __name__ == '__main__':

@@ -291,18 +291,6 @@ class Board:
         pos = Board.__idx_val_to_pos(idx_val)
         return self.__tiles[8 - 1 - pos.row][pos.col]
 
-    # def __setitem__(self, idx_val: Union[str, Position, Tuple[int, int]], piece: Optional[Piece]) -> None:
-    #     pos = Board.__idx_val_to_pos(idx_val)
-    #     self.__tiles[8 - 1 - pos.row][pos.col] = piece
-    #
-    #     if piece is None:
-    #         for is_white in (True, False):
-    #             self.__pieces_pos[is_white].pop(pos, None)
-    #     else:
-    #         self.__pieces_pos[piece.is_white][pos] = piece
-    #         if isinstance(piece, King):
-    #             self.__kings_pos[piece.is_white] = pos
-
     def __copy__(self) -> Board:
         cls = self.__class__
         board = cls.__new__(cls)
@@ -386,9 +374,10 @@ class Board:
                 self.__kings_pos.pop(piece.is_white, None)
 
     def get_pieces_pos(self, is_white: bool) -> Dict[Piece, Position]:
+
         return copy(self.__pieces_pos[is_white])
 
-    def get_king_pos(self, is_white: bool) -> Position:
+    def get_king_pos(self, is_white: bool) -> Position:  # TODO retirar
         return self.__kings_pos[is_white]
 
     def gen_fen_str(self) -> str:
@@ -532,6 +521,7 @@ class Simulator:
             else:
                 winner, loser = ("white", "black") if game_state == win_w else ("black", "white")
                 print(f"Game ended with {winner} player check-mating {loser} player")
+            print(self.__board)
 
     def is_legal_move(self, move: Move) -> bool:
         piece = self.__board[move.start_pos]
@@ -663,15 +653,17 @@ class Simulator:
         simulator.play(move, False)
 
         king_pos = simulator.__board.get_king_pos(piece.is_white)
-        pieces_pos = simulator.__board.get_pieces_pos(not piece.is_white).items()
+        pieces_pos = simulator.__board.get_pieces_pos(not piece.is_white)
 
-        for atk_piece, pos in pieces_pos:
-            if isinstance(piece, King):
-                if king_pos in atk_piece.gen_positions(simulator.__board, pos):
-                    return True
-            else:
-                if atk_piece.is_slider and king_pos in atk_piece.gen_positions(simulator.__board, pos):
-                    return True
+        for atk_piece, pos in pieces_pos.items():
+            if king_pos in atk_piece.gen_positions(simulator.__board, pos):
+                return True
+            # if isinstance(piece, King):
+            #     if king_pos in atk_piece.gen_positions(simulator.__board, pos):
+            #         return True
+            # else:
+            #     if atk_piece.is_slider and king_pos in atk_piece.gen_positions(simulator.__board, pos):
+            #         return True
 
         return False
 
@@ -681,20 +673,10 @@ class Player(ABC):
     @staticmethod
     def get_available_pieces_pos(simulator: Simulator) -> Dict[Position: Piece]:
         pieces_pos = simulator.board.get_pieces_pos(simulator.is_white_turn)
-        available_pieces_pos = {pos: piece for piece, pos in pieces_pos.items()
+        available_pieces_pos = {piece: pos for piece, pos in pieces_pos.items()
                                 if len(simulator.get_positions(piece, pos)) > 0}
         return available_pieces_pos
 
     @abstractmethod
     def gen_move(self, simulator: Simulator) -> Move:
         pass
-
-
-def __main():
-    board = Board()
-    board.add_piece("a1", King(True))
-    board.add_piece("a1", Pawn(True))
-
-
-if __name__ == '__main__':
-    __main()

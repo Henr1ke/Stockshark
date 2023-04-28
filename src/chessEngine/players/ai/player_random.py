@@ -8,7 +8,7 @@ class PlayerRandom(Player):
 
     def gen_move(self, simulator: Simulator) -> Move:
         pieces_pos = self.get_available_pieces_pos(simulator)
-        start_pos, piece = random.choice(list(pieces_pos.items()))
+        piece, start_pos = random.choice(list(pieces_pos.items()))
 
         end_pos_list = simulator.get_positions(piece, start_pos)
         end_pos = random.choice(end_pos_list)
