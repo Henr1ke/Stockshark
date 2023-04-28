@@ -377,7 +377,7 @@ class Board:
 
         return copy(self.__pieces_pos[is_white])
 
-    def get_king_pos(self, is_white: bool) -> Position:  # TODO retirar
+    def get_king_pos(self, is_white: bool) -> Position:
         return self.__kings_pos[is_white]
 
     def gen_fen_str(self) -> str:
