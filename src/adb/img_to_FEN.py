@@ -15,12 +15,11 @@ def morph_grad_img(img: ndarray) -> ndarray:
     return cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
 
 
-def find_template_multiple(board: ndarray, piece: ndarray):
+def find_template_multiple(board: ndarray, piece: ndarray, threshold=0.55):
     # Este método apenas dá atenção ao formato da peça, não interessa a cor
     rects = []
     w, h = piece.shape[1], piece.shape[0]
     res = cv2.matchTemplate(board, piece, cv2.TM_CCOEFF_NORMED)
-    threshold = 0.55
     loc = np.where(res >= threshold)
 
     for pt in zip(*loc[::-1]):
@@ -46,7 +45,7 @@ def crop_board(screen: ndarray = cv2.imread('chessPiecesImg/Screenshot_1.png'),
 
 def get_board_coords(screen: ndarray = cv2.imread('chessPiecesImg/Screenshot_1.png'),
                      board: ndarray = cv2.imread('chessPiecesImg/screenshot_emptyboard.png')):
-    return find_template_multiple(screen, board)[0]
+    return find_template_multiple(screen, board, threshold=0.01)[0]
 
 
 def check_color(board_img: ndarray, piece_img: ndarray, rect: List) -> bool:
@@ -103,12 +102,22 @@ def detect_pieces(screenshot: ndarray, piece_imgs: List[ndarray]):
     piece_imgs_gray = [grayscale_img(img) for img in piece_imgs]
     piece_imgs_grad = [morph_grad_img(img) for img in piece_imgs_gray]
 
-    crp_screen, tl_board = crop_board(screenshot_grad, piece_imgs_grad[-1])
-    add_board = np.hstack((tl_board[:2], [0, 0]))
-    rects = [find_template_multiple(crp_screen, img) for img in piece_imgs_grad]
+    cv2.imshow('screen', screenshot_gray)
+    cv2.imshow('board', piece_imgs_gray[-1])
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    cv2.imshow('screen', screenshot_grad)
+    cv2.imshow('board', piece_imgs_grad[-1])
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    board_img, corners = crop_board(screenshot_grad, piece_imgs_grad[-1])
+    add_board = np.hstack((corners[:2], [0, 0]))
+    rects = [find_template_multiple(board_img, img) for img in piece_imgs_grad]
     """ Adicionar a posição da board na screenshot original para os quadrados ficarem alinhados"""
     rects = [[r + add_board for r in rect] for rect in rects]
-    rects[-1] = [tl_board]
+    rects[-1] = [corners]
 
     colors_list = match_colors(screenshot_gray, piece_imgs_gray, rects)
     matching_color_rects = match_color_rect(rects, colors_list)
