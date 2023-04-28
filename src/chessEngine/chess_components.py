@@ -613,7 +613,6 @@ class Simulator:
         self.__pieces_positions.clear()
 
     def get_positions(self, piece: Piece, start_pos: Position) -> List[Position]:
-        # TODO ##################################################### NÃO TÁ A RESTRINGIR OS CHECKS
         legal_pos = self.__pieces_positions.get(piece)
 
         if legal_pos is None:
