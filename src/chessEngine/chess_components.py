@@ -483,8 +483,8 @@ class Simulator:
                 print(f"halfclock: {self.__halfclock}, fullclock: {self.__fullclock}")
                 print(self.__board)
 
-            valid_move = False
-            while not valid_move:
+            is_valid_move = False
+            while not is_valid_move:
                 move = player.gen_move(copy(self))
 
                 if log_game_info:
@@ -493,7 +493,7 @@ class Simulator:
 
                 try:
                     self.play(move)
-                    valid_move = True
+                    is_valid_move = True
 
                     if log_game_info:
                         print(f"The move was played")
