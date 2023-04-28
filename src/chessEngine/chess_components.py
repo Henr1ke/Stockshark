@@ -189,17 +189,20 @@ class Pawn(Piece):
     def gen_positions(self, board: Board, start_pos: Position) -> List[Position]:
         possible_pos = []
 
-        inc = (0, 1) if self.is_white else (0, -1)
-        end_pos = start_pos + inc
-        if board[end_pos] is None:
-            # Corresponding to one step forward
-            possible_pos.append(end_pos)
-
-            inc = (0, 2) if self.is_white else (0, -2)
+        try:
+            inc = (0, 1) if self.is_white else (0, -1)
             end_pos = start_pos + inc
-            if start_pos.row == (1 if self.is_white else 6) and board[end_pos] is None:
-                # Corresponding to two steps forward
+            if board[end_pos] is None:
+                # Corresponding to one step forward
                 possible_pos.append(end_pos)
+
+                inc = (0, 2) if self.is_white else (0, -2)
+                end_pos = start_pos + inc
+                if start_pos.row == (1 if self.is_white else 6) and board[end_pos] is None:
+                    # Corresponding to two steps forward
+                    possible_pos.append(end_pos)
+        except ChessException:
+            pass
 
         increments = ((-1, 1), (1, 1)) if self.is_white else ((-1, -1), (1, -1))
         for inc in increments:
@@ -266,7 +269,7 @@ class Board:
 
     def __init__(self, fen_str: str = "8/8/8/8/8/8/8/8") -> None:
 
-        self.__pieces_pos: Dict[bool, Dict[Position, Piece]] = {True: dict(), False: dict()}
+        self.__pieces_pos: Dict[bool, Dict[Piece, Position]] = {True: dict(), False: dict()}
         self.__kings_pos: Dict[bool, Position] = dict()
         self.__tiles: List[List[Optional[Piece]]] = [[None] * 8 for _ in range(8)]
 
@@ -281,24 +284,24 @@ class Board:
                     is_white = char.isupper()
                     piece = piece_class(is_white)
 
-                    self[col, row] = piece
+                    self.add_piece((col, row), piece)
                     col += 1
 
     def __getitem__(self, idx_val: Union[str, Position, Tuple[int, int]]) -> Optional[Piece]:
         pos = Board.__idx_val_to_pos(idx_val)
         return self.__tiles[8 - 1 - pos.row][pos.col]
 
-    def __setitem__(self, idx_val: Union[str, Position, Tuple[int, int]], piece: Optional[Piece]) -> None:
-        pos = Board.__idx_val_to_pos(idx_val)
-        self.__tiles[8 - 1 - pos.row][pos.col] = piece
-
-        if piece is None:
-            for is_white in (True, False):
-                self.__pieces_pos[is_white].pop(pos, None)
-        else:
-            self.__pieces_pos[piece.is_white][pos] = piece
-            if isinstance(piece, King):
-                self.__kings_pos[piece.is_white] = pos
+    # def __setitem__(self, idx_val: Union[str, Position, Tuple[int, int]], piece: Optional[Piece]) -> None:
+    #     pos = Board.__idx_val_to_pos(idx_val)
+    #     self.__tiles[8 - 1 - pos.row][pos.col] = piece
+    #
+    #     if piece is None:
+    #         for is_white in (True, False):
+    #             self.__pieces_pos[is_white].pop(pos, None)
+    #     else:
+    #         self.__pieces_pos[piece.is_white][pos] = piece
+    #         if isinstance(piece, King):
+    #             self.__kings_pos[piece.is_white] = pos
 
     def __copy__(self) -> Board:
         cls = self.__class__
@@ -339,7 +342,50 @@ class Board:
 
         return Position(idx_val[0], idx_val[1])
 
-    def get_pieces_pos(self, is_white: bool) -> Dict[Position, Piece]:
+    def add_piece(self, idx_val: Union[str, Position, Tuple[int, int]], piece: Piece) -> None:
+        if not isinstance(piece, Piece):
+            raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")
+
+        pos = self.__idx_val_to_pos(idx_val)
+        if self[pos] is not None:
+            self.clear_pos(pos)
+
+        if isinstance(piece, King):
+            if self.__kings_pos.get(piece.is_white) is not None:
+                raise ChessException(f"The board already contains a king, it is not allowed to add another")
+            self.__kings_pos[piece.is_white] = pos
+
+        self.__tiles[8 - 1 - pos.row][pos.col] = piece
+        self.__pieces_pos[piece.is_white][piece] = pos
+
+    def make_move(self, move: Move) -> Piece:
+        piece = self[move.start_pos]
+        if not isinstance(piece, Piece):
+            raise ChessException("There is no piece on the move starting position")
+
+        if self[move.end_pos] is not None:
+            self.clear_pos(move.end_pos)
+
+        self.__tiles[8 - 1 - move.start_pos.row][move.start_pos.col] = None
+        self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = piece
+
+        if isinstance(piece, King):
+            self.__kings_pos[piece.is_white] = move.end_pos
+
+        self.__pieces_pos[piece.is_white][piece] = move.end_pos
+        return piece
+
+    def clear_pos(self, idx_val: Union[str, Position, Tuple[int, int]]) -> None:
+        pos = self.__idx_val_to_pos(idx_val)
+        piece = self.__tiles[8 - 1 - pos.row][pos.col]
+        self.__tiles[8 - 1 - pos.row][pos.col] = None
+
+        if piece is not None:
+            self.__pieces_pos[piece.is_white].pop(piece)
+            if isinstance(piece, King):
+                self.__kings_pos.pop(piece.is_white, None)
+
+    def get_pieces_pos(self, is_white: bool) -> Dict[Piece, Position]:
         return copy(self.__pieces_pos[is_white])
 
     def get_king_pos(self, is_white: bool) -> Position:
@@ -469,7 +515,7 @@ class Simulator:
 
             pieces_pos = self.__board.get_pieces_pos(self.__is_white_turn)
             is_check_mated = True
-            for pos, piece in pieces_pos.items():
+            for piece, pos in pieces_pos.items():
                 if len(self.get_positions(piece, pos)) > 0:
                     is_check_mated = False
                     break
@@ -496,7 +542,9 @@ class Simulator:
         def pawn_actions(is_white: bool) -> Optional[Position]:
             if move.end_pos == self.__en_passant_target:
                 capt_piece_pos = move.end_pos + ((0, -1) if is_white else (0, 1))
-                self.__board[capt_piece_pos] = None
+                self.__board.clear_pos(capt_piece_pos)
+            elif move.end_pos.row == (7 if is_white else 0):
+                self.__board.add_piece(move.end_pos, Queen(is_white))  # TODO its always promoting to queen
 
             if abs(move.start_pos.row - move.end_pos.row) == 2:
                 return move.end_pos + ((0, -1) if is_white else (0, 1))
@@ -515,24 +563,29 @@ class Simulator:
 
                 if move.end_pos.col == 2:
                     start_pos = Position(0, move.end_pos.row)
-                    rook = self.__board[start_pos]
-                    self.__board[start_pos] = None
-                    self.__board[move.end_pos + (1, 0)] = rook
+                    end_pos = move.end_pos + (1, 0)
+                    self.__board.make_move(Move(start_pos, end_pos))
+                    # rook = self.__board[start_pos]
+                    # self.__board[start_pos] = None
+                    # self.__board[move.end_pos + (1, 0)] = rook
                 elif move.end_pos.col == 6:
                     start_pos = Position(7, move.end_pos.row)
-                    rook = self.__board[start_pos]
-                    self.__board[start_pos] = None
-                    self.__board[move.end_pos + (-1, 0)] = rook
+                    end_pos = move.end_pos + (-1, 0)
+                    self.__board.make_move(Move(start_pos, end_pos))
+                    # rook = self.__board[start_pos]
+                    # self.__board[start_pos] = None
+                    # self.__board[move.end_pos + (-1, 0)] = rook
 
         if check_if_legal and not self.is_legal_move(move):
             raise ChessException(f"The move is not legal, got \"{str(move)}\"")
 
-        piece = self.__board[move.start_pos]
         should_reset_halfclock = self.__board[move.end_pos] is not None
 
         # Update self.__board
-        self.__board[move.start_pos] = None
-        self.__board[move.end_pos] = piece
+        piece = self.__board.make_move(move)
+        # piece = self.__board[move.start_pos]
+        # self.__board[move.start_pos] = None
+        # self.__board[move.end_pos] = piece
 
         # Update self.__en_passants
         e_p_target = None
@@ -564,6 +617,7 @@ class Simulator:
         self.__pieces_positions.clear()
 
     def get_positions(self, piece: Piece, start_pos: Position) -> List[Position]:
+        # TODO ##################################################### NÃO TÁ A RESTRINGIR OS CHECKS
         legal_pos = self.__pieces_positions.get(piece)
 
         if legal_pos is None:
@@ -592,8 +646,8 @@ class Simulator:
                     possible_pos.append(start_pos + (2, 0))
 
             # Only keeps the position if the move does not leave the king in check
-            legal_pos = [pos for pos in possible_pos
-                         if not self.__leaves_king_under_atk(Move(start_pos, pos), piece)]
+            legal_pos = [end_pos for end_pos in possible_pos
+                         if not self.__leaves_king_under_atk(Move(start_pos, end_pos), piece)]
 
             # Updates the dictionary
             self.__pieces_positions[piece] = legal_pos
@@ -611,7 +665,7 @@ class Simulator:
         king_pos = simulator.__board.get_king_pos(piece.is_white)
         pieces_pos = simulator.__board.get_pieces_pos(not piece.is_white).items()
 
-        for pos, atk_piece in pieces_pos:
+        for atk_piece, pos in pieces_pos:
             if isinstance(piece, King):
                 if king_pos in atk_piece.gen_positions(simulator.__board, pos):
                     return True
@@ -627,10 +681,20 @@ class Player(ABC):
     @staticmethod
     def get_available_pieces_pos(simulator: Simulator) -> Dict[Position: Piece]:
         pieces_pos = simulator.board.get_pieces_pos(simulator.is_white_turn)
-        available_pieces_pos = {pos: piece for pos, piece in pieces_pos.items()
+        available_pieces_pos = {pos: piece for piece, pos in pieces_pos.items()
                                 if len(simulator.get_positions(piece, pos)) > 0}
         return available_pieces_pos
 
     @abstractmethod
     def gen_move(self, simulator: Simulator) -> Move:
         pass
+
+
+def __main():
+    board = Board()
+    board.add_piece("a1", King(True))
+    board.add_piece("a1", Pawn(True))
+
+
+if __name__ == '__main__':
+    __main()

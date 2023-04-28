@@ -9,7 +9,7 @@ class PlayerHuman(Player):
     def get_start_pos(simulator: Simulator) -> Position:
         board = simulator.board
 
-        positions = Player.get_available_pieces_pos(simulator).keys()
+        positions = list(Player.get_available_pieces_pos(simulator).keys())
 
         while True:
             try:
