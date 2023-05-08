@@ -29,15 +29,14 @@ class Position:
                 Columns (First index) --->                                Files (Letters) --->
     """
 
-    def __init__(self, col: int, row: int) -> None:
-        if not (0 <= col < 8):
-            raise ChessException(f"Column must be from 0 to 8, got {col}")
-        if not (0 <= row < 8):
-            raise ChessException(f"Row must be from 0 to 8, got {row}")
-
-        self.__col: int = col
-        self.__row: int = row
-        self.__coord: str = FILE_LETTERS[col] + str(row + 1)
+    def __init__(self, *args) -> None:
+        if len(args) == 1 and type(args[0]) == str:
+            self.__initialize_by_str(args[0])
+        elif len(args) == 2 and type(args[0]) == int and type(args[1]) == int:
+            self.__initialize_by_ints(args[0], args[1])
+        else:
+            raise ChessException(
+                f"Cannot initialize a Position with parameter types {[type(parameter) for parameter in args]}")
 
     def __hash__(self) -> int:
         number = 8 * self.row + self.col
@@ -79,22 +78,27 @@ class Position:
     def coord(self) -> str:
         return self.__coord
 
-    @staticmethod
-    def coord_to_pos(coord: str) -> Position:
-        try:
-            if len(coord) != 2:
-                raise ChessException("The coordinate introduced must contain exactly 2 characters")
+    def __initialize_by_str(self, coord: str) -> None:
+        if len(coord) != 2:
+            raise ChessException("The coordinate introduced must contain exactly 2 characters")
 
-            if coord[0].lower() not in FILE_LETTERS:
-                raise ChessException(f"The file (first character) must be a letter from \"{FILE_LETTERS[0]}\" to "
-                                     f"\"{FILE_LETTERS[-1]}\"")
+        if coord[0].lower() not in FILE_LETTERS:
+            raise ChessException(f"The file (first character) must be a letter from \"{FILE_LETTERS[0]}\" to "
+                                 f"\"{FILE_LETTERS[-1]}\"")
 
-            if not coord[1].isdigit() or not (0 < int(coord[1]) <= 8):
-                raise ChessException(f"The rank (second character) must be a number from 1 to 8")
+        if not coord[1].isdigit() or not (0 < int(coord[1]) <= 8):
+            raise ChessException(f"The rank (second character) must be a number from 1 to 8")
 
-            col = FILE_LETTERS.index(coord[0])
-            row = int(coord[1]) - 1
-            return Position(col, row)
+        self.__col = FILE_LETTERS.index(coord[0])
+        self.__row = int(coord[1]) - 1
+        self.__coord = coord
 
-        except ChessException as e:
-            raise ChessException(f"The coordinate introduced is not valid! {e}. got \"{coord}")
+    def __initialize_by_ints(self, col: int, row: int) -> None:
+        if not (0 <= col < 8):
+            raise ChessException(f"Column must be from 0 to 8, got {col}")
+        if not (0 <= row < 8):
+            raise ChessException(f"Row must be from 0 to 8, got {row}")
+
+        self.__col: int = col
+        self.__row: int = row
+        self.__coord: str = FILE_LETTERS[col] + str(row + 1)
