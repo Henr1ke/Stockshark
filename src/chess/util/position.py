@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import Tuple
-from constants import FILE_LETTERS
+from chess.util.constants import FILE_LETTERS
 
-from chessException import ChessException
+from chess.util.chessException import ChessException
 
 
 class Position:
@@ -32,8 +32,14 @@ class Position:
     def __init__(self, *args) -> None:
         if len(args) == 1 and type(args[0]) == str:
             self._initialize_by_str(args[0])
+
+        elif len(args) == 1 and type(args[0] == tuple and len(args[0]) == 2 and
+                                     isinstance(args[0][0], int) and isinstance(args[0][1], int)):
+            self._initialize_by_ints(args[0][0], args[0][1])
+
         elif len(args) == 2 and type(args[0]) == int and type(args[1]) == int:
             self._initialize_by_ints(args[0], args[1])
+
         else:
             raise ChessException(
                 f"Cannot initialize a Position with parameter types {[type(parameter) for parameter in args]}")
@@ -105,9 +111,9 @@ class Position:
 
 
 if __name__ == '__main__':
-    for args in [[0, 0], ["g5"], [], [19.5, 4, -7], [0, 8], ["ola"]]:
+    for arguments in [[0, 0], ["g5"], [(5,5)], [], [19.5, 4, -7], [0, 8], ["ola"]]:
         try:
-            pos = Position(*args)
-            print(f"{pos = }")
+            pos = Position(*arguments)
+            print(f"{arguments = }, {pos = }")
         except ChessException as e:
             print(f"Error: {e}")

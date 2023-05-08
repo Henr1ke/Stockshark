@@ -1,5 +1,5 @@
-from chessException import ChessException
-from position import Position
+from chess.util.chessException import ChessException
+from chess.util.position import Position
 
 
 class Move:

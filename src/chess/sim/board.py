@@ -1,0 +1,151 @@
+from __future__ import annotations
+
+from copy import copy
+from typing import Dict, Optional, List, Union, Tuple
+
+from chess.piece.constants import CHAR_TO_PIECE_CLASS
+from chess.piece.king import King
+from chess.piece.piece import Piece
+from chess.util.chessException import ChessException
+from chess.util.constants import FILE_LETTERS
+from chess.util.move import Move
+from chess.util.position import Position
+
+
+class Board:
+    def __init__(self, fen_str: str = "8/8/8/8/8/8/8/8") -> None:
+
+        self.__pieces_pos: Dict[Piece, Position] = dict()
+        self.__kings_pos: Dict[bool, Position] = dict()
+        self.__tiles: List[List[Optional[Piece]]] = [[None] * 8 for _ in range(8)]
+
+        for row, fen_substr in enumerate(fen_str.split("/")[::-1]):
+            col = 0
+            for char in fen_substr:
+                if char.isdigit():
+                    col += int(char)
+
+                else:
+                    piece_class = CHAR_TO_PIECE_CLASS[char.lower()]
+                    is_white = char.isupper()
+                    piece = piece_class(is_white)
+
+                    self.add_piece(piece, (col, row))
+                    col += 1
+
+    def __getitem__(self, *args: Union[Position, str, Tuple[int, int]]) -> Optional[Piece]:
+        pos = Board._args_to_pos(*args)
+        return self.__tiles[8 - 1 - pos.row][pos.col]
+
+    def __copy__(self) -> Board:
+        cls = self.__class__
+        board = cls.__new__(cls)
+        for key, value in self.__dict__.items():
+            if key == "_Board__tiles":
+                tiles = [[piece for piece in row] for row in value]
+                setattr(board, key, tiles)
+            elif key == "_Board__pieces_pos":
+                pieces_pos = {k: {k2: v2 for k2, v2 in v.items()} for k, v in value.items()}
+                setattr(board, key, pieces_pos)
+            elif key == "_Board__kings_pos":
+                kings_pos = {k: v for k, v in value.items()}
+                setattr(board, key, kings_pos)
+            else:
+                setattr(board, key, copy(value))
+        return board
+
+    def __str__(self) -> str:
+        board_str = "═══╦══" + "═╤══" * (8 - 1) + "═╗\n"
+
+        for row in range(8 - 1, -1, -1):
+            board_str += f" {row + 1} ║ " + " │ ".join(
+                " " if self[col, row] is None else str(self[col, row]) for col in range(8)
+            ) + " ║\n"
+
+        board_str += f"═══╬══{'═╪══' * (8 - 1)}═╣\n"
+        board_str += f"   ║ {' │ '.join(FILE_LETTERS)} ║"
+        return board_str
+
+    def add_piece(self, piece: Piece, *args: Union[Position, str, Tuple[int, int]], ) -> None:
+        if not isinstance(piece, Piece):
+            raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")
+
+        pos = Board._args_to_pos(*args)
+        if self[pos] is not None:
+            self.clear_pos(pos)
+
+        if isinstance(piece, King):
+            if self.__kings_pos.get(piece.is_white) is not None:
+                raise ChessException(f"The board already contains a king, it is not allowed to add another")
+            self.__kings_pos[piece.is_white] = pos
+
+        self.__tiles[8 - 1 - pos.row][pos.col] = piece
+        self.__pieces_pos[piece] = pos
+
+    def make_move(self, move: Move) -> Piece:
+        piece = self[move.start_pos]
+        if not isinstance(piece, Piece):
+            raise ChessException("There is no piece on the move starting position")
+
+        if self[move.end_pos] is not None:
+            self.clear_pos(move.end_pos)
+
+        self.__tiles[8 - 1 - move.start_pos.row][move.start_pos.col] = None
+        self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = piece
+
+        if isinstance(piece, King):
+            self.__kings_pos[piece.is_white] = move.end_pos
+
+        self.__pieces_pos[piece] = move.end_pos
+        return piece
+
+    def clear_pos(self, *args: Union[Position, str, Tuple[int, int]]) -> None:
+        pos = Board._args_to_pos(*args)
+        piece = self.__tiles[8 - 1 - pos.row][pos.col]
+        self.__tiles[8 - 1 - pos.row][pos.col] = None
+
+        if piece is not None:
+            self.__pieces_pos.pop(piece, None)
+            if isinstance(piece, King):
+                self.__kings_pos.pop(piece.is_white, None)
+
+    def get_pieces_pos(self, is_white: bool) -> Dict[Piece, Position]:
+        return {piece: pos for piece, pos in self.__pieces_pos.items() if piece.is_white is is_white}
+
+    def get_king_pos(self, is_white: bool) -> Position:
+        return self.__kings_pos[is_white]
+
+    def gen_fen_str(self) -> str:
+        piece_class_to_char = {val: key for (key, val) in CHAR_TO_PIECE_CLASS.items()}
+
+        fen_substrs = []
+
+        for i, row in enumerate(self.__tiles):
+            fen_substr = ""
+            tile_skips = 0
+            for piece in row:
+                if piece is None:
+                    tile_skips += 1
+                else:
+                    if tile_skips > 0:
+                        fen_substr += str(tile_skips)
+                        tile_skips = 0
+                    letter = piece_class_to_char[type(piece)]
+                    fen_substr += letter.upper() if piece.is_white else letter.lower()
+
+            if tile_skips > 0:
+                fen_substr += str(tile_skips)
+            fen_substrs.append(fen_substr)
+
+        return "/".join(fen_substrs)
+
+    @staticmethod
+    def _args_to_pos(*args: Union[Position, str, Tuple[int, int]]):
+        if len(args) == 1 and isinstance(args[0], Position):
+            return args[0]
+        return Position(*args)
+
+
+if __name__ == '__main__':
+    board = Board()
+    print(board)
