@@ -160,7 +160,7 @@ class Piece(ABC):
                     possible_pos.append(end_pos)
                     end_pos += direction
 
-                if board[end_pos].is_white is not self.__is_white:
+                if board[end_pos].is_white is not self.is_white:
                     possible_pos.append(end_pos)
             except ChessException:
                 pass
@@ -583,18 +583,16 @@ class Simulator:
         # self.__board[move.start_pos] = None
         # self.__board[move.end_pos] = piece
 
-        # Update self.__en_passants
+        # Update self.__en_passants and self.__castlings
         e_p_target = None
         if isinstance(piece, Pawn):
             should_reset_halfclock = True
             e_p_target = pawn_actions(piece.is_white)
-        self.__en_passant_target = e_p_target
-
-        # Update self.__castlings
-        if isinstance(piece, Rook):
+        elif isinstance(piece, Rook):
             rook_actions(piece.is_white)
         elif isinstance(piece, King):
             king_actions(piece.is_white)
+        self.__en_passant_target = e_p_target
 
         # Update self.__is_white_turn
         self.__is_white_turn = not self.__is_white_turn
