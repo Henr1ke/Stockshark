@@ -9,6 +9,7 @@ class Queen(Piece):
         super().__init__(is_white, "♛", "♕")
 
     def gen_positions(self, game, start_pos: Position) -> List[Position]:
-        possible_pos = self._gen_slider_positions(game, start_pos, is_diag=True)
-        possible_pos += self._gen_slider_positions(game, start_pos, is_diag=False)
+        board = game.board
+        possible_pos = self._gen_slider_positions(board, start_pos, is_diag=True)
+        possible_pos += self._gen_slider_positions(board, start_pos, is_diag=False)
         return possible_pos

@@ -9,4 +9,4 @@ class Rook(Piece):
         super().__init__(is_white, "♜", "♖")
 
     def gen_positions(self, game, start_pos: Position) -> List[Position]:
-        return self._gen_slider_positions(game, start_pos, is_diag=False)
+        return self._gen_slider_positions(game.board, start_pos, is_diag=False)

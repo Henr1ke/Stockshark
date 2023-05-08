@@ -10,18 +10,19 @@ class Pawn(Piece):
         super().__init__(is_white, "♟", "♙")
 
     def gen_positions(self, game, start_pos: Position) -> List[Position]:
+        board = game.board
         positions = []
 
         try:
             inc = (0, 1) if self.is_white else (0, -1)
             end_pos = start_pos + inc
-            if game[end_pos] is None:
+            if board[end_pos] is None:
                 # Corresponding to one step forward
                 positions.append(end_pos)
 
                 inc = (0, 2) if self.is_white else (0, -2)
                 end_pos = start_pos + inc
-                if start_pos.row == (1 if self.is_white else 6) and game[end_pos] is None:
+                if start_pos.row == (1 if self.is_white else 6) and board[end_pos] is None:
                     # Corresponding to two steps forward
                     positions.append(end_pos)
         except ChessException:
@@ -31,7 +32,7 @@ class Pawn(Piece):
         for inc in increments:
             try:
                 end_pos = start_pos + inc
-                piece = game[end_pos]
+                piece = board[end_pos]
                 if end_pos == game.__en_passant_target or piece is not None and piece.is_white is not self.is_white:
                     # Corresponding to En Passant or eating a piece in the diagonal
                     positions.append(end_pos)

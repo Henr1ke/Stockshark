@@ -10,4 +10,4 @@ class Knight(Piece):
 
     def gen_positions(self, game, start_pos: Position) -> List[Position]:
         increments = [(1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2)]
-        return self._gen_inc_positions(game, start_pos, increments)
+        return self._gen_inc_positions(game.board, start_pos, increments)
