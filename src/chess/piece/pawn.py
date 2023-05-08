@@ -9,7 +9,7 @@ class Pawn(Piece):
     def __init__(self, is_white: bool) -> None:
         super().__init__(is_white, False, "♟", "♙")
 
-    def gen_positions(self, board: Board, start_pos: Position) -> List[Position]:
+    def gen_positions(self, board, start_pos: Position) -> List[Position]:
         possible_pos = []
 
         try:

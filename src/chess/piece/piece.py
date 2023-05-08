@@ -23,10 +23,10 @@ class Piece(ABC):
         return self.__is_slider
 
     @abstractmethod
-    def gen_positions(self, board: Board, start_pos: Position) -> List[Position]:
+    def gen_positions(self, board, start_pos: Position) -> List[Position]:
         pass
 
-    def _gen_slider_positions(self, board: Board, start_pos: Position, is_diag: bool) -> List[Position]:
+    def _gen_slider_positions(self, board, start_pos: Position, is_diag: bool) -> List[Position]:
         possible_pos = []
 
         directions = ((1, 1), (1, -1), (-1, -1), (-1, 1)) if is_diag else ((0, 1), (1, 0), (0, -1), (-1, 0))
@@ -45,7 +45,7 @@ class Piece(ABC):
 
         return possible_pos
 
-    def _gen_inc_positions(self, board: Board, start_pos: Position, incs: List[Tuple[int, int]]) -> List[Position]:
+    def _gen_inc_positions(self, board, start_pos: Position, incs: List[Tuple[int, int]]) -> List[Position]:
         possible_pos = []
 
         for inc in incs:

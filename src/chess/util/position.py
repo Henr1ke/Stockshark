@@ -31,9 +31,9 @@ class Position:
 
     def __init__(self, *args) -> None:
         if len(args) == 1 and type(args[0]) == str:
-            self.__initialize_by_str(args[0])
+            self._initialize_by_str(args[0])
         elif len(args) == 2 and type(args[0]) == int and type(args[1]) == int:
-            self.__initialize_by_ints(args[0], args[1])
+            self._initialize_by_ints(args[0], args[1])
         else:
             raise ChessException(
                 f"Cannot initialize a Position with parameter types {[type(parameter) for parameter in args]}")
@@ -78,7 +78,17 @@ class Position:
     def coord(self) -> str:
         return self.__coord
 
-    def __initialize_by_str(self, coord: str) -> None:
+    def _initialize_by_ints(self, col: int, row: int) -> None:
+        if not (0 <= col < 8):
+            raise ChessException(f"Column must be from 0 to 7, got {col}")
+        if not (0 <= row < 8):
+            raise ChessException(f"Row must be from 0 to 7, got {row}")
+
+        self.__col: int = col
+        self.__row: int = row
+        self.__coord: str = FILE_LETTERS[col] + str(row + 1)
+
+    def _initialize_by_str(self, coord: str) -> None:
         if len(coord) != 2:
             raise ChessException("The coordinate introduced must contain exactly 2 characters")
 
@@ -93,12 +103,11 @@ class Position:
         self.__row = int(coord[1]) - 1
         self.__coord = coord
 
-    def __initialize_by_ints(self, col: int, row: int) -> None:
-        if not (0 <= col < 8):
-            raise ChessException(f"Column must be from 0 to 8, got {col}")
-        if not (0 <= row < 8):
-            raise ChessException(f"Row must be from 0 to 8, got {row}")
 
-        self.__col: int = col
-        self.__row: int = row
-        self.__coord: str = FILE_LETTERS[col] + str(row + 1)
+if __name__ == '__main__':
+    for args in [[0, 0], ["g5"], [], [19.5, 4, -7], [0, 8], ["ola"]]:
+        try:
+            pos = Position(*args)
+            print(f"{pos = }")
+        except ChessException as e:
+            print(f"Error: {e}")
