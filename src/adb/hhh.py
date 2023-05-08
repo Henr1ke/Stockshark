@@ -43,9 +43,9 @@ def open_app(device, app_path):
     device.shell('am start -n ' + app_path)
 
 
-def screenshot(device):
-    device.shell('screencap -p /sdcard/screenshot.png')
-    device.pull('/sdcard/screenshot.png', "../chessPiecesImg/Screenshot_1.png")
+def screenshot(device, name):
+    device.shell(f'screencap -p /sdcard/{name}.png')
+    device.pull(f'/sdcard/{name}.png', f"chessPiecesImg/{name}.png")
 
 
 def tap_play_button(device):
@@ -80,6 +80,7 @@ if __name__ == '__main__':
     # tap_choose_computer(device)
     # swipe(device, '900', '900', '30', '900')
 
-    screenshot(device)
+    screenshot(device, "scr1")
+    screenshot(device, "scr2")
 
     # detect_board()

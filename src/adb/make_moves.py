@@ -48,6 +48,7 @@ def play(move: Move):
 
 
 if __name__ == "__main__":
-    move = Move(Position(1, 0), Position(2, 2))
-
+    move = Move(Position(1, 3), Position(1, 4))
+    play(move)
+    move = Move(Position(0, 3), Position(0, 4))
     play(move)
