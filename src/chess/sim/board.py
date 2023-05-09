@@ -4,8 +4,9 @@ from copy import copy
 from typing import Dict, Optional, List, Union, Tuple
 
 from chess.piece.constants import CHAR_TO_PIECE_CLASS
-from chess.piece.king import King
+from chess.piece.pawn import Pawn
 from chess.piece.piece import Piece
+from chess.piece.king import King
 from chess.util.chessException import ChessException
 from chess.util.constants import FILE_LETTERS
 from chess.util.move import Move
@@ -33,7 +34,9 @@ class Board:
                     self.add_piece(piece, (col, row))
                     col += 1
 
-    def __getitem__(self, *args: Union[Position, str, Tuple[int, int]]) -> Optional[Piece]:
+    def __getitem__(self, *args) -> Optional[Piece]:
+        if isinstance(args[0], tuple):
+            args = args[0]
         pos = Board._args_to_pos(*args)
         return self.__tiles[8 - 1 - pos.row][pos.col]
 
@@ -44,12 +47,6 @@ class Board:
             if key == "_Board__tiles":
                 tiles = [[piece for piece in row] for row in value]
                 setattr(board, key, tiles)
-            elif key == "_Board__pieces_pos":
-                pieces_pos = {k: {k2: v2 for k2, v2 in v.items()} for k, v in value.items()}
-                setattr(board, key, pieces_pos)
-            elif key == "_Board__kings_pos":
-                kings_pos = {k: v for k, v in value.items()}
-                setattr(board, key, kings_pos)
             else:
                 setattr(board, key, copy(value))
         return board
@@ -66,7 +63,7 @@ class Board:
         board_str += f"   ║ {' │ '.join(FILE_LETTERS)} ║"
         return board_str
 
-    def add_piece(self, piece: Piece, *args: Union[Position, str, Tuple[int, int]], ) -> None:
+    def add_piece(self, piece: Piece, *args) -> None:
         if not isinstance(piece, Piece):
             raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")
 
@@ -99,7 +96,7 @@ class Board:
         self.__pieces_pos[piece] = move.end_pos
         return piece
 
-    def clear_pos(self, *args: Union[Position, str, Tuple[int, int]]) -> None:
+    def clear_pos(self, *args) -> None:
         pos = Board._args_to_pos(*args)
         piece = self.__tiles[8 - 1 - pos.row][pos.col]
         self.__tiles[8 - 1 - pos.row][pos.col] = None
@@ -147,5 +144,37 @@ class Board:
 
 
 if __name__ == '__main__':
-    board = Board()
-    print(board)
+    b = Board()
+
+    b.add_piece(Pawn(True), "b3")
+    b.add_piece(King(False), 0, 0)
+    b.add_piece(Pawn(False), Position(4, 7))
+    print(b)
+    print()
+
+    print(b["b3"])
+    print(b[0, 0])
+    print(b[Position(4, 7)])
+    print()
+
+    bc = copy(b)
+    print(b["b3"] == bc["b3"])
+    print()
+
+    sp = Position("b3")
+    ep = sp + (2, 0)
+    bc.make_move(Move(sp, ep))
+    print(b)
+    print(bc)
+    print(b.get_pieces_pos(True))
+    print(bc.get_pieces_pos(True))
+    print()
+
+    print(b.gen_fen_str())
+    print()
+
+    b.clear_pos("b3")
+    b.clear_pos(0, 0)
+    b.clear_pos(Position(4, 7))
+    print(b)
+    print()

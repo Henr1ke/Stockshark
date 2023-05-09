@@ -31,17 +31,13 @@ class Position:
 
     def __init__(self, *args) -> None:
         if len(args) == 1 and type(args[0]) == str:
-            self._initialize_by_str(args[0])
-
-        elif len(args) == 1 and type(args[0] == tuple and len(args[0]) == 2 and
-                                     isinstance(args[0][0], int) and isinstance(args[0][1], int)):
-            self._initialize_by_ints(args[0][0], args[0][1])
+            self._init_with_coord(args[0])
 
         elif len(args) == 2 and type(args[0]) == int and type(args[1]) == int:
-            self._initialize_by_ints(args[0], args[1])
+            self._init_with_col_row(args[0], args[1])
 
         else:
-            raise ChessException(
+            raise ValueError(
                 f"Cannot initialize a Position with parameter types {[type(parameter) for parameter in args]}")
 
     def __hash__(self) -> int:
@@ -84,7 +80,7 @@ class Position:
     def coord(self) -> str:
         return self.__coord
 
-    def _initialize_by_ints(self, col: int, row: int) -> None:
+    def _init_with_col_row(self, col: int, row: int) -> None:
         if not (0 <= col < 8):
             raise ChessException(f"Column must be from 0 to 7, got {col}")
         if not (0 <= row < 8):
@@ -94,7 +90,7 @@ class Position:
         self.__row: int = row
         self.__coord: str = FILE_LETTERS[col] + str(row + 1)
 
-    def _initialize_by_str(self, coord: str) -> None:
+    def _init_with_coord(self, coord: str) -> None:
         if len(coord) != 2:
             raise ChessException("The coordinate introduced must contain exactly 2 characters")
 
@@ -111,9 +107,11 @@ class Position:
 
 
 if __name__ == '__main__':
-    for arguments in [[0, 0], ["g5"], [(5,5)], [], [19.5, 4, -7], [0, 8], ["ola"]]:
+    for arguments in [["g5"], [0, 0], [(5, 5)], [], [19.5, 4, -7], [0, 8], ["ola"]]:
         try:
-            pos = Position(*arguments)
-            print(f"{arguments = }, {pos = }")
+            p = Position(*arguments)
+            print(f"{arguments = }, {p = }")
+        except ValueError as e:
+            print(f"Error: {e}")
         except ChessException as e:
             print(f"Error: {e}")
