@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple
+from typing import Tuple, Union
 from chess.util.constants import FILE_LETTERS
 
 from chess.util.chessException import ChessException
@@ -30,7 +30,10 @@ class Position:
     """
 
     def __init__(self, *args) -> None:
-        if len(args) == 1 and type(args[0]) == str:
+        if len(args) == 1 and type(args[0]) == Position:
+            self._init_with_pos(args[0])
+
+        elif len(args) == 1 and type(args[0]) == str:
             self._init_with_coord(args[0])
 
         elif len(args) == 2 and type(args[0]) == int and type(args[1]) == int:
@@ -65,7 +68,7 @@ class Position:
 
         return Position(self.col + inc[0], self.row + inc[1])
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         return self.__coord
 
     @property
@@ -105,12 +108,17 @@ class Position:
         self.__row = int(coord[1]) - 1
         self.__coord = coord
 
+    def _init_with_pos(self, pos: Position) -> None:
+        self.__col: int = pos.__col
+        self.__row: int = pos.__row
+        self.__coord: str = pos.__coord
+
 
 if __name__ == '__main__':
-    for arguments in [["g5"], [0, 0], [(5, 5)], [], [19.5, 4, -7], [0, 8], ["ola"]]:
+    for arguments in [["g5"], [0, 0], [Position("a3")], [(5, 5)], [], [19.5, 4, -7], [0, 8], ["ola"]]:
         try:
             p = Position(*arguments)
-            print(f"{arguments = }, {p = }")
+            print(f"arguments = {arguments}, p = {p}")
         except ValueError as e:
             print(f"Error: {e}")
         except ChessException as e:

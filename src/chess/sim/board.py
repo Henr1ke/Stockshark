@@ -16,9 +16,9 @@ from chess.util.position import Position
 class Board:
     def __init__(self, fen_str: str = "8/8/8/8/8/8/8/8") -> None:
 
+        self.__tiles: List[List[Optional[Piece]]] = [[None] * 8 for _ in range(8)]
         self.__pieces_pos: Dict[Piece, Position] = dict()
         self.__kings_pos: Dict[bool, Position] = dict()
-        self.__tiles: List[List[Optional[Piece]]] = [[None] * 8 for _ in range(8)]
 
         for row, fen_substr in enumerate(fen_str.split("/")[::-1]):
             col = 0
@@ -67,7 +67,7 @@ class Board:
         if not isinstance(piece, Piece):
             raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")
 
-        pos = Board._args_to_pos(*args)
+        pos = Position.to_pos(*args)
         if self[pos] is not None:
             self.clear_pos(pos)
 
@@ -97,7 +97,7 @@ class Board:
         return piece
 
     def clear_pos(self, *args) -> None:
-        pos = Board._args_to_pos(*args)
+        pos = Position.to_pos(*args)
         piece = self.__tiles[8 - 1 - pos.row][pos.col]
         self.__tiles[8 - 1 - pos.row][pos.col] = None
 
@@ -136,11 +136,7 @@ class Board:
 
         return "/".join(fen_substrs)
 
-    @staticmethod
-    def _args_to_pos(*args: Union[Position, str, Tuple[int, int]]):
-        if len(args) == 1 and isinstance(args[0], Position):
-            return args[0]
-        return Position(*args)
+
 
 
 if __name__ == '__main__':
