@@ -1,3 +1,5 @@
+from typing import Tuple, List
+
 import cv2
 import numpy as np
 from numpy import ndarray
@@ -17,7 +19,8 @@ class ProcessImage:
 
     @staticmethod
     def crop_board(screen: ndarray = cv2.imread('../chessPiecesImg/Screenshot_1.png'),
-                   board: ndarray = cv2.imread('../chessPiecesImg/screenshot_emptyboard.png')):
+                   board: ndarray = cv2.imread('../chessPiecesImg/screenshot_emptyboard.png')) \
+            -> Tuple[ndarray, List[int]]:
         board_coords = Identifier.get_board_coords(screen, board)
         x0, x1, y0, y1 = board_coords[0], board_coords[0] + board_coords[2], board_coords[1], board_coords[1] + \
                                           board_coords[3]
@@ -26,6 +29,6 @@ class ProcessImage:
         return screen_cropped, board_coords
 
     @staticmethod
-    def resize_img(img: ndarray, scale=0.4) -> ndarray:
+    def resize_img(img: ndarray, scale: float = 0.4) -> ndarray:
         dim = (int(img.shape[1] * scale), int(img.shape[0] * scale))
         return cv2.resize(img, dim, interpolation=cv2.INTER_AREA)

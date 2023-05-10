@@ -7,12 +7,12 @@ from numpy import ndarray
 
 class Identifier:
     @staticmethod
-    def find_template_multiple(board: ndarray, piece: ndarray, threshold=0.55):
+    def find_template(board: ndarray, piece: ndarray, thrs=0.55):
         # Este método apenas dá atenção ao formato da peça, não interessa a cor
         rects = []
         w, h = piece.shape[1], piece.shape[0]
         res = cv2.matchTemplate(board, piece, cv2.TM_CCOEFF_NORMED)
-        loc = np.where(res >= threshold)
+        loc = np.where(res >= thrs)
 
         for pt in zip(*loc[::-1]):
             rects.append((pt[0], pt[1], w, h))
@@ -26,10 +26,10 @@ class Identifier:
     @staticmethod
     def get_board_coords(screen: ndarray = cv2.imread('chessPiecesImg/Screenshot_1.png'),
                          board: ndarray = cv2.imread('chessPiecesImg/screenshot_emptyboard.png')):
-        return Identifier.find_template_multiple(screen, board, threshold=0.01)[0]
+        return Identifier.find_template(screen, board, thrs=0.01)[0]
 
     @staticmethod
-    def check_color(board_img: ndarray, piece_img: ndarray, rect: List) -> bool:
+    def check_color(board_img: ndarray, piece_img: ndarray, rect: ndarray) -> bool:
         x0, x1, y0, y1 = rect[0], rect[0] + rect[2], rect[1], rect[1] + rect[3]
         # Dá crop na board apenas no lugar da peça
         crop = (board_img[y0: y1, x0: x1]).copy()
@@ -39,7 +39,7 @@ class Identifier:
         return avg_diff < 0.3  # Baixo do limiar é peça preta
 
     @staticmethod
-    def match_colors(board: ndarray, piece_imgs: List[ndarray], rects: List) -> List:
+    def match_colors(board: ndarray, piece_imgs: List[ndarray], rects: List[List[ndarray]]) -> List:
         pairs = zip(piece_imgs, rects)
         return [[Identifier.check_color(board, img, r) for r in rect] for img, rect in pairs]
 

@@ -18,7 +18,7 @@ class Detector:
 
         board_img, corners = ProcessImage.crop_board(screenshot_grad, piece_imgs_grad[-1])
         add_board = np.hstack((corners[:2], [0, 0]))
-        rects = [Identifier.find_template_multiple(board_img, img) for img in piece_imgs_grad]
+        rects = [Identifier.find_template(board_img, img) for img in piece_imgs_grad]
         """ Adicionar a posição da board na screenshot original para os quadrados ficarem alinhados"""
         rects = [[r + add_board for r in rect] for rect in rects]
         rects[-1] = [corners]

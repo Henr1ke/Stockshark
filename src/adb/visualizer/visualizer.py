@@ -27,6 +27,6 @@ class Visualizer:
                     thickness=2)
 
     @staticmethod
-    def draw_results_squares(board_img: ndarray, rects: List):
+    def draw_results_squares(board_img: ndarray, rects: List[List[ndarray]]):
         for i, rect in enumerate(rects):
             Visualizer.draw_results(board_img, rect, i)
