@@ -1,9 +1,14 @@
 from copy import copy
 from typing import Dict, Optional, List
 
+from chess.piece.king import King
+from chess.piece.pawn import Pawn
 from chess.piece.piece import Piece
+from chess.piece.queen import Queen
+from chess.piece.rook import Rook
 from chess.sim.board import Board
 from chess.sim.gameRules import GameRules
+from chess.util.chessException import ChessException
 from chess.util.move import Move
 from chess.util.position import Position
 
@@ -82,4 +87,68 @@ class Game:
         return self.__legal_pieces_pos[piece]
 
     def play(self, move: Move) -> None:
-        pass
+        def pawn_actions(is_white: bool) -> Optional[Position]:
+            if move.end_pos == self.__en_passant_target:
+                capt_piece_pos = move.end_pos + ((0, -1) if is_white else (0, 1))
+                self.__board.clear_pos(capt_piece_pos)
+            elif move.end_pos.row == (7 if is_white else 0):
+                self.__board.add_piece(Queen(is_white), move.end_pos)  # TODO its always promoting to queen
+
+            if abs(move.start_pos.row - move.end_pos.row) == 2:
+                return move.end_pos + ((0, -1) if is_white else (0, 1))
+
+        def rook_actions(is_white: bool) -> None:
+            initial_row = 0 if is_white else 7
+            if move.start_pos.row == initial_row:
+                if move.start_pos.col == 0:
+                    self.__castlings[is_white][0] = False
+                elif move.start_pos.col == 7:
+                    self.__castlings[is_white][1] = False
+
+        def king_actions(is_white: bool) -> None:
+            if move.start_pos == Position(4, 0 if is_white else 7):
+                self.__castlings[is_white] = [False, False]
+
+                if move.end_pos.col == 2:
+                    start_pos = Position(0, move.end_pos.row)
+                    end_pos = move.end_pos + (1, 0)
+                    self.__board.make_move(Move(start_pos, end_pos))
+                elif move.end_pos.col == 6:
+                    start_pos = Position(7, move.end_pos.row)
+                    end_pos = move.end_pos + (-1, 0)
+                    self.__board.make_move(Move(start_pos, end_pos))
+
+        if check_if_legal and not GameRules.is_legal_move(self, move):
+            raise ChessException(f"The move is not legal, got \"{str(move)}\"")
+
+        should_reset_halfclock = self.__board[move.end_pos] is not None
+
+        # Update self.__board
+        piece = self.__board.make_move(move)
+
+        # Update self.__castlings and self.__en_passants
+        e_p_target = None
+        if isinstance(piece, Rook):
+            rook_actions(piece.is_white)
+        elif isinstance(piece, King):
+            king_actions(piece.is_white)
+        elif isinstance(piece, Pawn):
+            should_reset_halfclock = True
+            e_p_target = pawn_actions(piece.is_white)
+        self.__en_passant_target = e_p_target
+
+        # Update self.__is_white_turn
+        self.__is_white_turn = not self.__is_white_turn
+
+        # Update self.__halfclock
+        self.__halfclock = 0 if should_reset_halfclock else self.__halfclock + 1
+
+        # Update self.__fullclock
+        if self.__is_white_turn:
+            self.__fullclock += 1
+
+        # Update self.__moves_played
+        self.__moves_played.append(move)
+
+        # Reset self.__possible_poss
+        self.__legal_pieces_pos.clear()
