@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from copy import copy
-from typing import Dict, Optional, List, Union, Tuple
+from typing import Dict, Optional, List
 
 from chess.piece.constants import CHAR_TO_PIECE_CLASS
 from chess.piece.pawn import Pawn
@@ -34,10 +34,10 @@ class Board:
                     self.add_piece(piece, (col, row))
                     col += 1
 
-    def __getitem__(self, *args) -> Optional[Piece]:
-        if isinstance(args[0], tuple):
-            args = args[0]
-        pos = Board._args_to_pos(*args)
+    def __getitem__(self, *pos_args) -> Optional[Piece]:
+        if isinstance(pos_args[0], tuple):
+            pos_args = pos_args[0]
+        pos = Position(*pos_args)
         return self.__tiles[8 - 1 - pos.row][pos.col]
 
     def __copy__(self) -> Board:
@@ -63,11 +63,11 @@ class Board:
         board_str += f"   ║ {' │ '.join(FILE_LETTERS)} ║"
         return board_str
 
-    def add_piece(self, piece: Piece, *args) -> None:
+    def add_piece(self, piece: Piece, *pos_args) -> None:
         if not isinstance(piece, Piece):
             raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")
 
-        pos = Position.to_pos(*args)
+        pos = Position(*pos_args)
         if self[pos] is not None:
             self.clear_pos(pos)
 
@@ -96,8 +96,8 @@ class Board:
         self.__pieces_pos[piece] = move.end_pos
         return piece
 
-    def clear_pos(self, *args) -> None:
-        pos = Position.to_pos(*args)
+    def clear_pos(self, *pos_args) -> None:
+        pos = Position(*pos_args)
         piece = self.__tiles[8 - 1 - pos.row][pos.col]
         self.__tiles[8 - 1 - pos.row][pos.col] = None
 
@@ -106,11 +106,21 @@ class Board:
             if isinstance(piece, King):
                 self.__kings_pos.pop(piece.is_white, None)
 
+        return piece
+
+    @property
+    def pieces_pos(self) -> Dict[Piece, Position]:
+        return copy(self.__pieces_pos)
+
+    @property
+    def kings_pos(self) -> Dict[bool, Position]:
+        return copy(self.__kings_pos)
+
     def get_pieces_pos(self, is_white: bool) -> Dict[Piece, Position]:
         return {piece: pos for piece, pos in self.__pieces_pos.items() if piece.is_white is is_white}
 
     def get_king_pos(self, is_white: bool) -> Position:
-        return self.__kings_pos[is_white]
+        return self.__kings_pos.get(is_white)
 
     def gen_fen_str(self) -> str:
         piece_class_to_char = {val: key for (key, val) in CHAR_TO_PIECE_CLASS.items()}
@@ -137,8 +147,6 @@ class Board:
         return "/".join(fen_substrs)
 
 
-
-
 if __name__ == '__main__':
     b = Board()
 
@@ -162,8 +170,8 @@ if __name__ == '__main__':
     bc.make_move(Move(sp, ep))
     print(b)
     print(bc)
-    print(b.get_pieces_pos(True))
-    print(bc.get_pieces_pos(True))
+    print({key: str(value) for key, value in b.get_pieces_pos(True).items()})
+    print({key: str(value) for key, value in bc.get_pieces_pos(True).items()})
     print()
 
     print(b.gen_fen_str())
