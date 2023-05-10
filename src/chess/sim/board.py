@@ -68,16 +68,17 @@ class Board:
             raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")
 
         pos = Position(*pos_args)
-        if self[pos] is not None:
-            self.clear_pos(pos)
 
         if isinstance(piece, King):
-            if self.__kings_pos.get(piece.is_white) is not None:
-                raise ChessException(f"The board already contains a king, it is not allowed to add another")
+            if piece.is_white in self.__kings_pos.keys():
+                raise ChessException(
+                    f"The board already contains a king of that color, it is not allowed to add another")
             self.__kings_pos[piece.is_white] = pos
-
-        self.__tiles[8 - 1 - pos.row][pos.col] = piece
         self.__pieces_pos[piece] = pos
+
+        if self[pos] is not None:
+            self.clear_pos(pos)
+        self.__tiles[8 - 1 - pos.row][pos.col] = piece
 
     def make_move(self, move: Move) -> Piece:
         piece = self[move.start_pos]
@@ -87,24 +88,24 @@ class Board:
         if self[move.end_pos] is not None:
             self.clear_pos(move.end_pos)
 
+        if isinstance(piece, King):
+            self.__kings_pos[piece.is_white] = move.end_pos
+        self.__pieces_pos[piece] = move.end_pos
+
         self.__tiles[8 - 1 - move.start_pos.row][move.start_pos.col] = None
         self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = piece
 
-        if isinstance(piece, King):
-            self.__kings_pos[piece.is_white] = move.end_pos
-
-        self.__pieces_pos[piece] = move.end_pos
         return piece
 
     def clear_pos(self, *pos_args) -> None:
         pos = Position(*pos_args)
         piece = self.__tiles[8 - 1 - pos.row][pos.col]
-        self.__tiles[8 - 1 - pos.row][pos.col] = None
 
         if piece is not None:
             self.__pieces_pos.pop(piece, None)
             if isinstance(piece, King):
                 self.__kings_pos.pop(piece.is_white, None)
+            self.__tiles[8 - 1 - pos.row][pos.col] = None
 
         return piece
 
@@ -164,7 +165,7 @@ if __name__ == '__main__':
     bc.make_move(Move(sp, ep))
     print(b)
     print(bc)
-    print({key: str(value) for key, value in b.kings_pos.items() })
+    print({key: str(value) for key, value in b.kings_pos.items()})
     print({key: str(value) for key, value in bc.pieces_pos.items()})
     print()
 
