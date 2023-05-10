@@ -8,6 +8,7 @@ from chess.util.position import Position
 
 
 class Player(ABC):
+    # TODO
     @staticmethod
     def get_available_pieces_pos(game: Game) -> Dict[Piece: Position]:
         pieces_pos = game.board.get_pieces_pos(game.is_white_turn)
