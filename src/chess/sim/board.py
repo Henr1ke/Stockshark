@@ -116,12 +116,6 @@ class Board:
     def kings_pos(self) -> Dict[bool, Position]:
         return copy(self.__kings_pos)
 
-    def get_pieces_pos(self, is_white: bool) -> Dict[Piece, Position]:
-        return {piece: pos for piece, pos in self.__pieces_pos.items() if piece.is_white is is_white}
-
-    def get_king_pos(self, is_white: bool) -> Position:
-        return self.__kings_pos.get(is_white)
-
     def gen_fen_str(self) -> str:
         piece_class_to_char = {val: key for (key, val) in CHAR_TO_PIECE_CLASS.items()}
 
@@ -170,8 +164,8 @@ if __name__ == '__main__':
     bc.make_move(Move(sp, ep))
     print(b)
     print(bc)
-    print({key: str(value) for key, value in b.get_pieces_pos(True).items()})
-    print({key: str(value) for key, value in bc.get_pieces_pos(True).items()})
+    print({key: str(value) for key, value in b.kings_pos.items() })
+    print({key: str(value) for key, value in bc.pieces_pos.items()})
     print()
 
     print(b.gen_fen_str())
