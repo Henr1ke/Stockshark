@@ -8,7 +8,6 @@ from chess.piece.queen import Queen
 from chess.piece.rook import Rook
 from chess.sim.board import Board
 from chess.sim.gameRules import GameRules
-from chess.util.chessException import ChessException
 from chess.util.move import Move
 from chess.util.position import Position
 
@@ -101,13 +100,14 @@ class Game:
             initial_row = 0 if is_white else 7
             if move.start_pos.row == initial_row:
                 if move.start_pos.col == 0:
-                    self.__castlings[is_white][0] = False
+                    self.__castlings.replace("Q" if is_white else "q", "")
                 elif move.start_pos.col == 7:
-                    self.__castlings[is_white][1] = False
+                    self.__castlings.replace("K" if is_white else "k", "")
 
         def king_actions(is_white: bool) -> None:
             if move.start_pos == Position(4, 0 if is_white else 7):
-                self.__castlings[is_white] = [False, False]
+                self.__castlings.replace("Q" if is_white else "q", "")
+                self.__castlings.replace("K" if is_white else "k", "")
 
                 if move.end_pos.col == 2:
                     start_pos = Position(0, move.end_pos.row)
@@ -117,9 +117,6 @@ class Game:
                     start_pos = Position(7, move.end_pos.row)
                     end_pos = move.end_pos + (-1, 0)
                     self.__board.make_move(Move(start_pos, end_pos))
-
-        if check_if_legal and not GameRules.is_legal_move(self, move):
-            raise ChessException(f"The move is not legal, got \"{str(move)}\"")
 
         should_reset_halfclock = self.__board[move.end_pos] is not None
 
