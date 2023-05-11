@@ -56,7 +56,8 @@ class Board:
 
         for row in range(8 - 1, -1, -1):
             board_str += f" {row + 1} ║ " + " │ ".join(
-                " " if self[col, row] is None else str(self[col, row]) for col in range(8)
+                ("·" if (row + col) % 2 == 0 else " ") if self[col, row] is None else str(self[col, row])
+                for col in range(8)
             ) + " ║\n"
 
         board_str += f"═══╬══{'═╪══' * (8 - 1)}═╣\n"

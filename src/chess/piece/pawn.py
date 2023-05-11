@@ -8,6 +8,7 @@ from chess.util.position import Position
 class Pawn(Piece):
     def __init__(self, is_white: bool) -> None:
         super().__init__(is_white, "♟", "♙")
+        # super().__init__(is_white, "P", "p")
 
     def gen_positions(self, game) -> List[Position]:
         board = game.board

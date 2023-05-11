@@ -11,7 +11,6 @@ from chess.piece.rook import Rook
 from chess.sim.board import Board
 from chess.sim.gameRules import GameRules
 from chess.sim.state import State
-from chess.sim.visualizer import Visualizer
 from chess.util.move import Move
 from chess.util.position import Position
 

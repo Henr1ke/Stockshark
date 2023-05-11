@@ -1,3 +1,4 @@
+from chess.sim.game import Game
 from chess.sim.state import State
 
 
