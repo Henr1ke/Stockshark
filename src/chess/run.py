@@ -2,7 +2,6 @@ from chess.player.playerADB import PlayerADB
 from chess.sim.game import Game, Simulator
 from chessEngine.players.player_random import PlayerRandom
 
-
 # init player adb
 adb = start_abd()
 player_adb = PlayerADB(adb)
