@@ -15,8 +15,6 @@ from chess.util.position import Position
 
 class Game:
     def __init__(self, fen_str: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") -> None:
-        self.__state = State.IN_PROGRESS
-
         fen_str_fields = fen_str.split()
 
         self.__board: Board = Board(fen_str_fields[0])
@@ -31,12 +29,8 @@ class Game:
         self.__fullclock: int = int(fen_str_fields[5])
 
         self.__moves_played: List[Move] = []
-
         self.__legal_pieces_pos: Dict[Piece, List[Position]] = dict()
-
-    @property
-    def state(self) -> State:
-        return self.__state
+        self.__state = State.IN_PROGRESS
 
     @property
     def board(self) -> Board:
@@ -65,6 +59,10 @@ class Game:
     @property
     def moves_played(self) -> List[Move]:
         return copy(self.__moves_played)
+
+    @property
+    def state(self) -> State:
+        return self.__state
 
     def gen_fen_str(self):
         fen_str_fields = [
@@ -125,6 +123,22 @@ class Game:
                     end_pos = move.end_pos + (-1, 0)
                     self.__board.make_move(Move(start_pos, end_pos))
 
+        def get_new_state() -> State:
+            can_make_move = False
+            for piece in self.__board.pieces_pos.keys():
+                if piece.is_white is self.__is_white_turn and len(self.get_legal_piece_pos(piece)) > 0:
+                    can_make_move = True
+                    break
+
+            if not can_make_move:
+                if GameRules.king_is_under_atk(self):
+                    return State.WIN_W if self.__is_white_turn else State.WIN_B
+                else:
+                    return State.DRAW
+
+            elif self.__halfclock >= 100:
+                return State.DRAW
+
         should_reset_halfclock = self.__board[move.end_pos] is not None
 
         # Update self.__board
@@ -153,6 +167,9 @@ class Game:
 
         # Update self.__moves_played
         self.__moves_played.append(move)
+
+        # Update self.__state
+        self.__state = get_new_state()
 
         # Reset self.__possible_poss
         self.__legal_pieces_pos.clear()
