@@ -1,7 +1,6 @@
 from typing import List
 
 from chess.piece.piece import Piece
-from chess.util.chessException import ChessException
 from chess.util.position import Position
 
 
@@ -15,14 +14,15 @@ class King(Piece):
         start_pos = self.get_pos(board)
 
         increments = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
-        positions = self._gen_inc_positions(board, start_pos, increments)
+        positions = self._gen_inc_positions(board, increments)
 
         # Adds castling positions to the possible positions if possible
-        castling_rights = game.get_castlings(self.is_white)
-        if castling_rights[0] and board[1, start_pos.row] is None and board[2, start_pos.row] is None \
+        can_castle_q = ("Q" if self.is_white else "q") in game.castlings
+        can_castle_k = ("K" if self.is_white else "k") in game.castlings
+        if can_castle_q and board[1, start_pos.row] is None and board[2, start_pos.row] is None \
                 and board[3, start_pos.row] is None:
             positions.append(start_pos + (-2, 0))
-        if castling_rights[1] and board[5, start_pos.row] is None and board[6, start_pos.row] is None:
+        if can_castle_k and board[5, start_pos.row] is None and board[6, start_pos.row] is None:
             positions.append(start_pos + (2, 0))
 
         return positions

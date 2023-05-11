@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from copy import copy
 from typing import Dict, Optional, List
 
@@ -9,6 +11,7 @@ from chess.piece.rook import Rook
 from chess.sim.board import Board
 from chess.sim.gameRules import GameRules
 from chess.sim.state import State
+from chess.sim.visualizer import Visualizer
 from chess.util.move import Move
 from chess.util.position import Position
 
@@ -28,9 +31,20 @@ class Game:
         self.__halfclock: int = int(fen_str_fields[4])
         self.__fullclock: int = int(fen_str_fields[5])
 
-        self.__moves_played: List[Move] = []
+        self.__played_moves: List[Move] = []
         self.__legal_pieces_pos: Dict[Piece, List[Position]] = dict()
         self.__state = State.IN_PROGRESS
+
+    def __copy__(self) -> Game:
+        cls = self.__class__
+        game = cls.__new__(cls)
+        for key, value in self.__dict__.items():
+            if key == "_Game__legal_pieces_pos":
+                legal_pieces_pos = {piece: copy(pos) for piece, pos in self.__legal_pieces_pos.items()}
+                setattr(game, key, legal_pieces_pos)
+            else:
+                setattr(game, key, copy(value))
+        return game
 
     @property
     def board(self) -> Board:
@@ -57,8 +71,8 @@ class Game:
         return self.__fullclock
 
     @property
-    def moves_played(self) -> List[Move]:
-        return copy(self.__moves_played)
+    def played_moves(self) -> List[Move]:
+        return copy(self.__played_moves)
 
     @property
     def state(self) -> State:
@@ -90,7 +104,7 @@ class Game:
 
         return self.__legal_pieces_pos[piece]
 
-    def play(self, move: Move) -> None:
+    def play(self, move: Move, is_test=False) -> None:
         def pawn_actions(is_white: bool) -> Optional[Position]:
             if move.end_pos == self.__en_passant_target:
                 capt_piece_pos = move.end_pos + ((0, -1) if is_white else (0, 1))
@@ -105,14 +119,14 @@ class Game:
             initial_row = 0 if is_white else 7
             if move.start_pos.row == initial_row:
                 if move.start_pos.col == 0:
-                    self.__castlings.replace("Q" if is_white else "q", "")
+                    self.__castlings = self.__castlings.replace("Q" if is_white else "q", "")
                 elif move.start_pos.col == 7:
-                    self.__castlings.replace("K" if is_white else "k", "")
+                    self.__castlings = self.__castlings.replace("K" if is_white else "k", "")
 
         def king_actions(is_white: bool) -> None:
             if move.start_pos == Position(4, 0 if is_white else 7):
-                self.__castlings.replace("Q" if is_white else "q", "")
-                self.__castlings.replace("K" if is_white else "k", "")
+                self.__castlings = self.__castlings.replace("Q" if is_white else "q", "")
+                self.__castlings = self.__castlings.replace("K" if is_white else "k", "")
 
                 if move.end_pos.col == 2:
                     start_pos = Position(0, move.end_pos.row)
@@ -131,13 +145,15 @@ class Game:
                     break
 
             if not can_make_move:
-                if GameRules.king_is_under_atk(self):
-                    return State.WIN_W if self.__is_white_turn else State.WIN_B
+                if GameRules.king_is_under_atk(self, self.__is_white_turn):
+                    return State.WIN_B if self.__is_white_turn else State.WIN_W
                 else:
                     return State.DRAW
 
             elif self.__halfclock >= 100:
                 return State.DRAW
+
+            return State.IN_PROGRESS
 
         should_reset_halfclock = self.__board[move.end_pos] is not None
 
@@ -166,10 +182,11 @@ class Game:
             self.__fullclock += 1
 
         # Update self.__moves_played
-        self.__moves_played.append(move)
+        self.__played_moves.append(move)
 
-        # Update self.__state
-        self.__state = get_new_state()
+        if not is_test:
+            # Update self.__state
+            self.__state = get_new_state()
 
         # Reset self.__possible_poss
         self.__legal_pieces_pos.clear()

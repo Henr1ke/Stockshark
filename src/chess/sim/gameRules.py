@@ -11,24 +11,22 @@ class GameRules:
             move.end_pos in game.get_legal_piece_pos(piece)
 
     @staticmethod
-    def king_is_under_atk(game) -> bool:
+    def king_is_under_atk(game, is_white) -> bool:
         board = game.board
 
-        king_is_white = not game.is_white_turn
-
-        if king_is_white not in board.kings_pos.keys():
+        if is_white not in board.kings_pos.keys():
             return False
-        king_pos = board.kings_pos[king_is_white]
+        king_pos = board.kings_pos[is_white]
 
-        atk_pieces_pos = {piece: pos for piece, pos in board.pieces_pos.items() if piece.is_white is not king_is_white}
+        atk_pieces_pos = {piece: pos for piece, pos in board.pieces_pos.items() if piece.is_white is not is_white}
 
-        for atk_piece, pos in atk_pieces_pos.items():
-            if king_pos in atk_piece.gen_positions(game, pos):
+        for atk_piece in atk_pieces_pos.keys():
+            if king_pos in atk_piece.gen_positions(game):
                 return True
         return False
 
     @staticmethod
     def leaves_king_under_atk(game, move: Move) -> bool:
         game_copy = copy(game)
-        game_copy.play(move)
-        return GameRules.king_is_under_atk(game_copy)
+        game_copy.play(move, is_test=True)
+        return GameRules.king_is_under_atk(game_copy, game.is_white_turn)

@@ -1,11 +1,14 @@
-from chess.sim.game import Game
 from chess.sim.state import State
 
 
 class Visualizer:
     @staticmethod
-    def show(game: Game):
+    def show(game):
         print()
+
+        played_moves = game.played_moves
+        if len(played_moves) > 0:
+            print(f"{'Black' if game.is_white_turn else 'White'} player made the move {played_moves[-1]}\n")
 
         if game.state == State.IN_PROGRESS:
             print(f"{'White' if game.is_white_turn else 'Black'} turn to play")
@@ -19,5 +22,5 @@ class Visualizer:
 
 
 if __name__ == '__main__':
-    game = Game()
-    Visualizer.show(game)
+    g = Game()
+    Visualizer.show(g)
