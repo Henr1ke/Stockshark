@@ -7,8 +7,6 @@ from chess.piece.pawn import Pawn
 from chess.piece.piece import Piece
 from chess.piece.queen import Queen
 from chess.piece.rook import Rook
-from chess.sim.board import Board
-from chess.sim.game import Game
 from chess.sim.state import State
 from chess.util.constants import FILE_LETTERS
 
@@ -31,7 +29,6 @@ class Visualizer:
     }}
 
     PIECE_TO_SYMBOL = {True: {
-
         Pawn: "♟",
         Knight: "♛",
         Bishop: "♜",
@@ -50,7 +47,7 @@ class Visualizer:
     def __init__(self, piece_to_char: Dict[bool, Dict[Type[Piece], str]]):
         self.__piece_to_char = piece_to_char
 
-    def show(self, game):
+    def show(self, game) -> None:
         print()
 
         played_moves = game.played_moves
@@ -67,7 +64,7 @@ class Visualizer:
         print(f"halfclock: {game.halfclock}, fullclock: {game.fullclock}")
         self.print_board(game.board)
 
-    def print_board(self, board: Board) -> None:
+    def print_board(self, board) -> None:
         print("═══╦══" + "═╤══" * (8 - 1) + "═╗")
 
         for row in range(8 - 1, -1, -1):
@@ -79,10 +76,5 @@ class Visualizer:
         print(f"═══╬══{'═╪══' * (8 - 1)}═╣")
         print(f"   ║ {' │ '.join(FILE_LETTERS)} ║")
 
-    def get_char(self, piece: Piece) -> str:
+    def get_char(self, piece) -> str:
         return self.__piece_to_char[piece.is_white][piece.__class__]
-
-
-if __name__ == '__main__':
-    g = Game()
-    Visualizer(Visualizer.PIECE_TO_SYMBOL).show(g)

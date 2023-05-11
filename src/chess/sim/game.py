@@ -20,19 +20,14 @@ class Game:
         fen_str_fields = fen_str.split()
 
         self.__board: Board = Board(fen_str_fields[0])
-
         self.__is_white_turn: bool = True if fen_str_fields[1] == "w" else False
-
         self.__castlings: str = fen_str_fields[2]
-
         self.__en_passant_target: Optional[Position] = None if fen_str_fields[3] == "-" else Position(fen_str_fields[3])
-
         self.__halfclock: int = int(fen_str_fields[4])
         self.__fullclock: int = int(fen_str_fields[5])
-
         self.__played_moves: List[Move] = []
-        self.__legal_pieces_pos: Dict[Piece, List[Position]] = dict()
         self.__state = State.IN_PROGRESS
+        self.__legal_pieces_pos: Dict[Piece, List[Position]] = dict()
 
     def __copy__(self) -> Game:
         cls = self.__class__
@@ -77,7 +72,7 @@ class Game:
     def state(self) -> State:
         return self.__state
 
-    def gen_fen_str(self):
+    def gen_fen_str(self) -> str:
         fen_str_fields = [
             self.__board.gen_fen_str(),
             "w" if self.__is_white_turn else "b",

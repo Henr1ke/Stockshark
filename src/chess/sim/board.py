@@ -7,8 +7,8 @@ from chess.piece.constants import CHAR_TO_PIECE_CLASS
 from chess.piece.pawn import Pawn
 from chess.piece.piece import Piece
 from chess.piece.king import King
+from chess.sim.visualizer import Visualizer
 from chess.util.chessException import ChessException
-from chess.util.constants import FILE_LETTERS
 from chess.util.move import Move
 from chess.util.position import Position
 
@@ -130,12 +130,13 @@ class Board:
 
 
 if __name__ == '__main__':
+    v = Visualizer(Visualizer.PIECE_TO_LETTER)
     b = Board()
 
     b.add_piece(Pawn(True), "b3")
     b.add_piece(King(False), 0, 0)
     b.add_piece(Pawn(False), Position(4, 7))
-    print(b)
+    v.print_board(b)
     print()
 
     print(b["b3"])
@@ -150,8 +151,8 @@ if __name__ == '__main__':
     sp = Position("b3")
     ep = sp + (2, 0)
     bc.make_move(Move(sp, ep))
-    print(b)
-    print(bc)
+    v.print_board(b)
+    v.print_board(bc)
     print({key: str(value) for key, value in b.kings_pos.items()})
     print({key: str(value) for key, value in bc.pieces_pos.items()})
     print()
@@ -162,5 +163,5 @@ if __name__ == '__main__':
     b.clear_pos("b3")
     b.clear_pos(0, 0)
     b.clear_pos(Position(4, 7))
-    print(b)
+    v.print_board(b)
     print()
