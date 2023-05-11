@@ -5,10 +5,14 @@ from chess.util.move import Move
 
 class PlayerADB(Player):
 
-    def __init__(self, adb):
+    def __init__(self, adb) -> None:
         # TODO
         self.adb = adb
-        self.is_white: bool = self.adb.is_opponent_white()
+        self.__is_white: bool = self.adb.is_opponent_white()
+
+    @property
+    def is_white(self) -> bool:
+        return self.__is_white
 
     def gen_move(self, game: Game) -> Move:
         played_moves = game.played_moves

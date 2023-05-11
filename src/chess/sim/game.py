@@ -154,7 +154,8 @@ class Game:
 
             return State.IN_PROGRESS
 
-            # if not is_test and GameRules.is_legal_move(self, move):
+        if not is_test and not GameRules.is_legal_move(self, move):
+            return
 
         should_reset_halfclock = self.__board[move.end_pos] is not None
 

@@ -22,8 +22,7 @@ class Simulator:
             player = self.__player_w if self.__game.is_white_turn else self.__player_b
             move = player.gen_move(self.__game)
 
-            if GameRules.is_legal_move(self.__game, move):
-                self.__game.play(move)
+            self.__game.play(move)
 
         if self.__visualizer is not None:
             self.__visualizer.show(self.__game)
