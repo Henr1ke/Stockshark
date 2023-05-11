@@ -1,9 +1,9 @@
 from adb.identifier.identifier import Identifier
-from adb.sim_adb.ConnectorADB import ConnectorADB
+from adb.sim_adb.connector_ADB import ConnectorADB
 from chessEngine.chess_components import Move
 
 
-class ChessADB:
+class GamePlayer:
     def __init__(self):
         self.__connector = ConnectorADB()
 
@@ -31,3 +31,9 @@ class ChessADB:
             tap_y = int(botleft_corner[1] - gap * rank - gap / 2)
 
             self.connector.tap_screen(tap_x, tap_y)
+
+    def is_adv_white(self) -> bool:
+        pass
+
+    def get_adv_move(self) -> Move:
+        pass

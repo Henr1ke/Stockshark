@@ -1,5 +1,8 @@
+import time
+
 from ppadb.client import Client
 from ppadb.device import Device
+import scrcpy
 
 # ADB Shell Command List:
 # https://gist.github.com/Pulimet/5013acf2cd5b28e55036c82c91bd56d8
@@ -16,7 +19,7 @@ class ConnectorADB:
             quit()
 
         device = devices[0]
-
+        client = scrcpy.Client(device=device)
         print(f'Connected to {device}')
         self.__device = device
         self.__client = client
@@ -32,7 +35,11 @@ class ConnectorADB:
     def tap_screen(self, x, y):
         command = f'input tap {x} {y}'
         print(command)
-        self.__device.shell(command)
+        self.device.shell(command)
+        time.sleep(0.25)
+
+    def input_text(self, txt: str):
+        self.device.input_text(txt)
 
     def open_app(self, app_path):
         # para encontrar o nome do package da app pretendida instalei na Play Store
@@ -51,4 +58,4 @@ class ConnectorADB:
         self.device.shell('input swipe ' + x1 + ' ' + y1 + ' ' + x2 + ' ' + y2)
 
     def disconnect(self):
-        self.__client.remote_disconnect()
+        self.client.remote_disconnect()
