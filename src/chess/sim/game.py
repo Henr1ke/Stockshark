@@ -125,8 +125,8 @@ class Game:
 
         def get_new_state() -> State:
             can_make_move = False
-            for piece in self.__board.pieces_pos.keys():
-                if piece.is_white is self.__is_white_turn and len(self.get_legal_piece_pos(piece)) > 0:
+            for p in self.__board.pieces_pos.keys():
+                if p.is_white is self.__is_white_turn and len(self.get_legal_piece_pos(p)) > 0:
                     can_make_move = True
                     break
 

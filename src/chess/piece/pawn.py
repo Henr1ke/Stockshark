@@ -34,7 +34,7 @@ class Pawn(Piece):
             try:
                 end_pos = start_pos + inc
                 piece = board[end_pos]
-                if (piece is not None and piece.is_white is not self.is_white) or end_pos == game.__en_passant_target:
+                if (piece is not None and piece.is_white is not self.is_white) or end_pos == game.en_passant_target:
                     # Corresponding to En Passant or eating a piece in the diagonal
                     positions.append(end_pos)
             except ChessException:
