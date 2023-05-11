@@ -8,12 +8,15 @@ from chess.piece.queen import Queen
 from chess.piece.rook import Rook
 from chess.sim.board import Board
 from chess.sim.gameRules import GameRules
+from chess.sim.state import State
 from chess.util.move import Move
 from chess.util.position import Position
 
 
 class Game:
     def __init__(self, fen_str: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") -> None:
+        self.__state = State.IN_PROGRESS
+
         fen_str_fields = fen_str.split()
 
         self.__board: Board = Board(fen_str_fields[0])
@@ -30,6 +33,10 @@ class Game:
         self.__moves_played: List[Move] = []
 
         self.__legal_pieces_pos: Dict[Piece, List[Position]] = dict()
+
+    @property
+    def state(self) -> State:
+        return self.__state
 
     @property
     def board(self) -> Board:
