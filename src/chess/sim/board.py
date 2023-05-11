@@ -51,19 +51,6 @@ class Board:
                 setattr(board, key, copy(value))
         return board
 
-    def __str__(self) -> str:
-        board_str = "═══╦══" + "═╤══" * (8 - 1) + "═╗\n"
-
-        for row in range(8 - 1, -1, -1):
-            board_str += f" {row + 1} ║ " + " │ ".join(
-                ("·" if (row + col) % 2 == 0 else " ") if self[col, row] is None else str(self[col, row])
-                for col in range(8)
-            ) + " ║\n"
-
-        board_str += f"═══╬══{'═╪══' * (8 - 1)}═╣\n"
-        board_str += f"   ║ {' │ '.join(FILE_LETTERS)} ║"
-        return board_str
-
     def add_piece(self, piece: Piece, *pos_args) -> None:
         if not isinstance(piece, Piece):
             raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")

@@ -17,5 +17,5 @@ from chess.sim.visualizer import Visualizer
 # simulator = Simulator(game, player_w, player_b)
 # simulator.execute()
 
-simulator = Simulator(Game(), PlayerRandom(), PlayerRandom(), Visualizer())
+simulator = Simulator(Game(), PlayerRandom(), PlayerRandom(), Visualizer(Visualizer.PIECE_TO_LETTER))
 simulator.execute()

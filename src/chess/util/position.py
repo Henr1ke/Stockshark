@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple, Union
+from typing import Tuple
 from chess.util.constants import FILE_LETTERS
 
 from chess.util.chessException import ChessException
