@@ -66,18 +66,17 @@ class Board:
     def add_piece(self, piece: Piece, *pos_args) -> None:
         if not isinstance(piece, Piece):
             raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")
+        if isinstance(piece, King) and piece.is_white in self.__kings_pos.keys():
+            raise ChessException(f"The board already contains a king of that color, it is not allowed to add another")
 
         pos = Position(*pos_args)
+        if self[pos] is not None:
+            self.clear_pos(pos)
 
         if isinstance(piece, King):
-            if piece.is_white in self.__kings_pos.keys():
-                raise ChessException(
-                    f"The board already contains a king of that color, it is not allowed to add another")
             self.__kings_pos[piece.is_white] = pos
         self.__pieces_pos[piece] = pos
 
-        if self[pos] is not None:
-            self.clear_pos(pos)
         self.__tiles[8 - 1 - pos.row][pos.col] = piece
 
     def make_move(self, move: Move) -> Piece:
