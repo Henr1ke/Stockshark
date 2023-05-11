@@ -31,7 +31,7 @@ class Board:
                     is_white = char.isupper()
                     piece = piece_class(is_white)
 
-                    self.add_piece(piece, (col, row))
+                    self.add_piece(piece, col, row)
                     col += 1
 
     def __getitem__(self, *pos_args) -> Optional[Piece]:
