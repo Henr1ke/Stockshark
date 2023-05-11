@@ -74,11 +74,11 @@ class Game:
 
     def get_legal_piece_pos(self, piece: Piece) -> List[Position]:
         if piece not in self.__legal_pieces_pos:
-            start_pos = self.__board.pieces_pos[piece]
-            possible_pos = piece.gen_positions(self)
+            positions = piece.gen_positions(self)
 
             # Only keeps the position if the move does not leave the king in check
-            legal_pos = [end_pos for end_pos in possible_pos
+            start_pos = piece.get_pos(self.board)
+            legal_pos = [end_pos for end_pos in positions
                          if not GameRules.leaves_king_under_atk(self, Move(start_pos, end_pos))]
 
             # Updates the dictionary
