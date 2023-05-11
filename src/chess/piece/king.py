@@ -1,6 +1,7 @@
 from typing import List
 
 from chess.piece.piece import Piece
+from chess.util.chessException import ChessException
 from chess.util.position import Position
 
 
@@ -10,7 +11,8 @@ class King(Piece):
 
     def gen_positions(self, game) -> List[Position]:
         board = game.board
-        start_pos = board.pieces_pos[self]
+
+        start_pos = self.get_position(board)
 
         increments = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
         positions = self._gen_inc_positions(board, start_pos, increments)
