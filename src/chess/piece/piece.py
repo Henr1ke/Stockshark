@@ -6,6 +6,7 @@ from chess.util.position import Position
 
 
 class Piece(ABC):
+
     def __init__(self, is_white: bool) -> None:
         self.__is_white: bool = is_white
 

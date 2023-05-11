@@ -5,8 +5,6 @@ from chess.util.position import Position
 
 
 class Knight(Piece):
-    def __init__(self, is_white: bool) -> None:
-        super().__init__(is_white)
 
     def gen_positions(self, game) -> List[Position]:
         increments = [(1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2)]
