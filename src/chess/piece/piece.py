@@ -6,12 +6,8 @@ from chess.util.position import Position
 
 
 class Piece(ABC):
-    def __init__(self, is_white: bool, w_symbol: str, b_symbol: str) -> None:
+    def __init__(self, is_white: bool) -> None:
         self.__is_white: bool = is_white
-        self.__symbol: str = w_symbol if is_white else b_symbol
-
-    def __repr__(self) -> str:
-        return self.__symbol
 
     @property
     def is_white(self) -> bool:
