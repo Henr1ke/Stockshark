@@ -1,7 +1,7 @@
 import random
 
 from chess.player.player import Player
-from chess.sim.chessGame import ChessGame
+from chess.chessGame.chessGame import ChessGame
 from chess.util.move import Move
 
 

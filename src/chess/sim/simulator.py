@@ -1,9 +1,8 @@
 from typing import Optional
 
 from chess.player.player import Player
-from chess.sim.chessGame import ChessGame
-from chess.sim.chessRules import ChessRules
-from chess.sim.state import State
+from chess.chessGame.chessGame import ChessGame
+from chess.chessGame.state import State
 from chess.sim.visualizer import Visualizer
 
 

@@ -1,5 +1,5 @@
 from chess.player.playerRandom import PlayerRandom
-from chess.sim.chessGame import ChessGame
+from chess.chessGame.chessGame import ChessGame
 from chess.sim.simulator import Simulator
 from chess.sim.visualizer import Visualizer
 

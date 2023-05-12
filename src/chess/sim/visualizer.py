@@ -7,7 +7,7 @@ from chess.piece.pawn import Pawn
 from chess.piece.piece import Piece
 from chess.piece.queen import Queen
 from chess.piece.rook import Rook
-from chess.sim.state import State
+from chess.chessGame.state import State
 from chess.util.constants import FILE_LETTERS
 
 
