@@ -1,5 +1,5 @@
 from chess.player.playerRandom import PlayerRandom
-from chess.sim.game import Game
+from chess.sim.chessGame import ChessGame
 from chess.sim.simulator import Simulator
 from chess.sim.visualizer import Visualizer
 
@@ -17,5 +17,5 @@ from chess.sim.visualizer import Visualizer
 # simulator = Simulator(game, player_w, player_b)
 # simulator.execute()
 
-simulator = Simulator(Game(), PlayerRandom(), PlayerRandom(), Visualizer(Visualizer.PIECE_TO_LETTER))
+simulator = Simulator(ChessGame(), PlayerRandom(), PlayerRandom(), Visualizer(Visualizer.PIECE_TO_LETTER))
 simulator.execute()

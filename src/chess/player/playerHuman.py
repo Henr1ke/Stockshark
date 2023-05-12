@@ -1,5 +1,5 @@
 from chess.player.player import Player
-from chess.sim.game import Game
+from chess.sim.chessGame import ChessGame
 from chess.util.chessException import ChessException
 from chess.util.move import Move
 from chess.util.position import Position
@@ -8,7 +8,7 @@ from chess.util.position import Position
 class PlayerHuman(Player):
 
     @staticmethod
-    def get_start_pos(game: Game) -> Position:
+    def get_start_pos(game: ChessGame) -> Position:
         board = game.board
 
         positions = list(Player.get_available_pieces_pos(game).keys())
@@ -31,7 +31,7 @@ class PlayerHuman(Player):
                 print("Try again!")
 
     @staticmethod
-    def get_end_pos(game: Game, start_pos: Position) -> Position:
+    def get_end_pos(game: ChessGame, start_pos: Position) -> Position:
         board = game.board
         piece = board[start_pos]
         positions = game.get_legal_piece_pos(piece)
@@ -53,7 +53,7 @@ class PlayerHuman(Player):
                 print(e)
                 print("Try again!")
 
-    def gen_move(self, game: Game) -> Move:
+    def gen_move(self, game: ChessGame) -> Move:
         start_pos = PlayerHuman.get_start_pos(game)
         end_pos = PlayerHuman.get_end_pos(game, start_pos)
         return Move(start_pos, end_pos)

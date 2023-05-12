@@ -9,13 +9,13 @@ from chess.piece.piece import Piece
 from chess.piece.queen import Queen
 from chess.piece.rook import Rook
 from chess.sim.board import Board
-from chess.sim.gameRules import GameRules
+from chess.sim.chessRules import ChessRules
 from chess.sim.state import State
 from chess.util.move import Move
 from chess.util.position import Position
 
 
-class Game:
+class ChessGame:
     def __init__(self, fen_str: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") -> None:
         fen_str_fields = fen_str.split()
 
@@ -29,7 +29,7 @@ class Game:
         self.__state = State.IN_PROGRESS
         self.__legal_pieces_pos: Dict[Piece, List[Position]] = dict()
 
-    def __copy__(self) -> Game:
+    def __copy__(self) -> ChessGame:
         cls = self.__class__
         game = cls.__new__(cls)
         for key, value in self.__dict__.items():
@@ -91,7 +91,7 @@ class Game:
             # Only keeps the position if the move does not leave the king in check
             start_pos = piece.get_pos(self.board)
             legal_pos = [end_pos for end_pos in positions
-                         if not GameRules.leaves_king_under_atk(self, Move(start_pos, end_pos))]
+                         if not ChessRules.leaves_king_under_atk(self, Move(start_pos, end_pos))]
 
             # Updates the dictionary
             self.__legal_pieces_pos[piece] = legal_pos
@@ -139,7 +139,7 @@ class Game:
                     break
 
             if not can_make_move:
-                if GameRules.king_is_under_atk(self, self.__is_white_turn):
+                if ChessRules.king_is_under_atk(self, self.__is_white_turn):
                     return State.WIN_B if self.__is_white_turn else State.WIN_W
                 else:
                     return State.DRAW
@@ -149,7 +149,7 @@ class Game:
 
             return State.IN_PROGRESS
 
-        if not is_test and not GameRules.is_legal_move(self, move):
+        if not is_test and not ChessRules.is_legal_move(self, move):
             return
 
         should_reset_halfclock = self.__board[move.end_pos] is not None

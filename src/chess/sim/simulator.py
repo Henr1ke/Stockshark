@@ -1,14 +1,14 @@
 from typing import Optional
 
 from chess.player.player import Player
-from chess.sim.game import Game
-from chess.sim.gameRules import GameRules
+from chess.sim.chessGame import ChessGame
+from chess.sim.chessRules import ChessRules
 from chess.sim.state import State
 from chess.sim.visualizer import Visualizer
 
 
 class Simulator:
-    def __init__(self, game: Game, player_w: Player, player_b: Player, visualizer: Optional[Visualizer] = None):
+    def __init__(self, game: ChessGame, player_w: Player, player_b: Player, visualizer: Optional[Visualizer] = None):
         self.__game = game
         self.__player_w = player_w
         self.__player_b = player_b
