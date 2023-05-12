@@ -12,40 +12,43 @@ from chess.util.constants import FILE_LETTERS
 
 
 class Visualizer:
-    PIECE_TO_LETTER = {True: {
+    W_PIECE_CHARSET_LETTER = {
         Pawn: "P",
         Knight: "N",
         Bishop: "B",
         Rook: "R",
         Queen: "Q",
         King: "K"
-    }, False: {
+    }
+    B_PIECE_CHARSET_LETTER = {
         Pawn: "p",
         Knight: "n",
         Bishop: "b",
         Rook: "r",
         Queen: "q",
         King: "k"
-    }}
+    }
 
-    PIECE_TO_SYMBOL = {True: {
+    W_PIECE_CHARSET_SYMBOL = {
         Pawn: "♟",
         Knight: "♛",
         Bishop: "♜",
         Rook: "♝",
         Queen: "♞",
         King: "♚︎"
-    }, False: {
+    }
+    B_PIECE_CHARSET_SYMBOL = {
         Pawn: "♙",
         Knight: "♘",
         Bishop: "♗",
         Rook: "♖",
         Queen: "♕",
         King: "♔"
-    }}
+    }
 
-    def __init__(self, piece_to_char: Dict[bool, Dict[Type[Piece], str]]):
-        self.__piece_to_char = piece_to_char
+    def __init__(self, w_piece_charset: Dict[Type[Piece], str], b_piece_charset: Dict[Type[Piece], str]):
+        self.__w_piece_charset = w_piece_charset
+        self.__b_piece_charset = b_piece_charset
 
     def show(self, game) -> None:
         print()
@@ -77,4 +80,5 @@ class Visualizer:
         print(f"   ║ {' │ '.join(FILE_LETTERS)} ║")
 
     def get_char(self, piece) -> str:
-        return self.__piece_to_char[piece.is_white][piece.__class__]
+        piece_charset = self.__w_piece_charset if piece.is_white else self.__b_piece_charset
+        return piece_charset[piece.__class__]
