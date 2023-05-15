@@ -1,27 +1,25 @@
+from abc import ABC, abstractmethod
 from typing import Optional
 
-from chess.player.player import Player
 from chess.chessGame.chessGame import ChessGame
 from chess.chessGame.state import State
 from chess.sim.visualizer import Visualizer
 
 
-class Simulator:
-    def __init__(self, game: ChessGame, player_w: Player, player_b: Player, visualizer: Optional[Visualizer] = None):
-        self.__game = game
-        self.__player_w = player_w
-        self.__player_b = player_b
-        self.__visualizer = visualizer
+class Simulator(ABC):
+    def __init__(self, game: ChessGame, vis: Optional[Visualizer] = None):
+        self._game = game
+        self._vis = vis
 
     def execute(self) -> None:
-        while self.__game.state == State.IN_PROGRESS:
-            if self.__visualizer is not None:
-                self.__visualizer.show(self.__game)
+        while self._game.state == State.IN_PROGRESS:
+            if self._vis is not None:
+                self._vis.show(self._game)
 
-            player = self.__player_w if self.__game.is_white_turn else self.__player_b
-            move = player.gen_move(self.__game)
+            self._update_game()
+        if self._vis is not None:
+            self._vis.show(self._game)
 
-            self.__game.play(move)
-
-        if self.__visualizer is not None:
-            self.__visualizer.show(self.__game)
+    @abstractmethod
+    def _update_game(self):
+        pass
