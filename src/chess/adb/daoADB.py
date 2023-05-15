@@ -1,32 +1,53 @@
+from typing import Optional
+
+from ppadb.client import Client
+from ppadb.device import Device
+
+
 class DaoADB:
     def __init__(self):
-        self.__client = None
-        self.__device = None
+        self.__client: Optional[Client] = None
+        self.__device: Optional[Device] = None
         self.__is_connected: bool = False
 
     @property
-    def client(self):
+    def client(self) -> Optional[Client]:
         return self.__client
 
     @property
-    def device(self):
+    def device(self) -> Optional[Device]:
         return self.__device
 
     @property
     def is_connected(self) -> bool:
         return self.__is_connected
 
-    def connect(self, host: str, port: int) -> bool:
-        pass
+    def connect(self, host: str = "127.0.0.1", port: int = 5037) -> bool:
+        if self.__is_connected:
+            self.disconnect()
 
-    def disconnect(self) -> bool:
-        pass
+        client = Client(host=host, port=port)
+        devices = client.devices()
+
+        if len(devices) == 0:
+            return False
+
+        self.__client = client
+        self.__device = devices[0]
+        self.__is_connected = True
+
+    def disconnect(self) -> None:
+        # if self.__client is not None:
+        #     self.__client.
+        self.__client = None
+        self.__device = None
+        self.__is_connected: bool = False
 
     def tap_screen(self, x: int, y: int) -> None:
-        pass
+        self.__device.input_tap(x, y)
 
-    def swipe_screen(self, x1: int, x2: int, y1: int, y2: int):
-        pass
+    def swipe_screen(self, x1: int, y1: int, x2: int, y2: int) -> None:
+        self.__device.input_swipe(x1, y1, x2, y2, 0.25)
 
     def screenshot(self, filename: str = "Screenshot") -> None:
         pass
