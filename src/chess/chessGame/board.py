@@ -105,7 +105,7 @@ class Board:
         return copy(self.__kings_pos)
 
     def gen_fen_str(self) -> str:
-        piece_class_to_char = {val: key for (key, val) in CHAR_TO_PIECE_CLASS.items()}
+        piece_class_to_char = {piece_class: char for char, piece_class in CHAR_TO_PIECE_CLASS.items()}
 
         fen_substrs = []
 
@@ -130,7 +130,7 @@ class Board:
 
 
 if __name__ == '__main__':
-    v = Visualizer(Visualizer.PIECE_TO_LETTER)
+    v = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
     b = Board()
 
     b.add_piece(Pawn(True), "b3")

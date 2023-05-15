@@ -14,5 +14,5 @@ class SimulatorADB(Simulator):
         self.__mobile: MobileChess = mobile
         self.__is_white: bool = mobile.is_white()
 
-    def _update_game(self):
+    def _update_game(self) -> None:
         pass

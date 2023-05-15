@@ -12,7 +12,7 @@ from chess.util.constants import FILE_LETTERS
 
 
 class Visualizer:
-    W_PIECE_CHARSET_LETTER = {
+    W_PIECE_CHARSET_LETTER: Dict[Type[Piece], str] = {
         Pawn: "P",
         Knight: "N",
         Bishop: "B",
@@ -20,7 +20,7 @@ class Visualizer:
         Queen: "Q",
         King: "K"
     }
-    B_PIECE_CHARSET_LETTER = {
+    B_PIECE_CHARSET_LETTER: Dict[Type[Piece], str] = {
         Pawn: "p",
         Knight: "n",
         Bishop: "b",
@@ -29,7 +29,7 @@ class Visualizer:
         King: "k"
     }
 
-    W_PIECE_CHARSET_SYMBOL = {
+    W_PIECE_CHARSET_SYMBOL: Dict[Type[Piece], str] = {
         Pawn: "♟",
         Knight: "♛",
         Bishop: "♜",
@@ -37,7 +37,7 @@ class Visualizer:
         Queen: "♞",
         King: "♚︎"
     }
-    B_PIECE_CHARSET_SYMBOL = {
+    B_PIECE_CHARSET_SYMBOL: Dict[Type[Piece], str] = {
         Pawn: "♙",
         Knight: "♘",
         Bishop: "♗",
@@ -46,7 +46,7 @@ class Visualizer:
         King: "♔"
     }
 
-    def __init__(self, w_piece_charset: Dict[Type[Piece], str], b_piece_charset: Dict[Type[Piece], str]):
+    def __init__(self, w_piece_charset: Dict[Type[Piece], str], b_piece_charset: Dict[Type[Piece], str]) -> None:
         self.__w_piece_charset = w_piece_charset
         self.__b_piece_charset = b_piece_charset
 

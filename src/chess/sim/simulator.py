@@ -7,7 +7,7 @@ from chess.sim.visualizer import Visualizer
 
 
 class Simulator(ABC):
-    def __init__(self, game: ChessGame, vis: Optional[Visualizer] = None):
+    def __init__(self, game: ChessGame, vis: Optional[Visualizer] = None) -> None:
         self._game = game
         self._vis = vis
 
@@ -21,5 +21,5 @@ class Simulator(ABC):
             self._vis.show(self._game)
 
     @abstractmethod
-    def _update_game(self):
+    def _update_game(self) -> None:
         pass
