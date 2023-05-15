@@ -1,5 +1,6 @@
 from typing import Optional
 
+import scrcpy
 from ppadb.client import Client
 from ppadb.device import Device
 
@@ -32,16 +33,19 @@ class DaoADB:
         if len(devices) == 0:
             return False
 
-        self.__client = client
         self.__device = devices[0]
+        self.__client = scrcpy.Client(device=self.__device)
         self.__is_connected = True
 
+        return True
+
     def disconnect(self) -> None:
-        # if self.__client is not None:
-        #     self.__client.
+        if self.__client is not None:
+            self.__client.remote_disconnect()
+
         self.__client = None
         self.__device = None
-        self.__is_connected: bool = False
+        self.__is_connected = False
 
     def tap_screen(self, x: int, y: int) -> None:
         self.__device.input_tap(x, y)
@@ -50,7 +54,11 @@ class DaoADB:
         self.__device.input_swipe(x1, y1, x2, y2, 0.25)
 
     def screenshot(self, filename: str = "Screenshot") -> None:
-        pass
+        self.__device.shell(f'screencap -p /sdcard/{filename}.png')
+        self.__device.pull(f'/sdcard/{filename}.png', f"images/screenshots/{filename}.png")
 
-    def input_tex(self, text: str) -> None:
-        pass
+    def input_text(self, text: str) -> None:
+        self.__device.input_text(text)
+
+    def open_app(self, app_path: str) -> None:
+        self.__device.shell(f"am start -n {app_path}")
