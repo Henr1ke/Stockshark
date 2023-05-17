@@ -1,5 +1,8 @@
+import cv2
+
 from chess.adb.daoADB import DaoADB
 from chess.img_process.identifier import Identifier
+from chess.img_process.image_funcs import ImageFuncs
 from chess.util.move import Move
 
 
@@ -8,16 +11,16 @@ class MobileChess:
         self.__dao_adb: DaoADB = dao_adb
 
     def is_white(self) -> bool:
-        white_king = cv2.imread('../chessPiecesImg/white_king.png')
-        black_king = cv2.imread('../chessPiecesImg/black_king.png')
+        white_king = cv2.imread('../images/chess_components/white_king.png')
+        black_king = cv2.imread('../images/chess_components/black_king.png')
         kings = white_king, black_king
 
-        cropped_board = ProcessImage.crop()[0]
-        board_gray = ProcessImage.grayscale(cropped_board)
-        board_grad = ProcessImage.morph_grad(board_gray)
+        cropped_board = ImageFuncs.crop()[0]
+        board_gray = ImageFuncs.grayscale(cropped_board)
+        board_grad = ImageFuncs.morph_grad(board_gray)
 
-        kings_gray = [ProcessImage.grayscale(img) for img in kings]
-        kings_grad = [ProcessImage.morph_grad(img) for img in kings_gray]
+        kings_gray = [ImageFuncs.grayscale(img) for img in kings]
+        kings_grad = [ImageFuncs.morph_grad(img) for img in kings_gray]
 
         kings_rects = [Identifier.find_template(board_grad, img) for img in kings_grad]
         kings_colors = Identifier.match_colors(board_gray, kings_gray, kings_rects)
