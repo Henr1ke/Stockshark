@@ -14,9 +14,11 @@ class Identifier:
     TILE_W_COLOR: int = 235
     TILE_B_COLOR: int = 133
 
-    # TODO descobrir estes valores
-    TILE_W_PLAYED_COLOR: int = None
-    TILE_B_PLAYED_COLOR: int = None
+    """ Blue filter """
+    TILE_W_PLAYED_COLOR: int = 131
+
+    """ Red filter """
+    TILE_B_PLAYED_COLOR: int = 187
 
     @staticmethod
     def find_template(img: ndarray, template: ndarray, thrs=0.55) -> ndarray:
@@ -85,3 +87,18 @@ class Identifier:
                 board_array[int(piece_coord[0])][int(piece_coord[1])] = i + 1
 
         return np.fliplr(list(zip(*board_array[::-1])))
+
+    @staticmethod
+    def get_value_count(img: ndarray, value: int) -> int:
+        return int(np.sum(img == value))
+
+
+if __name__ == "__main__":
+    scr1 = cv2.imread('../../images/screenshots/Screenshot_getadvmove.png')
+
+    crop = ImageFuncs.crop(scr1, 0, 625, 1080, 1705)[:, :, 0]
+    crop = ImageFuncs.scale(crop)
+    print(Identifier.get_value_count(crop, Identifier.TILE_W_PLAYED_COLOR))
+    cv2.imshow("Red filter", crop)
+    cv2.waitKey()
+    cv2.destroyAllWindows()

@@ -80,7 +80,7 @@ if __name__ == '__main__':
     # tap_choose_computer(device)
     # swipe(device, '900', '900', '30', '900')
 
-    screenshot(device, "bot_selected")
+    screenshot(device, "black_played_dark_to_white")
 
     # swipe(device, "550", "1900", "550", "900")
     # detect_board()

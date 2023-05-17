@@ -53,9 +53,9 @@ class DaoADB:
     def swipe_screen(self, x1: int, y1: int, x2: int, y2: int) -> None:
         self.__device.input_swipe(x1, y1, x2, y2, 0.25)
 
-    def screenshot(self, filename: str = "Screenshot") -> None:
+    def screenshot(self, path: str, filename: str = "Screenshot") -> None:
         self.__device.shell(f'screencap -p /sdcard/{filename}.png')
-        self.__device.pull(f'/sdcard/{filename}.png', f"images/screenshots/{filename}.png")
+        self.__device.pull(f'/sdcard/{filename}.png', f"{path}/{filename}.png")
 
     def input_text(self, text: str) -> None:
         self.__device.input_text(text)

@@ -1,9 +1,16 @@
+import time
+from typing import Tuple, List, Optional
+
 import cv2
+import numpy as np
+from numpy import ndarray
 
 from chess.adb.daoADB import DaoADB
 from chess.img_process.identifier import Identifier
 from chess.img_process.image_funcs import ImageFuncs
 from chess.util.move import Move
+import constants
+from chess.util.position import Position
 
 
 class MobileChess:
@@ -41,5 +48,75 @@ class MobileChess:
     def has_adv_played(self) -> None:
         pass
 
-    def get_adv_move(self) -> Move:
-        pass
+    def get_w_sel_count(self, tile: ndarray) -> int:
+        return Identifier.get_value_count(tile[:, :, 0], Identifier.TILE_W_PLAYED_COLOR)
+
+    def get_b_sel_count(self, tile: ndarray) -> int:
+        return Identifier.get_value_count(tile[:, :, 2], Identifier.TILE_B_PLAYED_COLOR)
+
+    def get_adv_move(self, game: ChessGame) -> Move:
+        while True:
+            selected_move = self.get_selected_move()
+            if selected_move is not None:
+                played_moves = game.played_moves
+                if len(played_moves) == 0 or selected_move != played_moves[-1]:
+                    return selected_move
+
+            time.sleep(0.5)
+
+    def get_selected_move(self) -> Optional[Move]: # TODO fazer o caso em que não há selected move
+        self.__dao_adb.screenshot("../../images/screenshots", "Screenshot_getadvmove")
+        screenshot = cv2.imread("../../images/screenshots/Screenshot_getadvmove.png")
+        board = ImageFuncs.crop(screenshot, *constants.BOARD_COORDS_BOT)
+
+        start_pos = None
+        end_pos = None
+        for col_idx in range(8):
+            for row_idx in range(7, -1, -1):
+
+                pos = Position(col_idx, row_idx)
+                tile = self.get_tile(board, pos)
+
+                if self.is_tile_selected(tile):
+                    if self.is_tile_empty(tile):
+                        start_pos = pos
+                    else:
+                        end_pos = pos
+
+                    if start_pos is not None and end_pos is not None:
+                        break
+            if start_pos is not None and end_pos is not None:
+                break
+
+        if start_pos is None or end_pos is None:
+            return None
+
+        return Move(start_pos, end_pos)
+
+    def get_tile(self, board: ndarray, pos: Position) -> ndarray:
+        side_len = board.shape[0] / 8
+        margin = 10  # pixel
+        x1, y1, x2, y2 = int(pos.col * side_len + margin), int(pos.row * side_len + margin), int(
+            (pos.col + 1) * side_len - margin), int((pos.row + 1) * side_len - margin)
+        return ImageFuncs.crop(board, x1, y1, x2, y2)
+
+    def is_tile_selected(self, tile: ndarray) -> bool:
+        thresh_val = tile.shape[0] * tile.shape[1] * 0.02  # 2% of all tile pixels
+        w_sel_count = self.get_w_sel_count(tile)
+        b_sel_count = self.get_b_sel_count(tile)
+        return w_sel_count > thresh_val or b_sel_count > thresh_val
+
+    def is_tile_empty(self, tile: ndarray) -> bool: #TODO tweakar isto
+        thresh_val = tile.shape[0] * tile.shape[1] * 0.95  # 95% of all tile pixels
+        std = np.std(tile)
+        return std < thresh_val
+
+
+
+
+if __name__ == "__main__":
+    dao = DaoADB()
+    dao.connect()
+    mc = MobileChess(dao)
+    b = mc.get_selected_move()
+    print(b)
