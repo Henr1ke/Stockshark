@@ -12,9 +12,8 @@ class ProcessImage:
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     @staticmethod
-    def morph_grad_img(img: ndarray) -> ndarray:
-        s = 3
-        kernel = np.ones((s, s), np.uint8)
+    def morph_grad_img(img: ndarray, k_size: int = 3) -> ndarray:
+        kernel = np.ones((k_size, k_size), np.uint8)
         return cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
 
     @staticmethod

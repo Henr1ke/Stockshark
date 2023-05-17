@@ -29,6 +29,6 @@ class ProcessImage:
         return screen_cropped, board_coords
 
     @staticmethod
-    def resize_img(img: ndarray, scale: float = 0.4) -> ndarray:
+    def resize_img(img: ndarray, scale: float) -> ndarray:
         dim = (int(img.shape[1] * scale), int(img.shape[0] * scale))
         return cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
