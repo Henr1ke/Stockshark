@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import cv2
 import numpy as np
@@ -6,27 +6,25 @@ from numpy import ndarray
 
 
 class Identifier:
-    @staticmethod
-    def find_template(board: ndarray, piece: ndarray, thrs=0.55):
-        # Este método apenas dá atenção ao formato da peça, não interessa a cor
-        rects = []
-        w, h = piece.shape[1], piece.shape[0]
-        res = cv2.matchTemplate(board, piece, cv2.TM_CCOEFF_NORMED)
-        loc = np.where(res >= thrs)
 
-        for pt in zip(*loc[::-1]):
-            rects.append((pt[0], pt[1], w, h))
-            # cv2.rectangle(board, (pt[0], pt[1]), (pt[0] + w, pt[1] + h), (0, 255, 126), -1)
+    @staticmethod
+    def find_template(img: ndarray, template: ndarray, thrs=0.55) -> List[Tuple[int, int, int, int]]:
+        # Este método apenas dá atenção ao formato da peça, não interessa a cor
+
+        result = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
+
+        ys, xs = (result >= thrs).nonzero()
+        found_points = [(x, y, template.shape[1], template.shape[0]) for x, y in zip(xs, ys)]
 
         # Perform a simple non-max suppression
-        rects, _ = cv2.groupRectangles(rects, 1, 1)
+        found_points, _ = cv2.groupRectangles(found_points, 1, 1)
 
-        return rects
+        return found_points
 
     @staticmethod
-    def get_board_coords(screen: ndarray = cv2.imread('chessPiecesImg/Screenshot_1.png'),
-                         board: ndarray = cv2.imread('chessPiecesImg/screenshot_emptyboard.png')):
-        return Identifier.find_template(screen, board, thrs=0.01)[0]
+    def get_board_coords(screen: ndarray = cv2.imread('../../images/screenshots/Screenshot_1.png'),
+                         board: ndarray = cv2.imread('../../images/chess_components/empty_board.png')):
+        return Identifier.find_template(screen, board, thrs=0.4)[0]
 
     @staticmethod
     def check_color(board_img: ndarray, piece_img: ndarray, rect: ndarray) -> bool:

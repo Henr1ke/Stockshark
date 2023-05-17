@@ -87,7 +87,7 @@ if __name__ == "__main__":
     ]
     fen_str = Detector.detect_pieces(scr, piece_images)
     print(fen_str)
+    scr = ProcessImage.resize_img(scr, 0.4)
     cv2.imshow('Result', scr)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-

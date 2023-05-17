@@ -69,24 +69,25 @@ class Detector:
 if __name__ == "__main__":
     import cv2
 
-    scr = cv2.imread('../chessPiecesImg/Screenshot_1.png')
+    scr = cv2.imread('../../images/screenshots/Screenshot_1.png')
     piece_images = [
-        cv2.imread('../chessPiecesImg/white_pawn.png'),
-        cv2.imread('../chessPiecesImg/white_rook.png'),
-        cv2.imread('../chessPiecesImg/white_bishop.png'),
-        cv2.imread('../chessPiecesImg/white_knight.png'),
-        cv2.imread('../chessPiecesImg/white_king.png'),
-        cv2.imread('../chessPiecesImg/white_queen.png'),
-        cv2.imread('../chessPiecesImg/black_pawn.png'),
-        cv2.imread('../chessPiecesImg/black_rook.png'),
-        cv2.imread('../chessPiecesImg/black_bishop.png'),
-        cv2.imread('../chessPiecesImg/black_knight.png'),
-        cv2.imread('../chessPiecesImg/black_king.png'),
-        cv2.imread('../chessPiecesImg/black_queen.png'),
-        cv2.imread('../chessPiecesImg/screenshot_emptyboard.png')
+        cv2.imread('../../images/chess_components/white_pawn.png'),
+        cv2.imread('../../images/chess_components/white_rook.png'),
+        cv2.imread('../../images/chess_components/white_bishop.png'),
+        cv2.imread('../../images/chess_components/white_knight.png'),
+        cv2.imread('../../images/chess_components/white_king.png'),
+        cv2.imread('../../images/chess_components/white_queen.png'),
+        cv2.imread('../../images/chess_components/black_pawn.png'),
+        cv2.imread('../../images/chess_components/black_rook.png'),
+        cv2.imread('../../images/chess_components/black_bishop.png'),
+        cv2.imread('../../images/chess_components/black_knight.png'),
+        cv2.imread('../../images/chess_components/black_king.png'),
+        cv2.imread('../../images/chess_components/black_queen.png'),
+        cv2.imread('../../images/chess_components/empty_board.png')
     ]
     fen_str = Detector.detect_pieces(scr, piece_images)
     print(fen_str)
+    scr = ProcessImage.resize_img(scr, 0.4)
     cv2.imshow('Result', scr)
     cv2.waitKey(0)
     cv2.destroyAllWindows()

@@ -7,21 +7,22 @@ from numpy import ndarray
 
 class Identifier:
     @staticmethod
-    def find_template(board: ndarray, piece: ndarray, thrs=0.55):
+    def find_template(img: ndarray, template: ndarray, thrs=0.55):
         # Este método apenas dá atenção ao formato da peça, não interessa a cor
-        rects = []
-        w, h = piece.shape[1], piece.shape[0]
-        res = cv2.matchTemplate(board, piece, cv2.TM_CCOEFF_NORMED)
-        loc = np.where(res >= thrs)
+        found_templs = []
+        w, h = template.shape[1], template.shape[0]
+        result = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
+        result = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
+        ys, xs = (result >= thrs).nonzero()
 
-        for pt in zip(*loc[::-1]):
-            rects.append((pt[0], pt[1], w, h))
+        for x, y in zip(xs, ys):
+            found_templs.append((x, y, template.shape[1], template.shape[0]))
             # cv2.rectangle(board, (pt[0], pt[1]), (pt[0] + w, pt[1] + h), (0, 255, 126), -1)
 
         # Perform a simple non-max suppression
-        rects, _ = cv2.groupRectangles(rects, 1, 1)
+        found_templs, _ = cv2.groupRectangles(found_templs, 1, 1)
 
-        return rects
+        return found_templs
 
     @staticmethod
     def get_board_coords(screen: ndarray = cv2.imread('chessPiecesImg/Screenshot_1.png'),
@@ -64,6 +65,6 @@ class Identifier:
                 piece_center = (int((piece_x1 + piece_x2) / 2),
                                 int((piece_y1 + piece_y2) / 2))
                 piece_coord = np.floor((piece_center - tl_board) / gap)
-                board_array[int(piece_coord[0])][int(piece_coord[1])] = i+1
+                board_array[int(piece_coord[0])][int(piece_coord[1])] = i + 1
 
         return np.fliplr(list(zip(*board_array[::-1])))
