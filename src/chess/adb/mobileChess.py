@@ -17,14 +17,23 @@ from chess.util.position import Position
 class MobileChess:
     def __init__(self, dao_adb: DaoADB) -> None:
         self.__dao_adb: DaoADB = dao_adb
+        self.__is_white: bool = self.__is_white()
 
+    @property
     def is_white(self) -> bool:
-        white_king = cv2.imread('../images/chess_components/white_king.png')
-        black_king = cv2.imread('../images/chess_components/black_king.png')
+        return self.__is_white
+
+    def __is_white(self) -> bool:
+        white_king = Identifier.read_img("chess_components",
+                                         "white_king")  # cv2.imread('../images/chess_components/white_king.png')
+        black_king = Identifier.read_img("chess_components",
+                                         "black_king")  # cv2.imread('../images/chess_components/black_king.png')
         kings = white_king, black_king
 
-        cropped_board = ImageFuncs.crop()[0]
-        board_gray = ImageFuncs.grayscale(cropped_board)
+        self.__dao_adb.screenshot()
+        screenshot = Identifier.read_last_screenshot()
+        board = ImageFuncs.crop(screenshot, *constants.BOARD_COORDS_BOT)
+        board_gray = ImageFuncs.grayscale(board)
         board_grad = ImageFuncs.morph_grad(board_gray)
 
         kings_gray = [ImageFuncs.grayscale(img) for img in kings]
@@ -65,16 +74,15 @@ class MobileChess:
 
             time.sleep(0.5)
 
-    def get_selected_move(self) -> Optional[Move]: # TODO fazer o caso em que não há selected move
-        self.__dao_adb.screenshot("../../images/screenshots", "Screenshot_getadvmove")
-        screenshot = cv2.imread("../../images/screenshots/Screenshot_getadvmove.png")
+    def get_selected_move(self) -> Optional[Move]:  # TODO fazer o caso em que não há selected move
+        self.__dao_adb.screenshot()
+        screenshot = Identifier.read_last_screenshot()
         board = ImageFuncs.crop(screenshot, *constants.BOARD_COORDS_BOT)
 
         start_pos = None
         end_pos = None
-        for col_idx in range(8):
-            for row_idx in range(7, -1, -1):
-
+        for row_idx in range(8):
+            for col_idx in range(8):
                 pos = Position(col_idx, row_idx)
                 tile = self.get_tile(board, pos)
 
@@ -97,26 +105,30 @@ class MobileChess:
     def get_tile(self, board: ndarray, pos: Position) -> ndarray:
         side_len = board.shape[0] / 8
         margin = 10  # pixel
-        x1, y1, x2, y2 = int(pos.col * side_len + margin), int(pos.row * side_len + margin), int(
-            (pos.col + 1) * side_len - margin), int((pos.row + 1) * side_len - margin)
+
+        x = pos.col if self.__is_white else 7 - pos.col
+        y = pos.row if self.__is_white else 7 - pos.row
+
+        x1 = int(x * side_len + margin)
+        x2 = int((x + 1) * side_len - margin)
+        y1 = int(board.shape[0] - (y + 1) * side_len + margin)
+        y2 = int(board.shape[0] - y * side_len - margin)
+
         return ImageFuncs.crop(board, x1, y1, x2, y2)
 
     def is_tile_selected(self, tile: ndarray) -> bool:
         thresh_val = tile.shape[0] * tile.shape[1] * 0.02  # 2% of all tile pixels
+        # Identifier.debug_show_img(tile)
         w_sel_count = self.get_w_sel_count(tile)
         b_sel_count = self.get_b_sel_count(tile)
         return w_sel_count > thresh_val or b_sel_count > thresh_val
 
-    def is_tile_empty(self, tile: ndarray) -> bool: #TODO tweakar isto
-        thresh_val = tile.shape[0] * tile.shape[1] * 0.95  # 95% of all tile pixels
-        std = np.std(tile)
-        cv2.imshow(f"{std}", tile)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
+    def is_tile_empty(self, tile: ndarray) -> bool:  # TODO tweakar isto
+        thresh_val = 20  # 95% of all tile pixels
+        gs = ImageFuncs.grayscale(tile)
+        std = np.std(gs)
+        print(std)
         return std < thresh_val
-
-
-
 
 if __name__ == "__main__":
     dao = DaoADB()

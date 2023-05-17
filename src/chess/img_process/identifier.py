@@ -47,9 +47,6 @@ class Identifier:
     def get_piece_color(board_img: ndarray, piece_img: ndarray, box: ndarray) -> bool:
         x1, x2, y1, y2 = box[0], box[0] + box[2], box[1], box[1] + box[3]
         crop = ImageFuncs.crop(board_img, x1, y1, x2, y2)
-
-        print(len((crop == Identifier.PIECE_W_COLOR).nonzero()[0]),
-              len((crop == Identifier.PIECE_B_COLOR).nonzero()[0]))
         diff = cv2.absdiff(piece_img, crop)
         avg_diff = cv2.mean(diff)[0] / 255
         return avg_diff < 0.3
@@ -91,6 +88,20 @@ class Identifier:
     @staticmethod
     def get_value_count(img: ndarray, value: int) -> int:
         return int(np.sum(img == value))
+
+    @staticmethod
+    def read_img(path: str, filename: str) -> ndarray:
+        return cv2.imread(f"../../images/{path}/{filename}.png")
+
+    @staticmethod
+    def read_last_screenshot():
+        return Identifier.read_img("screenshots", "Screenshot")
+
+    @staticmethod
+    def debug_show_img(img: ndarray, title: str = "debug") -> None:
+        cv2.imshow(title, img)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
