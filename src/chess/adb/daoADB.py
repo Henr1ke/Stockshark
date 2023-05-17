@@ -1,6 +1,5 @@
 from typing import Optional
 
-import scrcpy
 from ppadb.client import Client
 from ppadb.device import Device
 

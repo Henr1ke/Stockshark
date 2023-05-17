@@ -1,5 +1,5 @@
 import time
-from typing import Tuple, List, Optional
+from typing import Optional
 
 import cv2
 import numpy as np
@@ -110,6 +110,9 @@ class MobileChess:
     def is_tile_empty(self, tile: ndarray) -> bool: #TODO tweakar isto
         thresh_val = tile.shape[0] * tile.shape[1] * 0.95  # 95% of all tile pixels
         std = np.std(tile)
+        cv2.imshow(f"{std}", tile)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
         return std < thresh_val
 
 
