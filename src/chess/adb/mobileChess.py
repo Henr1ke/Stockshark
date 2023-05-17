@@ -12,12 +12,12 @@ class MobileChess:
         black_king = cv2.imread('../chessPiecesImg/black_king.png')
         kings = white_king, black_king
 
-        cropped_board = ProcessImage.crop_board()[0]
-        board_gray = ProcessImage.grayscale_img(cropped_board)
-        board_grad = ProcessImage.morph_grad_img(board_gray)
+        cropped_board = ProcessImage.crop()[0]
+        board_gray = ProcessImage.grayscale(cropped_board)
+        board_grad = ProcessImage.morph_grad(board_gray)
 
-        kings_gray = [ProcessImage.grayscale_img(img) for img in kings]
-        kings_grad = [ProcessImage.morph_grad_img(img) for img in kings_gray]
+        kings_gray = [ProcessImage.grayscale(img) for img in kings]
+        kings_grad = [ProcessImage.morph_grad(img) for img in kings_gray]
 
         kings_rects = [Identifier.find_template(board_grad, img) for img in kings_grad]
         kings_colors = Identifier.match_colors(board_gray, kings_gray, kings_rects)

@@ -4,22 +4,22 @@ import cv2
 import numpy as np
 from numpy import ndarray
 
+from chess.img_process.image_funcs import ImageFuncs
+
 
 class Identifier:
 
     @staticmethod
-    def find_template(img: ndarray, template: ndarray, thrs=0.55) -> List[Tuple[int, int, int, int]]:
+    def find_template(img: ndarray, template: ndarray, thrs=0.55) -> ndarray:
         # Este método apenas dá atenção ao formato da peça, não interessa a cor
-
         result = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
 
         ys, xs = (result >= thrs).nonzero()
-        found_points = [(x, y, template.shape[1], template.shape[0]) for x, y in zip(xs, ys)]
+        overlapping_boxes = [(x, y, template.shape[1], template.shape[0]) for x, y in zip(xs, ys)]
 
-        # Perform a simple non-max suppression
-        found_points, _ = cv2.groupRectangles(found_points, 1, 1)
-
-        return found_points
+        # Group overlapping rectangles as one
+        template_boxes, _ = cv2.groupRectangles(overlapping_boxes, 1, 1)
+        return template_boxes
 
     @staticmethod
     def get_board_coords(screen: ndarray = cv2.imread('../../images/screenshots/Screenshot_1.png'),
@@ -28,9 +28,8 @@ class Identifier:
 
     @staticmethod
     def check_color(board_img: ndarray, piece_img: ndarray, rect: ndarray) -> bool:
-        x0, x1, y0, y1 = rect[0], rect[0] + rect[2], rect[1], rect[1] + rect[3]
-        # Dá crop na board apenas no lugar da peça
-        crop = (board_img[y0: y1, x0: x1]).copy()
+        x1, x2, y1, y2 = rect[0], rect[0] + rect[2], rect[1], rect[1] + rect[3]
+        crop = ImageFuncs.crop(board_img, x1, y1, x2, y2)
 
         diff = cv2.absdiff(piece_img, crop)
         avg_diff = cv2.mean(diff)[0] / 255
