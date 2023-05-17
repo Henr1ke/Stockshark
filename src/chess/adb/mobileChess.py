@@ -6,6 +6,7 @@ import numpy as np
 from numpy import ndarray
 
 from chess.adb.daoADB import DaoADB
+from chess.chessGame.chessGame import ChessGame
 from chess.img_process.identifier import Identifier
 from chess.img_process.image_funcs import ImageFuncs
 from chess.util.move import Move
