@@ -33,8 +33,8 @@ class DaoADB:
         if len(devices) == 0:
             return False
 
+        self.__client = client
         self.__device = devices[0]
-        self.__client = scrcpy.Client(device=self.__device)
         self.__is_connected = True
 
         return True

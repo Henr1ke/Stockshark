@@ -2,9 +2,9 @@ from typing import List
 import numpy as np
 from numpy import ndarray
 
-from adb.processing.process_image import ProcessImage
-from adb.identifier.identifier import Identifier
-from adb.visualizer.visualizer import Visualizer
+from cenasAfonso.processing.process_image import ProcessImage
+from cenasAfonso.identifier.identifier import Identifier
+from cenasAfonso.visualizer.visualizer import Visualizer
 
 
 class Detector:

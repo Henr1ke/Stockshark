@@ -37,7 +37,7 @@ def open_app(device, app_path):
     # para encontrar o nome do package da app pretendida instalei na Play Store
     # uma app chamada "Package Name Viewer 2.0"
     # encontrar a app (com.chessEngine é o nome do Android package):
-    # adb shell dumpsys package | findstr Activity | findstr com.chessEngine
+    # cenasAfonso shell dumpsys package | findstr Activity | findstr com.chessEngine
 
     # open app in package @app_path
     device.shell('am start -n ' + app_path)

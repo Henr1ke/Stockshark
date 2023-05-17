@@ -1,5 +1,5 @@
-from adb.sim_adb.connector_ADB import ConnectorADB
-from adb.sim_adb.constants import *
+from cenasAfonso.sim_adb.connector_ADB import ConnectorADB
+from cenasAfonso.sim_adb.constants import *
 
 
 # TODO open_path, vs_friend, vs_bot return ?

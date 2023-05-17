@@ -3,7 +3,7 @@ from typing import Tuple, List
 import cv2
 import numpy as np
 from numpy import ndarray
-from adb.identifier.identifier import Identifier
+from cenasAfonso.identifier.identifier import Identifier
 
 
 class ProcessImage:

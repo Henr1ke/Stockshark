@@ -1,7 +1,7 @@
 from typing import Optional
 
 from chess.adb.daoADB import DaoADB
-from adb.sim_adb.constants import *
+from cenasAfonso.sim_adb.constants import *
 
 
 class MenuNavigator:
@@ -10,6 +10,12 @@ class MenuNavigator:
         self.__dao_adb: DaoADB = dao_adb
 
     def open_app(self) -> None:
+        # para encontrar o nome do package da app pretendida instalei na Play Store
+        # uma app chamada "Package Name Viewer 2.0"
+        # encontrar a app (com.chessEngine é o nome do Android package):
+        # adb shell dumpsys package | findstr Activity | findstr com.chessEngine
+
+        # open app in package @app_path
         self.__dao_adb.open_app("com.chess/.home.HomeActivity")
 
     def vs_player(self, name: str, is_white: Optional[bool] = None, time_control: int = 10) -> None:

@@ -1,5 +1,5 @@
-from adb.identifier.identifier import Identifier
-from adb.sim_adb.connector_ADB import ConnectorADB
+from cenasAfonso.identifier.identifier import Identifier
+from cenasAfonso.sim_adb.connector_ADB import ConnectorADB
 from chessEngine.chess_components import Move
 
 

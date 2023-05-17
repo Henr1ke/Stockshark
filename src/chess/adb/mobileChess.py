@@ -8,7 +8,22 @@ class MobileChess:
         self.__dao_adb: DaoADB = dao_adb
 
     def is_white(self) -> bool:
-        pass
+        white_king = cv2.imread('../chessPiecesImg/white_king.png')
+        black_king = cv2.imread('../chessPiecesImg/black_king.png')
+        kings = white_king, black_king
+
+        cropped_board = ProcessImage.crop_board()[0]
+        board_gray = ProcessImage.grayscale_img(cropped_board)
+        board_grad = ProcessImage.morph_grad_img(board_gray)
+
+        kings_gray = [ProcessImage.grayscale_img(img) for img in kings]
+        kings_grad = [ProcessImage.morph_grad_img(img) for img in kings_gray]
+
+        kings_rects = [Identifier.find_template(board_grad, img) for img in kings_grad]
+        kings_colors = Identifier.match_colors(board_gray, kings_gray, kings_rects)
+        kings_color_rects = Identifier.match_color_rect(kings_rects, kings_colors)
+        wk, bk = kings_color_rects[0][0], kings_color_rects[1][0]
+        return wk[1] > bk[1]
 
     def play(self, move: Move) -> None:
         board_coords = Identifier.get_board_coords()
