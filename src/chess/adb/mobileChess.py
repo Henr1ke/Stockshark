@@ -41,5 +41,5 @@ class MobileChess:
     def has_adv_played(self) -> None:
         pass
 
-    def get_adv_move(self) -> None:
+    def get_adv_move(self) -> Move:
         pass
