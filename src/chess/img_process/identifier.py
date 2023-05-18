@@ -5,6 +5,7 @@ import numpy as np
 from numpy import ndarray
 
 from chess.img_process.image_funcs import ImageFuncs
+import pathlib
 
 
 class Identifier:
@@ -91,7 +92,8 @@ class Identifier:
 
     @staticmethod
     def read_img(path: str, filename: str) -> ndarray:
-        return cv2.imread(f"../../images/{path}/{filename}.png")
+        current_path = pathlib.Path(__file__).parent.resolve()
+        return cv2.imread(f"{current_path}/../../images/{path}/{filename}.png")
 
     @staticmethod
     def read_last_screenshot():

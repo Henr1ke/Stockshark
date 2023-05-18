@@ -68,6 +68,9 @@ class Position:
 
         return Position(self.col + inc[0], self.row + inc[1])
 
+    def __neg__(self):
+        return Position(7 - self.col, 7 - self.row)
+
     def __str__(self) -> str:
         return self.__coord
 

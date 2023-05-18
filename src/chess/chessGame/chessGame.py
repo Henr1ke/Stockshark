@@ -98,7 +98,7 @@ class ChessGame:
 
         return self.__legal_pieces_pos[piece]
 
-    def play(self, move: Move, is_test=False) -> None:
+    def play(self, move: Move, is_test=False) -> bool:
         def pawn_actions(is_white: bool) -> Optional[Position]:
             if move.end_pos == self.__en_passant_target:
                 capt_piece_pos = move.end_pos + ((0, -1) if is_white else (0, 1))
@@ -150,7 +150,7 @@ class ChessGame:
             return State.IN_PROGRESS
 
         if not is_test and not ChessRules.is_legal_move(self, move):
-            return
+            return False
 
         should_reset_halfclock = self.__board[move.end_pos] is not None
 
@@ -187,3 +187,5 @@ class ChessGame:
 
         # Reset self.__possible_poss
         self.__legal_pieces_pos.clear()
+
+        return True

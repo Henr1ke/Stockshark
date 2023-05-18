@@ -1,7 +1,7 @@
 from typing import Optional
 
 from chess.adb.daoADB import DaoADB
-from cenasAfonso.sim_adb.constants import *
+from chess.adb.constants import *
 
 
 class MenuNavigator:

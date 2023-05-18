@@ -1,22 +1,24 @@
 import time
 from typing import Optional
 
-import cv2
 import numpy as np
 from numpy import ndarray
 
+from chess.adb.coordinates.coordinates import Coordinates
 from chess.adb.daoADB import DaoADB
 from chess.chessGame.chessGame import ChessGame
 from chess.img_process.identifier import Identifier
 from chess.img_process.image_funcs import ImageFuncs
+from chess.sim.visualizer import Visualizer
 from chess.util.move import Move
-import constants
+from chess.adb.constants import *
 from chess.util.position import Position
 
 
 class MobileChess:
     def __init__(self, dao_adb: DaoADB) -> None:
         self.__dao_adb: DaoADB = dao_adb
+        # self._coordinates = coordinates
         self.__is_white: bool = self.__is_white()
 
     @property
@@ -32,7 +34,7 @@ class MobileChess:
 
         self.__dao_adb.screenshot()
         screenshot = Identifier.read_last_screenshot()
-        board = ImageFuncs.crop(screenshot, *constants.BOARD_COORDS_BOT)
+        board = ImageFuncs.crop(screenshot, *BOARD_COORDS_BOT)
         board_gray = ImageFuncs.grayscale(board)
         board_grad = ImageFuncs.morph_grad(board_gray)
 
@@ -46,22 +48,21 @@ class MobileChess:
         return wk[1] > bk[1]
 
     def play(self, move: Move) -> None:
-        board_coords = Identifier.get_board_coords()
-        botleft_corner = (board_coords[0], board_coords[1] + board_coords[3])
-        gap = board_coords[2] / 8
+        botleft_corner = (BOARD_COORDS_BOT[0], BOARD_COORDS_BOT[3])
+        gap = BOARD_COORDS_BOT[2] / 8
 
         for pos in (move.start_pos, move.end_pos):
             x = int(botleft_corner[0] + gap * pos.col + gap / 2)
             y = int(botleft_corner[1] - gap * pos.row - gap / 2)
             self.__dao_adb.tap_screen(x, y)
 
-    def has_adv_played(self) -> None:
-        pass
 
-    def get_w_sel_count(self, tile: ndarray) -> int:
+    @staticmethod
+    def get_w_sel_count(tile: ndarray) -> int:
         return Identifier.get_value_count(tile[:, :, 0], Identifier.TILE_W_PLAYED_COLOR)
 
-    def get_b_sel_count(self, tile: ndarray) -> int:
+    @staticmethod
+    def get_b_sel_count(tile: ndarray) -> int:
         return Identifier.get_value_count(tile[:, :, 2], Identifier.TILE_B_PLAYED_COLOR)
 
     def get_adv_move(self, game: ChessGame) -> Move:
@@ -77,7 +78,7 @@ class MobileChess:
     def get_selected_move(self) -> Optional[Move]:  # TODO fazer o caso em que não há selected move
         self.__dao_adb.screenshot()
         screenshot = Identifier.read_last_screenshot()
-        board = ImageFuncs.crop(screenshot, *constants.BOARD_COORDS_BOT)
+        board = ImageFuncs.crop(screenshot, *BOARD_COORDS_BOT)
 
         start_pos = None
         end_pos = None
@@ -88,7 +89,11 @@ class MobileChess:
 
                 if self.is_tile_selected(tile):
                     if self.is_tile_empty(tile):
-                        start_pos = pos
+                        if start_pos is not None:
+                            # Two empty selected tiles found, it's a castle movve
+                            return self.get_castle_move(start_pos, pos)
+                        else:
+                            start_pos = pos
                     else:
                         end_pos = pos
 
@@ -123,16 +128,39 @@ class MobileChess:
         b_sel_count = self.get_b_sel_count(tile)
         return w_sel_count > thresh_val or b_sel_count > thresh_val
 
-    def is_tile_empty(self, tile: ndarray) -> bool:  # TODO tweakar isto
-        thresh_val = 20  # 95% of all tile pixels
+    @staticmethod
+    def is_tile_empty(tile: ndarray) -> bool:
+        thresh_val = 20
         gs = ImageFuncs.grayscale(tile)
         std = np.std(gs)
-        print(std)
         return std < thresh_val
+
+    @staticmethod
+    def get_castle_move(pos1: Position, pos2: Position) -> Optional[Move]:
+        if pos1.row != pos2.row or pos1.row != 0 and pos1.row != 7:
+            return None
+
+        start_pos, other_pos = (pos1, pos2) if pos1.col == 4 else (pos2, pos1)
+        end_pos = Position(2 if other_pos.col == 0 else 6, start_pos.row)
+
+        return Move(start_pos, end_pos)
+
 
 if __name__ == "__main__":
     dao = DaoADB()
     dao.connect()
     mc = MobileChess(dao)
-    b = mc.get_selected_move()
-    print(b)
+    game = ChessGame()
+    vis = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
+
+    game.play(Move(Position("a2"), Position("a4")))
+    vis.show(game)
+    game.play(Move(Position("a7"), Position("a5")))
+    vis.show(game)
+    game.play(Move(Position("b2"), Position("b4")))
+    vis.show(game)
+    ti = time.time()
+    move = mc.get_adv_move(game)
+    print(time.time() - ti)
+    game.play(move)
+    vis.show(game)
