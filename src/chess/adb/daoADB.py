@@ -1,3 +1,4 @@
+import time
 from typing import Optional
 
 from ppadb.client import Client
@@ -49,9 +50,11 @@ class DaoADB:
 
     def tap_screen(self, x: int, y: int) -> None:
         self.__device.input_tap(x, y)
+        time.sleep(0.5)
 
     def swipe_screen(self, x1: int, y1: int, x2: int, y2: int) -> None:
         self.__device.input_swipe(x1, y1, x2, y2, 0.25)
+        time.sleep(0.2)
 
     def screenshot(self, path: str = "screenshots", filename: str = "Screenshot") -> None:
         current_path = pathlib.Path(__file__).parent.resolve()
@@ -60,6 +63,8 @@ class DaoADB:
 
     def input_text(self, text: str) -> None:
         self.__device.input_text(text)
+        time.sleep(0.2)
 
     def open_app(self, app_path: str) -> None:
         self.__device.shell(f"am start -n {app_path}")
+        time.sleep(0.5)
