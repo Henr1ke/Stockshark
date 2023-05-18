@@ -1,5 +1,6 @@
 from typing import Optional
 
+from chess.adb.coordinates.coordinatesPixel4 import CoordinatesPixel4
 from chess.adb.daoADB import DaoADB
 from chess.adb.mobileChess import MobileChess
 from chess.chessGame.chessGame import ChessGame
@@ -29,11 +30,12 @@ class SimulatorADB(Simulator):
 
 
 if __name__ == '__main__':
-    dao = DaoADB()
-    dao.connect()
-    mc = MobileChess(dao)
-    game = ChessGame()
-    vis = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
+    d = DaoADB()
+    d.connect()
+    c = CoordinatesPixel4()
+    m = MobileChess(d, c, True)
+    g = ChessGame()
+    v = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
 
-    simulator = SimulatorADB(PlayerRandom(), mc, game, vis)
+    simulator = SimulatorADB(PlayerRandom(), m, g, v)
     simulator.execute()

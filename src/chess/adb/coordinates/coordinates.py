@@ -62,11 +62,11 @@ class Coordinates(ABC):
     def board_width(self) -> int:
         pass
 
-    def pos_coords(self, pos: Position, is_white: bool, top_left: Tuple[int, int]) -> Tuple[int, int]:
+    def pos_coords(self, pos: Position, is_white: bool, tl_corner: Tuple[int, int]) -> Tuple[int, int]:
         tile_size = self.board_width() / 8
         if not is_white:
             pos = -pos
 
-        x = int(top_left[0] + tile_size / 2 + tile_size * pos.col)
-        y = int(top_left[1] + tile_size / 2 + tile_size * (7 - pos.row))
+        x = int(tl_corner[0] + tile_size / 2 + tile_size * pos.col)
+        y = int(tl_corner[1] + tile_size / 2 + tile_size * (7 - pos.row))
         return x, y

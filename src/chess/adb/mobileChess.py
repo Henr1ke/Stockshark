@@ -11,14 +11,14 @@ from chess.img_process.identifier import Identifier
 from chess.img_process.image_funcs import ImageFuncs
 from chess.sim.visualizer import Visualizer
 from chess.util.move import Move
-from chess.adb.constants import *
 from chess.util.position import Position
 
 
 class MobileChess:
-    def __init__(self, dao_adb: DaoADB) -> None:
+    def __init__(self, dao_adb: DaoADB, coordinates: Coordinates, is_vs_bot: bool) -> None:
         self.__dao_adb: DaoADB = dao_adb
-        # self._coordinates = coordinates
+        self.__coordinates: Coordinates = coordinates
+        self.__is_vs_bot: bool = is_vs_bot
         self.__is_white: bool = self.__is_white()
 
     @property
@@ -32,9 +32,14 @@ class MobileChess:
                                          "black_king")  # cv2.imread('../images/chess_components/black_king.png')
         kings = white_king, black_king
 
+        board_width = self.__coordinates.board_width()
+        x1, y1 = self.__coordinates.board_tl_corner_coords_bot() if self.__is_vs_bot \
+            else self.__coordinates.board_tl_corner_coords_bot()
+        x2, y2 = x1 + board_width, y1 + board_width
+
         self.__dao_adb.screenshot()
         screenshot = Identifier.read_last_screenshot()
-        board = ImageFuncs.crop(screenshot, *BOARD_COORDS_BOT)
+        board = ImageFuncs.crop(screenshot, x1, y1, x2, y2)
         board_gray = ImageFuncs.grayscale(board)
         board_grad = ImageFuncs.morph_grad(board_gray)
 
@@ -48,14 +53,12 @@ class MobileChess:
         return wk[1] > bk[1]
 
     def play(self, move: Move) -> None:
-        botleft_corner = (BOARD_COORDS_BOT[0], BOARD_COORDS_BOT[3])
-        gap = BOARD_COORDS_BOT[2] / 8
+        topleft_corner = self.__coordinates.board_tl_corner_coords_bot() if self.__is_vs_bot \
+            else self.__coordinates.board_tl_corner_coords_bot()
 
         for pos in (move.start_pos, move.end_pos):
-            x = int(botleft_corner[0] + gap * pos.col + gap / 2)
-            y = int(botleft_corner[1] - gap * pos.row - gap / 2)
+            x, y = self.__coordinates.pos_coords(pos, self.__is_white, topleft_corner)
             self.__dao_adb.tap_screen(x, y)
-
 
     @staticmethod
     def get_w_sel_count(tile: ndarray) -> int:
@@ -75,10 +78,15 @@ class MobileChess:
 
             time.sleep(0.5)
 
-    def get_selected_move(self) -> Optional[Move]:  # TODO fazer o caso em que não há selected move
+    def get_selected_move(self) -> Optional[Move]:
+        board_width = self.__coordinates.board_width()
+        x1, y1 = self.__coordinates.board_tl_corner_coords_bot() if self.__is_vs_bot \
+            else self.__coordinates.board_tl_corner_coords_bot()
+        x2, y2 = x1 + board_width, y1 + board_width
+
         self.__dao_adb.screenshot()
         screenshot = Identifier.read_last_screenshot()
-        board = ImageFuncs.crop(screenshot, *BOARD_COORDS_BOT)
+        board = ImageFuncs.crop(screenshot, x1, y1, x2, y2)
 
         start_pos = None
         end_pos = None
