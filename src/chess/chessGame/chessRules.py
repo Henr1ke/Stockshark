@@ -7,7 +7,7 @@ class ChessRules:
     @staticmethod
     def is_legal_move(game, move: Move) -> bool:
         piece = game.board[move.start_pos]
-        return piece is not None and piece.is_white is game.is_white_turn and \
+        return piece is not None and piece.plays_as_whites is game.is_white_turn and \
             move.end_pos in game.get_legal_piece_pos(piece)
 
     @staticmethod
@@ -18,7 +18,7 @@ class ChessRules:
             return False
         king_pos = board.kings_pos[is_white]
 
-        atk_pieces_pos = {piece: pos for piece, pos in board.pieces_pos.items() if piece.is_white is not is_white}
+        atk_pieces_pos = {piece: pos for piece, pos in board.pieces_pos.items() if piece.plays_as_whites is not is_white}
 
         for atk_piece in atk_pieces_pos.keys():
             if king_pos in atk_piece.gen_positions(game):

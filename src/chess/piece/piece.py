@@ -36,7 +36,7 @@ class Piece(ABC):
                     positions.append(end_pos)
                     end_pos += direction
 
-                if board[end_pos].is_white is not self.is_white:
+                if board[end_pos].plays_as_whites is not self.is_white:
                     positions.append(end_pos)
             except ChessException:
                 pass
@@ -51,7 +51,7 @@ class Piece(ABC):
             try:
                 end_pos = start_pos + inc
                 piece = board[end_pos]
-                if piece is None or piece.is_white is not self.is_white:
+                if piece is None or piece.plays_as_whites is not self.is_white:
                     positions.append(end_pos)
             except ChessException:
                 pass

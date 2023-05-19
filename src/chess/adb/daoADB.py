@@ -65,5 +65,5 @@ class DaoADB:
         self.__device.input_text(text)
         time.sleep(0.75)
 
-    def open_app(self, app_path: str) -> None:
-        self.__device.shell(f"am start -n {app_path}")
+    def open_app(self, package_name: str) -> None:
+        self.__device.shell(f"am start -n {package_name}")

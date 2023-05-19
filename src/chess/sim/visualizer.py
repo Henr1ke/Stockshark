@@ -80,5 +80,5 @@ class Visualizer:
         print(f"   ║ {' │ '.join(FILE_LETTERS)} ║")
 
     def get_char(self, piece) -> str:
-        piece_charset = self.__w_piece_charset if piece.is_white else self.__b_piece_charset
+        piece_charset = self.__w_piece_charset if piece.plays_as_whites else self.__b_piece_charset
         return piece_charset[piece.__class__]

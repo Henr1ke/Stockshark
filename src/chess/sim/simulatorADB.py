@@ -15,10 +15,10 @@ class SimulatorADB(Simulator):
         super().__init__(game, vis)
         self._player: Player = player
         self._mobile: MobileChess = mobile
-        self._is_white: bool = mobile.is_white
+        self._plays_as_whites: bool = mobile.plays_as_whites
 
     def _update_game(self) -> None:
-        if self._game.is_white_turn == self._is_white:
+        if self._game.is_white_turn == self._plays_as_whites:
             move = self._player.gen_move(self._game)
             sucess = self._game.play(move)
             if sucess:
