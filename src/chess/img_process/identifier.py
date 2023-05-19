@@ -33,10 +33,13 @@ class Identifier:
         template_boxes, _ = cv2.groupRectangles(overlapping_boxes, 1, 1)
         return template_boxes
 
+    # Todo receber a screenshot e o objeto Coordinates, fazer crop, chamar o save_fen_str() e retornar a crop
     @staticmethod
     def get_board_coords(screen: ndarray = cv2.imread('../../images/screenshots/Screenshot_1.png'),
                          board: ndarray = cv2.imread('../../images/chess_components/empty_board.png')):
         return Identifier.find_template(screen, board, thrs=0.4)[0]
+
+    # TODO fazer o save_fen_str(board:ndarray) -> None: (obtem a fen_str, verifica se ja existe e guarda a img na pasta fen_strings)
 
     @staticmethod
     def is_piece_white(piece_img: ndarray) -> bool:
