@@ -32,9 +32,13 @@ class SimulatorADB(Simulator):
 if __name__ == '__main__':
     d = DaoADB()
     d.connect()
+
     c = CoordinatesPixel4()
+
     m = MobileChess(d, c, True)
+
     g = ChessGame()
+
     v = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
 
     simulator = SimulatorADB(PlayerRandom(), m, g, v)

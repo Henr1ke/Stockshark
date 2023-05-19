@@ -40,8 +40,6 @@ class CoordinatesTelAfonso(Coordinates):
             return 770, 1200
         return (580, 1200) if is_white else (950, 1200)
 
-
-
     def vs_bot_coords(self) -> Tuple[int, int]:
         return 540, 1370
 
