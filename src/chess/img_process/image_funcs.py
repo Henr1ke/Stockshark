@@ -5,10 +5,6 @@ from numpy import ndarray
 
 class ImageFuncs:
     @staticmethod
-    def read(path: str) -> ndarray:
-        return cv2.imread(path)
-
-    @staticmethod
     def grayscale(img: ndarray) -> ndarray:
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 

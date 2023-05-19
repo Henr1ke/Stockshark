@@ -3,7 +3,7 @@ from typing import Tuple, Optional
 from chess.adb.coordinates.coordinates import Coordinates
 
 
-class CoordinatesTelAfonso(Coordinates):
+class CoordinatesMi8Lite(Coordinates):
 
     def init_screen_play_coords(self) -> Tuple[int, int]:
         return 540, 1900
