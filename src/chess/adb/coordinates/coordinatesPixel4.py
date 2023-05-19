@@ -62,7 +62,7 @@ class CoordinatesPixel4(Coordinates):
         return (355, 815) if is_white else (725, 815)
 
     def board_tl_corner_coords_player(self) -> Tuple[int, int]:
-        pass  # TODO
+        return 0, 606
 
     def board_tl_corner_coords_bot(self) -> Tuple[int, int]:
         return 0, 616

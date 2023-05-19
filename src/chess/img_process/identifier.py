@@ -94,9 +94,9 @@ class Identifier:
         return int(np.sum(img == value))
 
     @staticmethod
-    def read_img(path: str, filename: str) -> ndarray:
+    def read_img(folder: str, filename: str) -> ndarray:
         current_path = pathlib.Path(__file__).parent.resolve()
-        return cv2.imread(f"{current_path}/../../images/{path}/{filename}.png")
+        return cv2.imread(f"{current_path}/../../images/{folder}/{filename}.png")
 
     @staticmethod
     def read_last_screenshot():
