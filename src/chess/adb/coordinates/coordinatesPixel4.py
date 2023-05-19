@@ -69,10 +69,3 @@ class CoordinatesPixel4(Coordinates):
 
     def board_width(self) -> int:
         return 1080
-
-
-if __name__ == '__main__':
-    dao = DaoADB()
-    dao.connect()
-    dao.screenshot()
-    pass
