@@ -67,3 +67,9 @@ class DaoADB:
 
     def open_app(self, package_name: str) -> None:
         self.__device.shell(f"am start -n {package_name}")
+
+    def get_device_model(self) -> str:
+        avd_name = self.__device.shell("getprop ro.kernel.qemu.avd_name").strip()
+        if avd_name == "":
+            return self.__device.shell("getprop ro.product.model").strip()
+        return avd_name
