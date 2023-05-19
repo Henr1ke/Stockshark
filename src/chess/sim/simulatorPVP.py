@@ -2,8 +2,11 @@ from abc import ABC
 from typing import Optional
 
 from chess.chessGame.chessGame import ChessGame
+from chess.player.behaviour.eatBehaviour import EatBehaviour
+from chess.player.behaviour.random_behaviour import RandomBehaviour
 from chess.player.player import Player
 from chess.player.playerRandom import PlayerRandom
+from chess.player.player_reactive import PlayerReactive
 from chess.sim.simulator import Simulator
 from chess.sim.visualizer import Visualizer
 
@@ -22,8 +25,8 @@ class SimulatorPVP(Simulator, ABC):
 
 if __name__ == '__main__':
     game = ChessGame()
-    player_w = PlayerRandom()
-    player_b = PlayerRandom()
+    player_w = PlayerReactive([EatBehaviour(), RandomBehaviour()])
+    player_b = PlayerReactive([EatBehaviour(), RandomBehaviour()])
     visualizer = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
 
     simulator = SimulatorPVP(player_w, player_b, game, visualizer)

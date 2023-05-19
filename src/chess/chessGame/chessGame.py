@@ -98,6 +98,10 @@ class ChessGame:
 
         return self.__legal_pieces_pos[piece]
 
+    def get_available_pieces_pos(self) -> Dict[Piece, Position]:
+        return {piece: pos for piece, pos in self.board.pieces_pos.items()
+                if piece.is_white is self.is_white_turn and len(self.get_legal_piece_pos(piece)) > 0}
+
     def play(self, move: Move, is_test=False) -> bool:
         def pawn_actions(is_white: bool) -> Optional[Position]:
             if move.end_pos == self.__en_passant_target:

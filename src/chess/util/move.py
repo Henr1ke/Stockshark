@@ -1,3 +1,4 @@
+from __future__ import annotations
 from chess.util.chessException import ChessException
 from chess.util.position import Position
 
@@ -10,8 +11,11 @@ class Move:
         self.__start_pos: Position = start_pos
         self.__end_pos: Position = end_pos
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Move) -> bool:
         return isinstance(other, Move) and self.start_pos == other.start_pos and self.end_pos == other.end_pos
+
+    def __gt__(self, other: Move) -> bool:
+        return False
 
     def __repr__(self) -> str:
         return f"[{self.start_pos} -> {self.end_pos}]"
