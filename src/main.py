@@ -9,8 +9,11 @@ from chess.adb.menuNavigator import MenuNavigator
 from chess.adb.mobileChess import MobileChess
 from chess.chessGame.chessGame import ChessGame
 from chess.player.playerRandom import PlayerRandom
+from chess.player.player_reactive import PlayerReactive
 from chess.sim.simulatorADB import SimulatorADB
 from chess.sim.visualizer import Visualizer
+from chess.player.behaviour.random_behaviour import RandomBehaviour
+from chess.player.behaviour.eatBehaviour import EatBehaviour
 
 
 def get_coordinates(phone_model: str) -> Optional[Coordinates]:
@@ -69,5 +72,5 @@ g = ChessGame()
 
 v = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
 
-simulator = SimulatorADB(PlayerRandom(), mobile_chess, g, v)
+simulator = SimulatorADB(PlayerReactive([EatBehaviour(), RandomBehaviour()]), mobile_chess, g, v)
 simulator.execute()

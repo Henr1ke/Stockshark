@@ -12,7 +12,7 @@ from chess.img_process.image_funcs import ImageFuncs
 from chess.sim.visualizer import Visualizer
 from chess.util.move import Move
 from chess.util.position import Position
-
+import cv2
 
 class MobileChess:
     def __init__(self, dao_adb: DaoADB, coordinates: Coordinates, is_vs_bot: bool) -> None:
@@ -34,12 +34,13 @@ class MobileChess:
 
         board_width = self.__coordinates.board_width()
         x1, y1 = self.__coordinates.board_tl_corner_coords_bot() if self.__is_vs_bot \
-            else self.__coordinates.board_tl_corner_coords_bot()
+            else self.__coordinates.board_tl_corner_coords_player()
         x2, y2 = x1 + board_width, y1 + board_width
 
         self.__dao_adb.screenshot()
         screenshot = Identifier.read_last_screenshot()
         board = ImageFuncs.crop(screenshot, x1, y1, x2, y2)
+
         board_gray = ImageFuncs.grayscale(board)
         board_grad = ImageFuncs.morph_grad(board_gray)
 
@@ -49,6 +50,7 @@ class MobileChess:
         kings_rects = [Identifier.find_template(board_grad, img) for img in kings_grad]
         kings_colors = Identifier.match_colors(board_gray, kings_gray, kings_rects)
         kings_color_rects = Identifier.match_color_rect(kings_rects, kings_colors)
+
         wk, bk = kings_color_rects[0][0], kings_color_rects[1][0]
         return wk[1] > bk[1]
 
@@ -154,21 +156,21 @@ class MobileChess:
         return Move(start_pos, end_pos)
 
 
-if __name__ == "__main__":
-    dao = DaoADB()
-    dao.connect()
-    mc = MobileChess(dao)
-    game = ChessGame()
-    vis = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
-
-    game.play(Move(Position("a2"), Position("a4")))
-    vis.show(game)
-    game.play(Move(Position("a7"), Position("a5")))
-    vis.show(game)
-    game.play(Move(Position("b2"), Position("b4")))
-    vis.show(game)
-    ti = time.time()
-    move = mc.get_adv_move(game)
-    print(time.time() - ti)
-    game.play(move)
-    vis.show(game)
+# if __name__ == "__main__":
+#     dao = DaoADB()
+#     dao.connect()
+#     mc = MobileChess(dao)
+#     game = ChessGame()
+#     vis = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
+#
+#     game.play(Move(Position("a2"), Position("a4")))
+#     vis.show(game)
+#     game.play(Move(Position("a7"), Position("a5")))
+#     vis.show(game)
+#     game.play(Move(Position("b2"), Position("b4")))
+#     vis.show(game)
+#     ti = time.time()
+#     move = mc.get_adv_move(game)
+#     print(time.time() - ti)
+#     game.play(move)
+#     vis.show(game)
