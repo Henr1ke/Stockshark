@@ -8,7 +8,7 @@ from chess.piece.pawn import Pawn
 from chess.piece.piece import Piece
 from chess.piece.king import King
 from chess.sim.visualizer import Visualizer
-from chess.util.chessException import ChessException
+from chess.util.chess_exception import ChessException
 from chess.util.move import Move
 from chess.util.position import Position
 

@@ -1,11 +1,11 @@
 from typing import Optional
 
-from chess.adb.coordinates.coordinatesPixel4 import CoordinatesPixel4
-from chess.adb.daoADB import DaoADB
-from chess.adb.mobileChess import MobileChess
-from chess.chessGame.chessGame import ChessGame
+from chess.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
+from chess.adb.dao_adb import DaoADB
+from chess.adb.mobile_chess import MobileChess
+from chess.chessGame.chess_game import ChessGame
 from chess.player.player import Player
-from chess.player.playerRandom import PlayerRandom
+from chess.player.player_random import PlayerRandom
 from chess.sim.simulator import Simulator
 from chess.sim.visualizer import Visualizer
 

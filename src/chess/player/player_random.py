@@ -1,6 +1,6 @@
 from chess.player.behaviour.random_behaviour import RandomBehaviour
 from chess.player.player import Player
-from chess.chessGame.chessGame import ChessGame
+from chess.chessGame.chess_game import ChessGame
 from chess.util.move import Move
 
 

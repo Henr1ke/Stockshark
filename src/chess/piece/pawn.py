@@ -1,7 +1,7 @@
 from typing import List
 
 from chess.piece.piece import Piece
-from chess.util.chessException import ChessException
+from chess.util.chess_exception import ChessException
 from chess.util.position import Position
 
 

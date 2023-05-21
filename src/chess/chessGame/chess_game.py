@@ -9,7 +9,7 @@ from chess.piece.piece import Piece
 from chess.piece.queen import Queen
 from chess.piece.rook import Rook
 from chess.chessGame.board import Board
-from chess.chessGame.chessRules import ChessRules
+from chess.chessGame.chess_rules import ChessRules
 from chess.chessGame.state import State
 from chess.util.move import Move
 from chess.util.position import Position

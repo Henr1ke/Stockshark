@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Tuple
 from chess.util.constants import FILE_LETTERS
 
-from chess.util.chessException import ChessException
+from chess.util.chess_exception import ChessException
 
 
 class Position:

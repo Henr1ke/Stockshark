@@ -39,15 +39,15 @@ class Coordinates(ABC):
         pass
 
     @abstractmethod
-    def vs_bot_coords(self) -> Tuple[int, int]:
+    def vs_computer_coords(self) -> Tuple[int, int]:
         pass
 
     @abstractmethod
-    def bot_coords(self, diff_lvl: int) -> Tuple[int, int]:
+    def computer_coords(self, diff_lvl: int) -> Tuple[int, int]:
         pass
 
     @abstractmethod
-    def bot_color_coords(self, is_white: Optional[bool]) -> Tuple[int, int]:
+    def computer_color_coords(self, is_white: Optional[bool]) -> Tuple[int, int]:
         pass
 
     @abstractmethod
@@ -55,7 +55,7 @@ class Coordinates(ABC):
         pass
 
     @abstractmethod
-    def board_tl_corner_coords_bot(self) -> Tuple[int, int]:
+    def board_tl_corner_coords_computer(self) -> Tuple[int, int]:
         pass
 
     @abstractmethod

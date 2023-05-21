@@ -1,4 +1,4 @@
-from chess.adb.daoADB import DaoADB
+from chess.adb.dao_adb import DaoADB
 
 if __name__ == '__main__':
     dao = DaoADB()

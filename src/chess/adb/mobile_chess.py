@@ -5,20 +5,19 @@ import numpy as np
 from numpy import ndarray
 
 from chess.adb.coordinates.coordinates import Coordinates
-from chess.adb.daoADB import DaoADB
-from chess.chessGame.chessGame import ChessGame
+from chess.adb.dao_adb import DaoADB
+from chess.chessGame.chess_game import ChessGame
 from chess.img_process.identifier import Identifier
 from chess.img_process.image_funcs import ImageFuncs
-from chess.sim.visualizer import Visualizer
 from chess.util.move import Move
 from chess.util.position import Position
-import cv2
+
 
 class MobileChess:
-    def __init__(self, dao_adb: DaoADB, coordinates: Coordinates, is_vs_bot: bool) -> None:
+    def __init__(self, dao_adb: DaoADB, coordinates: Coordinates, is_vs_computer: bool) -> None:
         self.__dao_adb: DaoADB = dao_adb
         self.__coordinates: Coordinates = coordinates
-        self.__is_vs_bot: bool = is_vs_bot
+        self.__is_vs_computer: bool = is_vs_computer
         self.__plays_as_whites: bool = self.__is_playing_as_whites()
 
     @property
@@ -26,14 +25,12 @@ class MobileChess:
         return self.__plays_as_whites
 
     def __is_playing_as_whites(self) -> bool:
-        white_king = Identifier.read_img("chess_components",
-                                         "white_king")  # cv2.imread('../images/chess_components/white_king.png')
-        black_king = Identifier.read_img("chess_components",
-                                         "black_king")  # cv2.imread('../images/chess_components/black_king.png')
+        white_king = ImageFuncs.read_img("chess_components", "white_king")
+        black_king = ImageFuncs.read_img("chess_components", "black_king")
         kings = white_king, black_king
 
         board_width = self.__coordinates.board_width()
-        x1, y1 = self.__coordinates.board_tl_corner_coords_bot() if self.__is_vs_bot \
+        x1, y1 = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
             else self.__coordinates.board_tl_corner_coords_player()
         x2, y2 = x1 + board_width, y1 + board_width
 
@@ -55,8 +52,8 @@ class MobileChess:
         return wk[1] > bk[1]
 
     def play(self, move: Move) -> None:
-        topleft_corner = self.__coordinates.board_tl_corner_coords_bot() if self.__is_vs_bot \
-            else self.__coordinates.board_tl_corner_coords_bot()
+        topleft_corner = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
+            else self.__coordinates.board_tl_corner_coords_player()
 
         for pos in (move.start_pos, move.end_pos):
             x, y = self.__coordinates.pos_coords(pos, self.__plays_as_whites, topleft_corner)
@@ -82,8 +79,8 @@ class MobileChess:
 
     def _get_selected_move(self) -> Optional[Move]:
         board_width = self.__coordinates.board_width()
-        x1, y1 = self.__coordinates.board_tl_corner_coords_bot() if self.__is_vs_bot \
-            else self.__coordinates.board_tl_corner_coords_bot()
+        x1, y1 = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
+            else self.__coordinates.board_tl_corner_coords_computer()
         x2, y2 = x1 + board_width, y1 + board_width
 
         self.__dao_adb.screenshot()
@@ -154,7 +151,6 @@ class MobileChess:
         end_pos = Position(2 if other_pos.col == 0 else 6, start_pos.row)
 
         return Move(start_pos, end_pos)
-
 
 # if __name__ == "__main__":
 #     dao = DaoADB()

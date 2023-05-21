@@ -5,7 +5,6 @@ import numpy as np
 from numpy import ndarray
 
 from chess.img_process.image_funcs import ImageFuncs
-import pathlib
 
 
 class Identifier:
@@ -34,10 +33,17 @@ class Identifier:
         return template_boxes
 
     # Todo receber a screenshot e o objeto Coordinates, fazer crop, chamar o save_fen_str() e retornar a crop
-    # @staticmethod
-    # def get_board_coords(screen: ndarray = cv2.imread('../../images/screenshots/Screenshot_1.png'),
-    #                      board: ndarray = cv2.imread('../../images/chess_components/empty_board.png')):
-    #     return Identifier.find_template(screen, board, thrs=0.4)[0]
+    @staticmethod
+    def get_board_coords(screen: ndarray, topleft_corner: Tuple[int, int], board_width: int):
+        x1, y1 = topleft_corner
+        x2, y2 = x1 + board_width, y1 + board_width
+        board = ImageFuncs.crop(screen, x1, y1, x2, y2)
+        Identifier.save_fen_str(board)
+        return board
+
+    @staticmethod
+    def save_fen_str(board: ndarray):
+        pass
 
     # TODO fazer o save_fen_str(board:ndarray) -> None: (obtem a fen_str, verifica se ja existe e guarda a img na pasta fen_strings)
 
@@ -93,14 +99,14 @@ class Identifier:
     def get_value_count(img: ndarray, value: int) -> int:
         return int(np.sum(img == value))
 
-    @staticmethod
-    def read_img(folder: str, filename: str) -> ndarray:
-        current_path = pathlib.Path(__file__).parent.resolve()
-        return cv2.imread(f"{current_path}/../../images/{folder}/{filename}.png")
+    # @staticmethod
+    # def read_img(folder: str, filename: str) -> ndarray:
+    #     current_path = pathlib.Path(__file__).parent.resolve()
+    #     return cv2.imread(f"{current_path}/../../images/{folder}/{filename}.png")
 
     @staticmethod
     def read_last_screenshot():
-        return Identifier.read_img("screenshots", "Screenshot")
+        return ImageFuncs.read_img("screenshots", "Screenshot")
 
     @staticmethod
     def debug_show_img(img: ndarray, title: str = "debug") -> None:

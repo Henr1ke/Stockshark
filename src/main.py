@@ -2,47 +2,67 @@ import argparse
 from typing import Optional
 
 from chess.adb.coordinates.coordinates import Coordinates
-from chess.adb.coordinates.coordinatesMi8Lite import CoordinatesMi8Lite
-from chess.adb.coordinates.coordinatesPixel4 import CoordinatesPixel4
-from chess.adb.daoADB import DaoADB
-from chess.adb.menuNavigator import MenuNavigator
-from chess.adb.mobileChess import MobileChess
-from chess.chessGame.chessGame import ChessGame
-from chess.player.playerRandom import PlayerRandom
+from chess.adb.coordinates.coordinates_mi_8_lite import CoordinatesMi8Lite
+from chess.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
+from chess.adb.dao_adb import DaoADB
+from chess.adb.menu_navigator import MenuNavigator
+from chess.adb.mobile_chess import MobileChess
+from chess.chessGame.chess_game import ChessGame
+from chess.player.player import Player
+from chess.player.player_human import PlayerHuman
+from chess.player.player_random import PlayerRandom
 from chess.player.player_reactive import PlayerReactive
-from chess.sim.simulatorADB import SimulatorADB
+from chess.sim.simulator_adb import SimulatorADB
 from chess.sim.visualizer import Visualizer
-from chess.player.behaviour.random_behaviour import RandomBehaviour
-from chess.player.behaviour.eatBehaviour import EatBehaviour
 
 
-def get_coordinates(phone_model: str) -> Optional[Coordinates]:
-    if phone_model.casefold() == "pixel4".casefold():
+def get_coordinates(model: str) -> Optional[Coordinates]:
+    if model.casefold() == "pixel4".casefold():
         return CoordinatesPixel4()
-    if phone_model.casefold() == "mi8lite".casefold():
+    if model.casefold() == "mi8lite".casefold():
         return CoordinatesMi8Lite()
     return None
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--phone_model', type=str, required=True, help='Which smartphone model the ADB connects to')
-subparser = parser.add_subparsers(dest='opponent_type', required=True,
-                                  help="Insert 'player' to play against another player or 'computer' to play against a computer")
+def get_player(player: str) -> Optional[Player]:
+    if player.casefold() == "human".casefold():
+        return PlayerHuman()
+    if player.casefold() == "random".casefold():
+        return PlayerRandom()
+    if player.casefold() == "reactive".casefold():
+        return PlayerReactive()
+    return None
 
-player = subparser.add_parser('player')
-player.add_argument("--username", type=str, required=True)
-player.add_argument("--play_as_whites", type=bool, required=False)
-player.add_argument("--duration", type=int, required=False)
+
+def get_paw_response(play_as_wihtes: str) -> Optional[bool]:
+    if play_as_wihtes is None:
+        return None
+    return play_as_wihtes.casefold() == "y".casefold()
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--player', type=str, required=True, help="Which player model to run on the simulation")
+parser.add_argument('--model', type=str, required=True, help='Which smartphone model the ADB connects to')
+subparser = parser.add_subparsers(dest='opponent_type', required=True,
+                                  help="Insert 'friend' to play against another friend or 'computer' to play against a computer")
+
+friend = subparser.add_parser('friend')
+friend.add_argument("--username", type=str, required=True)
+friend.add_argument("--play_as_whites", type=str, required=False)
+friend.add_argument("--duration", type=int, required=False)
 
 computer = subparser.add_parser('computer')
 computer.add_argument("--diff_lvl", type=int, required=True)
-computer.add_argument("--play_as_whites", type=bool, required=False)
+computer.add_argument("--play_as_whites", type=str, required=False)
 
 args = parser.parse_args()
-print("entrou")
 print(args)
 
-coordinates = get_coordinates(args.phone_model)
+player = get_player(args.player)
+if player is None:
+    raise ValueError("The player type is not recognized")
+
+coordinates = get_coordinates(args.model)
 if coordinates is None:
     raise ValueError("The model is not available to playtest")
 
@@ -57,20 +77,20 @@ menu_navigator.open_app()
 vs_bot = args.opponent_type.casefold() == "computer"
 if vs_bot:
     diff_lvl = args.diff_lvl
-    is_white = args.play_as_whites
-    menu_navigator.vs_bot(diff_lvl, is_white)
+    is_white = get_paw_response(args.play_as_whites)
+    menu_navigator.vs_computer(diff_lvl, is_white)
 
 else:
     name = args.username
-    is_white = args.play_as_whites
+    is_white = get_paw_response(args.play_as_whites)
     duration = args.duration
     menu_navigator.vs_player(name, is_white, duration)
 
 mobile_chess = MobileChess(dao_adb, coordinates, vs_bot)
 
-g = ChessGame()
+game = ChessGame()
 
-v = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
+vis = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
 
-simulator = SimulatorADB(PlayerReactive([EatBehaviour(), RandomBehaviour()]), mobile_chess, g, v)
+simulator = SimulatorADB(player, mobile_chess, game, vis)
 simulator.execute()

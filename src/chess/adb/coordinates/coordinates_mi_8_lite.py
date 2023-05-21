@@ -40,10 +40,10 @@ class CoordinatesMi8Lite(Coordinates):
             return 770, 1200
         return (580, 1200) if is_white else (950, 1200)
 
-    def vs_bot_coords(self) -> Tuple[int, int]:
+    def vs_computer_coords(self) -> Tuple[int, int]:
         return 540, 1370
 
-    def bot_coords(self, diff_lvl: int) -> Tuple[int, int]:
+    def computer_coords(self, diff_lvl: int) -> Tuple[int, int]:
         if diff_lvl == 1:
             return 170, 1000
         if diff_lvl == 2:
@@ -55,7 +55,7 @@ class CoordinatesMi8Lite(Coordinates):
         if diff_lvl == 5:
             return 910, 1000
 
-    def bot_color_coords(self, is_white: Optional[bool]) -> Tuple[int, int]:
+    def computer_color_coords(self, is_white: Optional[bool]) -> Tuple[int, int]:
         if is_white is None:
             return 540, 850
         return (355, 850) if is_white else (725, 850)
@@ -63,7 +63,7 @@ class CoordinatesMi8Lite(Coordinates):
     def board_tl_corner_coords_player(self) -> Tuple[int, int]:
         return 0, 615
 
-    def board_tl_corner_coords_bot(self) -> Tuple[int, int]:
+    def board_tl_corner_coords_computer(self) -> Tuple[int, int]:
         return 0, 625
 
     def board_width(self) -> int:

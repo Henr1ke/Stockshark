@@ -1,7 +1,6 @@
 from typing import Tuple, Optional
 
 from chess.adb.coordinates.coordinates import Coordinates
-from chess.adb.daoADB import DaoADB
 
 
 class CoordinatesPixel4(Coordinates):
@@ -41,10 +40,10 @@ class CoordinatesPixel4(Coordinates):
             return 770, 1200
         return (580, 1200) if is_white else (950, 1200)
 
-    def vs_bot_coords(self) -> Tuple[int, int]:
+    def vs_computer_coords(self) -> Tuple[int, int]:
         return 540, 1360
 
-    def bot_coords(self, diff_lvl: int) -> Tuple[int, int]:
+    def computer_coords(self, diff_lvl: int) -> Tuple[int, int]:
         if diff_lvl == 1:
             return 165, 1030
         if diff_lvl == 2:
@@ -56,7 +55,7 @@ class CoordinatesPixel4(Coordinates):
         if diff_lvl == 5:
             return 915, 1030
 
-    def bot_color_coords(self, is_white: Optional[bool]) -> Tuple[int, int]:
+    def computer_color_coords(self, is_white: Optional[bool]) -> Tuple[int, int]:
         if is_white is None:
             return 540, 815
         return (355, 815) if is_white else (725, 815)
@@ -64,7 +63,7 @@ class CoordinatesPixel4(Coordinates):
     def board_tl_corner_coords_player(self) -> Tuple[int, int]:
         return 0, 606
 
-    def board_tl_corner_coords_bot(self) -> Tuple[int, int]:
+    def board_tl_corner_coords_computer(self) -> Tuple[int, int]:
         return 0, 616
 
     def board_width(self) -> int:

@@ -1,7 +1,7 @@
 import random
 from typing import Optional
 
-from chess.chessGame.chessGame import ChessGame
+from chess.chessGame.chess_game import ChessGame
 from chess.player.behaviour.behaviour import Behaviour
 from chess.util.move import Move
 

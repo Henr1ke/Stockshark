@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 
-from chess.util.chessException import ChessException
+from chess.util.chess_exception import ChessException
 from chess.util.position import Position
 
 

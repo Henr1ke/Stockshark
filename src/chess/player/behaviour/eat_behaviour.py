@@ -3,7 +3,7 @@ from typing import Optional
 
 from heapq import heappop, heappush
 
-from chess.chessGame.chessGame import ChessGame
+from chess.chessGame.chess_game import ChessGame
 from chess.piece.bishop import Bishop
 from chess.piece.king import King
 from chess.piece.knight import Knight

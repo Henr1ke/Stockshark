@@ -1,9 +1,16 @@
+import pathlib
+
 import cv2
 import numpy as np
 from numpy import ndarray
 
 
 class ImageFuncs:
+    @staticmethod
+    def read_img(folder: str, filename: str) -> ndarray:
+        current_path = pathlib.Path(__file__).parent.resolve()
+        return cv2.imread(f"{current_path}/../../images/{folder}/{filename}.png")
+
     @staticmethod
     def grayscale(img: ndarray) -> ndarray:
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

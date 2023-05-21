@@ -1,5 +1,5 @@
 from __future__ import annotations
-from chess.util.chessException import ChessException
+from chess.util.chess_exception import ChessException
 from chess.util.position import Position
 
 
