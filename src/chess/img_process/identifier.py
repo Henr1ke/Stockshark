@@ -82,7 +82,7 @@ class Identifier:
         return int(np.sum(img == value))
 
     @staticmethod
-    def get_board(screen: ndarray, topleft_corner: Tuple[int, int], board_width: int) -> ndarray:
+    def get_board_img(screen: ndarray, topleft_corner: Tuple[int, int], board_width: int) -> ndarray:
         x1, y1 = topleft_corner
         x2, y2 = x1 + board_width, y1 + board_width
         board = ImageFuncs.crop(screen, x1, y1, x2, y2)
@@ -90,15 +90,42 @@ class Identifier:
         return board
 
     @staticmethod
-    def save_fen_str(board: ndarray) -> None:
-        filename = Identifier.gen_fen_str(board)
+    def save_fen_str(board_img: ndarray) -> None:
+        filename = Identifier.gen_fen_str(board_img)
         img = ImageFuncs.read_img("fen_strings", filename)
         if img is None:
             ImageFuncs.write_img("fen_strings", filename)
 
     @staticmethod
-    def gen_fen_str(board: ndarray) -> str:
-        pass
+    def gen_fen_str(board_img: ndarray) -> str:
+        # board_gray = ImageFuncs.grayscale(board_img)
+        # board_grad = ImageFuncs.morph_grad(board_gray)
+        #
+        # piece_imgs = [
+        #     ImageFuncs.read_img("chess_components", "white_pawn.png"),
+        #     ImageFuncs.read_img("chess_components", "white_rook.png"),
+        #     ImageFuncs.read_img("chess_components", "white_bishop.png"),
+        #     ImageFuncs.read_img("chess_components", "white_knight.png"),
+        #     ImageFuncs.read_img("chess_components", "white_king.png"),
+        #     ImageFuncs.read_img("chess_components", "white_queen.png"),
+        #     ImageFuncs.read_img("chess_components", "black_pawn.png"),
+        #     ImageFuncs.read_img("chess_components", "black_rook.png"),
+        #     ImageFuncs.read_img("chess_components", "black_bishop.png"),
+        #     ImageFuncs.read_img("chess_components", "black_knight.png"),
+        #     ImageFuncs.read_img("chess_components", "black_king.png"),
+        #     ImageFuncs.read_img("chess_components", "black_queen.png"),
+        #     ImageFuncs.read_img("chess_components", "empty_board.png")
+        # ]
+        # piece_imgs_gray = [ImageFuncs.grayscale(img) for img in piece_imgs]
+        # piece_imgs_grad = [ImageFuncs.morph_grad(img) for img in piece_imgs_gray]
+        #
+        # rects = [Identifier.find_template(board_img, img) for img in piece_imgs_grad]
+        # colors_list = Identifier.match_colors(board_gray, piece_imgs_gray, rects)
+        # matching_color_rects = Identifier.match_color_rect(rects, colors_list)
+        # piece_coordinate_dict = Identifier.determine_pieces_squares(matching_color_rects)
+        # fen = Detector.fen_string(piece_coordinate_dict)
+        # return fen
+        pass  # TODO
 
     @staticmethod
     def read_last_screenshot() -> ndarray:

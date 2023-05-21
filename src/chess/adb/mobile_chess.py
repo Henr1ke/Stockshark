@@ -34,9 +34,9 @@ class MobileChess:
         board_width = self.__coordinates.board_width()
         topleft_corner = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
             else self.__coordinates.board_tl_corner_coords_player()
-        board = Identifier.get_board(screenshot, topleft_corner, board_width)
+        board_img = Identifier.get_board_img(screenshot, topleft_corner, board_width)
 
-        board_gray = ImageFuncs.grayscale(board)
+        board_gray = ImageFuncs.grayscale(board_img)
         board_grad = ImageFuncs.morph_grad(board_gray)
 
         kings_gray = [ImageFuncs.grayscale(img) for img in kings]
@@ -81,14 +81,14 @@ class MobileChess:
         board_width = self.__coordinates.board_width()
         topleft_corner = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
             else self.__coordinates.board_tl_corner_coords_player()
-        board = Identifier.get_board(screenshot, topleft_corner, board_width)
+        board_img = Identifier.get_board_img(screenshot, topleft_corner, board_width)
 
         start_pos = None
         end_pos = None
         for row_idx in range(8):
             for col_idx in range(8):
                 pos = Position(col_idx, row_idx)
-                tile = self._get_tile(board, pos)
+                tile = self._get_tile(board_img, pos)
 
                 if self._is_tile_selected(tile):
                     if self._is_tile_empty(tile):
@@ -110,8 +110,8 @@ class MobileChess:
 
         return Move(start_pos, end_pos)
 
-    def _get_tile(self, board: ndarray, pos: Position) -> ndarray:
-        side_len = board.shape[0] / 8
+    def _get_tile(self, board_img: ndarray, pos: Position) -> ndarray:
+        side_len = board_img.shape[0] / 8
         margin = 10  # pixel
 
         x = pos.col if self.__plays_as_whites else 7 - pos.col
@@ -119,10 +119,10 @@ class MobileChess:
 
         x1 = int(x * side_len + margin)
         x2 = int((x + 1) * side_len - margin)
-        y1 = int(board.shape[0] - (y + 1) * side_len + margin)
-        y2 = int(board.shape[0] - y * side_len - margin)
+        y1 = int(board_img.shape[0] - (y + 1) * side_len + margin)
+        y2 = int(board_img.shape[0] - y * side_len - margin)
 
-        return ImageFuncs.crop(board, x1, y1, x2, y2)
+        return ImageFuncs.crop(board_img, x1, y1, x2, y2)
 
     def _is_tile_selected(self, tile: ndarray) -> bool:
         thresh_val = tile.shape[0] * tile.shape[1] * 0.02  # 2% of all tile pixels

@@ -16,7 +16,7 @@ class Detector:
         piece_imgs_gray = [ImageFuncs.grayscale(img) for img in piece_imgs]
         piece_imgs_grad = [ImageFuncs.morph_grad(img) for img in piece_imgs_gray]
 
-        corners = Identifier.get_board(screenshot_grad, piece_imgs_grad[-1])
+        corners = Identifier.get_board_img(screenshot_grad, piece_imgs_grad[-1], )
         x1, x2, y1, y2 = corners[0], corners[0] + corners[2], corners[1], corners[1] + corners[3]
         board_img = ImageFuncs.crop(screenshot_grad, x1, y1, x2, y2)
         add_board = np.hstack((corners[:2], [0, 0]))
