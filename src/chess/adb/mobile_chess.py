@@ -29,14 +29,12 @@ class MobileChess:
         black_king = ImageFuncs.read_img("chess_components", "black_king")
         kings = white_king, black_king
 
-        board_width = self.__coordinates.board_width()
-        x1, y1 = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
-            else self.__coordinates.board_tl_corner_coords_player()
-        x2, y2 = x1 + board_width, y1 + board_width
-
         self.__dao_adb.screenshot()
         screenshot = Identifier.read_last_screenshot()
-        board = ImageFuncs.crop(screenshot, x1, y1, x2, y2)
+        board_width = self.__coordinates.board_width()
+        topleft_corner = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
+            else self.__coordinates.board_tl_corner_coords_player()
+        board = Identifier.get_board(screenshot, topleft_corner, board_width)
 
         board_gray = ImageFuncs.grayscale(board)
         board_grad = ImageFuncs.morph_grad(board_gray)
@@ -78,14 +76,12 @@ class MobileChess:
         return Identifier.get_value_count(tile[:, :, 2], Identifier.TILE_B_PLAYED_COLOR)
 
     def _get_selected_move(self) -> Optional[Move]:
-        board_width = self.__coordinates.board_width()
-        x1, y1 = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
-            else self.__coordinates.board_tl_corner_coords_computer()
-        x2, y2 = x1 + board_width, y1 + board_width
-
         self.__dao_adb.screenshot()
         screenshot = Identifier.read_last_screenshot()
-        board = ImageFuncs.crop(screenshot, x1, y1, x2, y2)
+        board_width = self.__coordinates.board_width()
+        topleft_corner = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
+            else self.__coordinates.board_tl_corner_coords_player()
+        board = Identifier.get_board(screenshot, topleft_corner, board_width)
 
         start_pos = None
         end_pos = None

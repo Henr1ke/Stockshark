@@ -12,6 +12,11 @@ class ImageFuncs:
         return cv2.imread(f"{current_path}/../../images/{folder}/{filename}.png")
 
     @staticmethod
+    def write_img(folder: str, filename: str) -> None:
+        current_path = pathlib.Path(__file__).parent.resolve()
+        return cv2.imwrite(f"{current_path}/../../images/{folder}/{filename}.png")
+
+    @staticmethod
     def grayscale(img: ndarray) -> ndarray:
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -28,3 +33,8 @@ class ImageFuncs:
     def scale(img: ndarray, scale: float = 0.4) -> ndarray:
         dim = (int(img.shape[1] * scale), int(img.shape[0] * scale))
         return cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+
+if __name__ == '__main__':
+    img = ImageFuncs.read_img("screenshots", "sakjbafb")
+
+    print(img is None)

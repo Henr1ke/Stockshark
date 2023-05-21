@@ -1,8 +1,10 @@
+import pathlib
 from typing import List, Tuple
 
 import cv2
 import numpy as np
 from numpy import ndarray
+import os
 
 from chess.img_process.image_funcs import ImageFuncs
 
@@ -31,27 +33,6 @@ class Identifier:
         # Group overlapping rectangles as one
         template_boxes, _ = cv2.groupRectangles(overlapping_boxes, 1, 1)
         return template_boxes
-
-    # Todo receber a screenshot e o objeto Coordinates, fazer crop, chamar o save_fen_str() e retornar a crop
-    @staticmethod
-    def get_board_coords(screen: ndarray, topleft_corner: Tuple[int, int], board_width: int):
-        x1, y1 = topleft_corner
-        x2, y2 = x1 + board_width, y1 + board_width
-        board = ImageFuncs.crop(screen, x1, y1, x2, y2)
-        Identifier.save_fen_str(board)
-        return board
-
-    @staticmethod
-    def save_fen_str(board: ndarray):
-        pass
-
-    # TODO fazer o save_fen_str(board:ndarray) -> None: (obtem a fen_str, verifica se ja existe e guarda a img na pasta fen_strings)
-
-    @staticmethod
-    def is_piece_white(piece_img: ndarray) -> bool:
-        w_pixel_count = np.sum(piece_img == Identifier.PIECE_W_COLOR)
-        b_pixel_count = np.sum(piece_img == Identifier.PIECE_B_COLOR)
-        return w_pixel_count >= b_pixel_count
 
     @staticmethod
     def get_piece_color(board_img: ndarray, piece_img: ndarray, box: ndarray) -> bool:
@@ -95,24 +76,39 @@ class Identifier:
 
         return np.fliplr(list(zip(*board_array[::-1])))
 
+    # ---------------------------------------------------------------------------------------
     @staticmethod
     def get_value_count(img: ndarray, value: int) -> int:
         return int(np.sum(img == value))
 
-    # @staticmethod
-    # def read_img(folder: str, filename: str) -> ndarray:
-    #     current_path = pathlib.Path(__file__).parent.resolve()
-    #     return cv2.imread(f"{current_path}/../../images/{folder}/{filename}.png")
+    @staticmethod
+    def get_board(screen: ndarray, topleft_corner: Tuple[int, int], board_width: int) -> ndarray:
+        x1, y1 = topleft_corner
+        x2, y2 = x1 + board_width, y1 + board_width
+        board = ImageFuncs.crop(screen, x1, y1, x2, y2)
+        Identifier.save_fen_str(board)
+        return board
 
     @staticmethod
-    def read_last_screenshot():
+    def save_fen_str(board: ndarray) -> None:
+        filename = Identifier.gen_fen_str(board)
+        img = ImageFuncs.read_img("fen_strings", filename)
+        if img is None:
+            ImageFuncs.write_img("fen_strings", filename)
+
+    @staticmethod
+    def gen_fen_str(board: ndarray) -> str:
+        pass
+
+    @staticmethod
+    def read_last_screenshot() -> ndarray:
         return ImageFuncs.read_img("screenshots", "Screenshot")
 
     @staticmethod
-    def debug_show_img(img: ndarray, title: str = "debug") -> None:
-        cv2.imshow(title, img)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
+    def is_piece_white(piece_img: ndarray) -> bool:
+        w_pixel_count = np.sum(piece_img == Identifier.PIECE_W_COLOR)
+        b_pixel_count = np.sum(piece_img == Identifier.PIECE_B_COLOR)
+        return w_pixel_count >= b_pixel_count
 
 
 if __name__ == "__main__":
