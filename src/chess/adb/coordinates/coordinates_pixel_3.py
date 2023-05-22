@@ -3,12 +3,12 @@ from typing import Tuple, Optional
 from chess.adb.coordinates.coordinates import Coordinates
 
 
-class CoordinatesPixel5(Coordinates):
+class CoordinatesPixel3(Coordinates):
     def init_screen_play_coords(self) -> Tuple[int, int]:
-        return 540, 1900
+        return 540, 1780
 
     def bottom_green_btn_coords(self) -> Tuple[int, int]:
-        return 540, 2030
+        return 540, 1915
 
     def vs_friend_coords(self) -> Tuple[int, int]:
         return 540, 1170
@@ -30,9 +30,9 @@ class CoordinatesPixel5(Coordinates):
         if time == 5:
             return 880, 760
         if time == 10:
-            return 200, 1240
+            return 200, 1060
         if time == 30:
-            return 880, 1240
+            return 880, 1060
 
     def player_color_coords(self, is_white: Optional[bool]) -> Tuple[int, int]:
         if is_white is None:
@@ -60,10 +60,10 @@ class CoordinatesPixel5(Coordinates):
         return (355, 815) if is_white else (725, 815)
 
     def board_tl_corner_coords_player(self) -> Tuple[int, int]:
-        return 0, 606
+        return 0, 546
 
     def board_tl_corner_coords_computer(self) -> Tuple[int, int]:
-        return 0, 616
+        return 0, 556
 
     def board_width(self) -> int:
         return 1080
