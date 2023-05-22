@@ -34,10 +34,10 @@ def get_player(player: str) -> Optional[Player]:
     return None
 
 
-def get_paw_response(play_as_wihtes: str) -> Optional[bool]:
-    if play_as_wihtes is None:
+def get_paw_response(play_as_whites: str) -> Optional[bool]:
+    if play_as_whites is None:
         return None
-    return play_as_wihtes.casefold() == "y".casefold()
+    return play_as_whites.casefold() == "y".casefold() or play_as_whites.casefold() == "yes".casefold() or play_as_whites.casefold() == "s".casefold() or play_as_whites.casefold() == "sim".casefold() or play_as_whites.casefold() == "true".casefold()
 
 
 parser = argparse.ArgumentParser()
@@ -56,7 +56,7 @@ computer.add_argument("--diff_lvl", type=int, required=True)
 computer.add_argument("--play_as_whites", type=str, required=False)
 
 args = parser.parse_args()
-print(args)
+print("\n--- A INICIAR STOCKSHARK ---\n")
 
 player = get_player(args.player)
 if player is None:
@@ -71,8 +71,11 @@ connected = dao_adb.connect()
 if not connected:
     raise RuntimeError("Error connecting to the device")
 
+print("A abrir aplicação\n")
+
 menu_navigator = MenuNavigator(dao_adb, coordinates)
 menu_navigator.open_app()
+print("A selecionar o adversário\n")
 
 vs_bot = args.opponent_type.casefold() == "computer"
 if vs_bot:
@@ -86,6 +89,8 @@ else:
     duration = args.duration
     menu_navigator.vs_player(name, is_white, duration)
 
+input("Pressiona Enter assim que o jogo estiver pronto para iniciar a simulação\n")
+print("A iniciar simulação\n")
 mobile_chess = MobileChess(dao_adb, coordinates, vs_bot)
 
 game = ChessGame()

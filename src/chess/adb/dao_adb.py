@@ -7,8 +7,6 @@ import pathlib
 
 
 class DaoADB:
-    WAIT_TIME = 4
-    APP_BOOT_TIME = 10
 
     def __init__(self):
         self.__client: Optional[Client] = None
@@ -53,11 +51,9 @@ class DaoADB:
 
     def tap_screen(self, x: int, y: int) -> None:
         self.__device.input_tap(x, y)
-        time.sleep(DaoADB.WAIT_TIME)
 
     def swipe_screen(self, x1: int, y1: int, x2: int, y2: int) -> None:
         self.__device.input_swipe(x1, y1, x2, y2, 0.25)
-        time.sleep(DaoADB.WAIT_TIME)
 
     def screenshot(self, folder: str = "screenshots", filename: str = "Screenshot") -> None:
         current_path = pathlib.Path(__file__).parent.resolve()
@@ -66,14 +62,11 @@ class DaoADB:
 
     def input_text(self, text: str) -> None:
         self.__device.input_text(text)
-        time.sleep(DaoADB.WAIT_TIME)
 
     def open_app(self, package_name: str) -> None:
         self.__device.shell(f"am start -n {package_name}")
-        time.sleep(DaoADB.APP_BOOT_TIME)
 
     def get_device_model(self) -> str:
-        print(self.__device.shell("wm size"))
         avd_name = self.__device.shell("getprop ro.kernel.qemu.avd_name").strip()
         if avd_name == "":
             return self.__device.shell("getprop ro.product.model").strip()

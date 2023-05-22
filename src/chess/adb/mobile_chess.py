@@ -14,6 +14,8 @@ from chess.util.position import Position
 
 
 class MobileChess:
+    WAIT_TIME = 0.5
+
     def __init__(self, dao_adb: DaoADB, coordinates: Coordinates, is_vs_computer: bool) -> None:
         self.__dao_adb: DaoADB = dao_adb
         self.__coordinates: Coordinates = coordinates
@@ -55,7 +57,7 @@ class MobileChess:
 
         for pos in (move.start_pos, move.end_pos):
             x, y = self.__coordinates.pos_coords(pos, self.__plays_as_whites, topleft_corner)
-            self.__dao_adb.tap_screen(x, y)
+            self.__tap_screen(x, y)
 
     def get_adv_move(self, game: ChessGame) -> Move:
         while True:
@@ -147,6 +149,10 @@ class MobileChess:
         end_pos = Position(2 if other_pos.col == 0 else 6, start_pos.row)
 
         return Move(start_pos, end_pos)
+
+    def __tap_screen(self, x: int, y: int) -> None:
+        self.__dao_adb.tap_screen(x, y)
+        time.sleep(MobileChess.WAIT_TIME)
 
 # if __name__ == "__main__":
 #     dao = DaoADB()
