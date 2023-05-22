@@ -26,7 +26,7 @@ class SimulatorPVP(Simulator, ABC):
 
 if __name__ == '__main__':
     game = ChessGame()
-    player_w = PlayerHuman()
+    player_w = PlayerRandom()
     player_b = PlayerReactive([EatBehaviour(), RandomBehaviour()])
     visualizer = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
 

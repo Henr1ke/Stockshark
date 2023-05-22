@@ -22,16 +22,18 @@ class MenuNavigator:
         self.__dao_adb.open_app("com.chess/.splash.SplashActivity")
 
 
-    def vs_player(self, name: str, is_white: Optional[bool] = None, time_control: int = 10) -> None:
-        assert time_control in [1, 3, 5, 10, 30], "O tempo de jogo tem de ser 1, 3, 5, 10 ou 30 minutos"
+    def vs_player(self, name: str, is_white: Optional[bool] = None, duration: Optional[int] = None) -> None:
+        if duration is not None:
+            assert duration in [1, 3, 5, 10, 30], "O tempo de jogo tem de ser 1, 3, 5, 10 ou 30 minutos"
 
         self.__dao_adb.tap_screen(*self.__coordinates.init_screen_play_coords())  # play
         self.__dao_adb.tap_screen(*self.__coordinates.vs_friend_coords())  # vs friend
         self.__dao_adb.tap_screen(*self.__coordinates.search_box_coords())  # search box
         self.__dao_adb.input_text(name)  # write friend name
         self.__dao_adb.tap_screen(*self.__coordinates.friend_coords())  # friend
-        self.__dao_adb.tap_screen(*self.__coordinates.time_box_coords())  # time box
-        self.__dao_adb.tap_screen(*self.__coordinates.time_coords(time_control))
+        if duration is not None:
+            self.__dao_adb.tap_screen(*self.__coordinates.time_box_coords())  # time box
+            self.__dao_adb.tap_screen(*self.__coordinates.time_coords(duration))
         self.__dao_adb.tap_screen(*self.__coordinates.player_color_coords(is_white))  # choose color
         self.__dao_adb.tap_screen(*self.__coordinates.bottom_green_btn_coords())  # play
 

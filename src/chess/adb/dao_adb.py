@@ -7,7 +7,7 @@ import pathlib
 
 
 class DaoADB:
-    WAIT_TIME = 3
+    WAIT_TIME = 4
     APP_BOOT_TIME = 10
 
     def __init__(self):
