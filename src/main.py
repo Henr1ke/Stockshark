@@ -16,6 +16,9 @@ from chess.sim.simulator_adb import SimulatorADB
 from chess.sim.visualizer import Visualizer
 
 
+# python main.py --player reactive --model pixel4 friend --username Henrike01
+# python main.py --player reactive --model pixel4 computer --diff_lvl 1
+
 def get_coordinates(model: str) -> Optional[Coordinates]:
     if model.casefold() == "pixel4".casefold():
         return CoordinatesPixel4()

@@ -1,9 +1,12 @@
 import time
 from typing import Optional
 
+from numpy import ndarray
 from ppadb.client import Client
 from ppadb.device import Device
 import pathlib
+
+from chess.art_vis.image_processing import ImageProcessing
 
 
 class DaoADB:
@@ -55,10 +58,14 @@ class DaoADB:
     def swipe_screen(self, x1: int, y1: int, x2: int, y2: int) -> None:
         self.__device.input_swipe(x1, y1, x2, y2, 0.25)
 
-    def screenshot(self, folder: str = "screenshots", filename: str = "Screenshot") -> None:
+    def screenshot(self, folder: str = "screenshots", filename: str = "Screenshot") -> ndarray:
         current_path = pathlib.Path(__file__).parent.resolve()
         self.__device.shell(f'screencap -p /sdcard/{filename}.png')
         self.__device.pull(f'/sdcard/{filename}.png', f"{current_path}/../../images/{folder}/{filename}.png")
+
+        img = ImageProcessing.read_img(folder, filename)
+
+        return img
 
     def input_text(self, text: str) -> None:
         self.__device.input_text(text)

@@ -7,8 +7,8 @@ from numpy import ndarray
 from chess.adb.coordinates.coordinates import Coordinates
 from chess.adb.dao_adb import DaoADB
 from chess.chessGame.chess_game import ChessGame
-from chess.img_process.identifier import Identifier
-from chess.img_process.image_funcs import ImageFuncs
+from chess.art_vis.identifier import Identifier
+from chess.art_vis.image_processing import ImageProcessing
 from chess.util.move import Move
 from chess.util.position import Position
 
@@ -26,23 +26,23 @@ class MobileChess:
     def plays_as_whites(self) -> bool:
         return self.__plays_as_whites
 
+    # TODO refatorizar
     def __is_playing_as_whites(self) -> bool:
-        white_king = ImageFuncs.read_img("chess_components", "white_king")
-        black_king = ImageFuncs.read_img("chess_components", "black_king")
+        white_king = ImageProcessing.read_img("chess_components", "white_king")
+        black_king = ImageProcessing.read_img("chess_components", "black_king")
         kings = white_king, black_king
 
-        self.__dao_adb.screenshot()
-        screenshot = Identifier.read_last_screenshot()
+        screenshot = self.__dao_adb.screenshot()
         board_width = self.__coordinates.board_width()
         topleft_corner = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
             else self.__coordinates.board_tl_corner_coords_player()
         board_img = Identifier.get_board_img(screenshot, topleft_corner, board_width)
 
-        board_gray = ImageFuncs.grayscale(board_img)
-        board_grad = ImageFuncs.morph_grad(board_gray)
+        board_gray = ImageProcessing.grayscale(board_img)
+        board_grad = ImageProcessing.morph_grad(board_gray)
 
-        kings_gray = [ImageFuncs.grayscale(img) for img in kings]
-        kings_grad = [ImageFuncs.morph_grad(img) for img in kings_gray]
+        kings_gray = [ImageProcessing.grayscale(img) for img in kings]
+        kings_grad = [ImageProcessing.morph_grad(img) for img in kings_gray]
 
         kings_rects = [Identifier.find_template(board_grad, img) for img in kings_grad]
         kings_colors = Identifier.match_colors(board_gray, kings_gray, kings_rects)
@@ -78,8 +78,7 @@ class MobileChess:
         return Identifier.get_value_count(tile[:, :, 2], Identifier.TILE_B_PLAYED_COLOR)
 
     def _get_selected_move(self) -> Optional[Move]:
-        self.__dao_adb.screenshot()
-        screenshot = Identifier.read_last_screenshot()
+        screenshot = self.__dao_adb.screenshot()
         board_width = self.__coordinates.board_width()
         topleft_corner = self.__coordinates.board_tl_corner_coords_computer() if self.__is_vs_computer \
             else self.__coordinates.board_tl_corner_coords_player()
@@ -124,7 +123,7 @@ class MobileChess:
         y1 = int(board_img.shape[0] - (y + 1) * side_len + margin)
         y2 = int(board_img.shape[0] - y * side_len - margin)
 
-        return ImageFuncs.crop(board_img, x1, y1, x2, y2)
+        return ImageProcessing.crop(board_img, x1, y1, x2, y2)
 
     def _is_tile_selected(self, tile: ndarray) -> bool:
         thresh_val = tile.shape[0] * tile.shape[1] * 0.02  # 2% of all tile pixels
@@ -136,7 +135,7 @@ class MobileChess:
     @staticmethod
     def _is_tile_empty(tile: ndarray) -> bool:
         thresh_val = 20
-        gs = ImageFuncs.grayscale(tile)
+        gs = ImageProcessing.grayscale(tile)
         std = np.std(gs)
         return std < thresh_val
 

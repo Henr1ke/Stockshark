@@ -1,15 +1,25 @@
 Prioridades: 1 -> pouca .... 5 -> muita
 
+-- 4 Criar um objeto geral que apenas tem o metodo execute e faz todo o processo da app
+-- 4 iniciar automaticamente
+-- os time.sleeps() entre taps são feitos dentro desse objeto geral e não nas classes DaoADB / MenuNavigator / MobileChess
 
-Iniciar o simulador ADB automaticamente
-
-
-guardar as imgs com o fen str
-
-MIN MAX
-
-
-
-ChessGame:
+chessGame:
     -- 1 promotion tá hardcoded para Queen
     -- 1 tornar a cena de ver os checks mais eficiente
+
+player:
+    -- 5 MinMax
+    -- 2 refatorizar os behaviours talvez como em IASA
+
+img_process:
+    -- 2 refatorizar as classes
+    -- 2 mudar os nomes
+    -- 4 guardar as imgs com o fen str
+    -- melhorar o VisualDebug() para mostrar tiles, etc... (que se chama visualizer)
+
+adb:
+    -- 3 refatorizar o mobile_chess (E MUDAR O NOME)
+    -- 2 Arranjar uma solução para não usar as classes Coordinates
+
+

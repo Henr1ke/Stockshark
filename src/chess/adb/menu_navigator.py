@@ -7,7 +7,7 @@ from chess.adb.dao_adb import DaoADB
 
 
 class MenuNavigator:
-    WAIT_TIME = 3
+    WAIT_TIME = 1.5
     APP_BOOT_TIME = 5
 
     def __init__(self, dao_adb: DaoADB, coordinates: Coordinates) -> None:

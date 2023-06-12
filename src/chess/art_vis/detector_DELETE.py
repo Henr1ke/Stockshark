@@ -2,23 +2,23 @@ from typing import List
 import numpy as np
 from numpy import ndarray
 
-from chess.img_process.image_funcs import ImageFuncs
-from chess.img_process.identifier import Identifier
-from chess.img_process.visualizer import Visualizer
+from chess.art_vis.image_processing import ImageProcessing
+from chess.art_vis.identifier import Identifier
+from chess.art_vis.visual_debug import VisualDebug
 
 
-class Detector:
+class DetectorDelete:
     @staticmethod
     def detect_pieces(screenshot: ndarray, piece_imgs: List[ndarray]):
-        screenshot_gray = ImageFuncs.grayscale(screenshot)
-        screenshot_grad = ImageFuncs.morph_grad(screenshot_gray)
+        screenshot_gray = ImageProcessing.grayscale(screenshot)
+        screenshot_grad = ImageProcessing.morph_grad(screenshot_gray)
 
-        piece_imgs_gray = [ImageFuncs.grayscale(img) for img in piece_imgs]
-        piece_imgs_grad = [ImageFuncs.morph_grad(img) for img in piece_imgs_gray]
+        piece_imgs_gray = [ImageProcessing.grayscale(img) for img in piece_imgs]
+        piece_imgs_grad = [ImageProcessing.morph_grad(img) for img in piece_imgs_gray]
 
         corners = Identifier.get_board_img(screenshot_grad, piece_imgs_grad[-1], )
         x1, x2, y1, y2 = corners[0], corners[0] + corners[2], corners[1], corners[1] + corners[3]
-        board_img = ImageFuncs.crop(screenshot_grad, x1, y1, x2, y2)
+        board_img = ImageProcessing.crop(screenshot_grad, x1, y1, x2, y2)
         add_board = np.hstack((corners[:2], [0, 0]))
         rects = [Identifier.find_template(board_img, img) for img in piece_imgs_grad]
         """ Adicionar a posição da board na screenshot original para os quadrados ficarem alinhados"""
@@ -27,9 +27,9 @@ class Detector:
 
         colors_list = Identifier.match_colors(screenshot_gray, piece_imgs_gray, rects)
         matching_color_rects = Identifier.match_color_rect(rects, colors_list)
-        Visualizer.draw_results_squares(screenshot, matching_color_rects)
+        VisualDebug.draw_results_squares(screenshot, matching_color_rects)
         piece_coordinate_dict = Identifier.determine_pieces_squares(matching_color_rects)
-        FEN = Detector.fen_string(piece_coordinate_dict)
+        FEN = DetectorDelete.fen_string(piece_coordinate_dict)
         return FEN
 
     @staticmethod
@@ -87,9 +87,9 @@ if __name__ == "__main__":
         cv2.imread('../../images/chess_components/black_queen.png'),
         cv2.imread('../../images/chess_components/empty_board.png')
     ]
-    fen_str = Detector.detect_pieces(scr, piece_images)
+    fen_str = DetectorDelete.detect_pieces(scr, piece_images)
     print(fen_str)
-    scr = ImageFuncs.scale(scr, 0.4)
+    scr = ImageProcessing.scale(scr, 0.4)
     cv2.imshow('Result', scr)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
