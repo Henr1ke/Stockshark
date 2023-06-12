@@ -1,0 +1,5 @@
+Iniciar o simulador ADB automaticamente
+
+guardar as imgs com o fen str
+
+MIN MAX
