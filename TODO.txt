@@ -1,5 +1,15 @@
+Prioridades: 1 -> pouca .... 5 -> muita
+
+
 Iniciar o simulador ADB automaticamente
+
 
 guardar as imgs com o fen str
 
 MIN MAX
+
+
+
+ChessGame:
+    -- 1 promotion tá hardcoded para Queen
+    -- 1 tornar a cena de ver os checks mais eficiente

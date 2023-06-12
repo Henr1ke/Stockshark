@@ -94,7 +94,6 @@ print("A iniciar simulação\n")
 mobile_chess = MobileChess(dao_adb, coordinates, vs_bot)
 
 game = ChessGame()
-
 vis = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
 
 simulator = SimulatorADB(player, mobile_chess, game, vis)
