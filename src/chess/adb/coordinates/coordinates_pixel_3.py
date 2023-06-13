@@ -58,12 +58,3 @@ class CoordinatesPixel3(Coordinates):
         if is_white is None:
             return 540, 815
         return (355, 815) if is_white else (725, 815)
-
-    def board_tl_corner_coords_player(self) -> Tuple[int, int]:
-        return 0, 546
-
-    def board_tl_corner_coords_computer(self) -> Tuple[int, int]:
-        return 0, 556
-
-    def board_width(self) -> int:
-        return 1080

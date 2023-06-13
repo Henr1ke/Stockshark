@@ -1,5 +1,5 @@
 import time
-from typing import Tuple
+from typing import Tuple, Optional
 
 from numpy import ndarray
 
@@ -31,10 +31,13 @@ class MobileChess:
             self.__dao_adb.tap_screen(self.__board_tl_corner[0] + x, self.__board_tl_corner[1] + y)
             time.sleep(MobileChess.WAIT_TIME)
 
-    def get_adv_move(self, game: ChessGame) -> Move:
+    def get_adv_move(self, game: ChessGame) -> Optional[Move]:
         while True:
             screenshot = self.__dao_adb.screenshot()
             board, _ = Detector.get_board(screenshot)
+            if board is None:
+                return None
+
             selected_move = self.__detector.get_selected_move(board)
             if selected_move is not None:
                 played_moves = game.played_moves

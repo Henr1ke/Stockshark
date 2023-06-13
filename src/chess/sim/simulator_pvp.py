@@ -18,10 +18,11 @@ class SimulatorPVP(Simulator, ABC):
         self._player_w: Player = player_w
         self._player_b: Player = player_b
 
-    def _update_game(self) -> None:
+    def _update_game(self) -> bool:
         player = self._player_w if self._game.is_white_turn else self._player_b
         move = player.gen_move(self._game)
         self._game.play(move)
+        return True
 
 
 if __name__ == '__main__':

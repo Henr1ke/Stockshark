@@ -1,7 +1,6 @@
 Prioridades: 1 -> pouca .... 5 -> muita
 
 -- 4 Criar um objeto geral que apenas tem o metodo execute e faz todo o processo da app
--- 4 iniciar automaticamente
 -- os time.sleeps() entre taps são feitos dentro desse objeto geral e não nas classes DaoADB / MenuNavigator / MobileChess
 
 chessGame:
@@ -12,13 +11,11 @@ player:
     -- 5 MinMax
     -- 2 refatorizar os behaviours talvez como em IASA
 
-img_process:
-    -- 2 refatorizar as classes
-    -- 2 mudar os nomes
-    -- melhorar o VisualDebug() para mostrar tiles, etc... (que se chama visualizer)
+art_vis:
+    -- 1 fazer um menuDetector para navegar nos botoes do menu
 
 adb:
-    -- 3 refatorizar o mobile_chess (E MUDAR O NOME)
+    -- 1 mudar o nome do mobile_chess
     -- 2 Arranjar uma solução para não usar as classes Coordinates
 
 

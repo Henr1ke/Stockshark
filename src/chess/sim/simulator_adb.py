@@ -1,6 +1,5 @@
 from typing import Optional
 
-from chess.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
 from chess.adb.dao_adb import DaoADB
 from chess.adb.mobile_chess import MobileChess
 from chess.art_vis.detector import Detector
@@ -18,7 +17,7 @@ class SimulatorADB(Simulator):
         self._mobile: MobileChess = mobile
         self._on_white_side: bool = mobile.on_white_side
 
-    def _update_game(self) -> None:
+    def _update_game(self) -> bool:
         if self._game.is_white_turn == self._on_white_side:
             move = self._player.gen_move(self._game)
             sucess = self._game.play(move)
@@ -27,7 +26,12 @@ class SimulatorADB(Simulator):
 
         else:
             move = self._mobile.get_adv_move(self._game)
+            if move is None:
+                return False
+
             self._game.play(move)
+
+        return True
 
 
 if __name__ == '__main__':

@@ -59,12 +59,3 @@ class CoordinatesMi8Lite(Coordinates):
         if is_white is None:
             return 540, 850
         return (355, 850) if is_white else (725, 850)
-
-    def board_tl_corner_coords_player(self) -> Tuple[int, int]:
-        return 0, 615
-
-    def board_tl_corner_coords_computer(self) -> Tuple[int, int]:
-        return 0, 625
-
-    def board_width(self) -> int:
-        return 1080

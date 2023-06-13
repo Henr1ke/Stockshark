@@ -16,11 +16,13 @@ class Simulator(ABC):
             if self._vis is not None:
                 self._vis.show(self._game)
 
-            self._update_game()
+            sucess = self._update_game()
+            if not sucess:
+                break
 
         if self._vis is not None:
             self._vis.show(self._game)
 
     @abstractmethod
-    def _update_game(self) -> None:
+    def _update_game(self) -> bool:
         pass

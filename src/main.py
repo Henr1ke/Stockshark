@@ -1,4 +1,5 @@
 import argparse
+import time
 from typing import Optional
 
 from chess.adb.coordinates.coordinates import Coordinates
@@ -7,6 +8,7 @@ from chess.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
 from chess.adb.dao_adb import DaoADB
 from chess.adb.menu_navigator import MenuNavigator
 from chess.adb.mobile_chess import MobileChess
+from chess.art_vis.detector import Detector
 from chess.chessGame.chess_game import ChessGame
 from chess.player.player import Player
 from chess.player.player_human import PlayerHuman
@@ -92,9 +94,22 @@ else:
     duration = args.duration
     menu_navigator.vs_player(name, is_white, duration)
 
-input("Pressiona Enter assim que o jogo estiver pronto para iniciar a simulação\n")
+print("A detetar o ecrã de jogo\n")
+board, center = None, None
+for _ in range(60):
+    screenshot = dao_adb.screenshot()
+    board, center = Detector.get_board(screenshot)
+    if board is None:
+        time.sleep(1)
+    else:
+        break
+
+if board is None:
+    print("Escedeu o tempo de espera limite. A terminar a aplicação\n")
+    quit()
+
 print("A iniciar simulação\n")
-mobile_chess = MobileChess(dao_adb, coordinates, vs_bot)
+mobile_chess = MobileChess(dao_adb, board, center)
 
 game = ChessGame()
 vis = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
