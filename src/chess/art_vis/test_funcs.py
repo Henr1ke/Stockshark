@@ -1,0 +1,85 @@
+import os
+import pathlib
+
+import cv2
+import numpy as np
+
+from chess.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
+from chess.art_vis.detector import Detector
+from chess.art_vis.identifier import Identifier
+from chess.art_vis.image_processing import ImageProcessing
+from chess.art_vis.visual_debug import VisualDebug
+
+
+def gen_mean_pieces():
+    for piece_name in ("pawn", "knight", "bishop", "rook", "queen", "king"):
+        w_p = ImageProcessing.read_img(f"chess_components/w_{piece_name}.png")
+        b_p = ImageProcessing.read_img(f"chess_components/b_{piece_name}.png")
+
+        max_w = max(w_p.shape[1], b_p.shape[1])
+        max_h = max(w_p.shape[0], b_p.shape[0])
+
+        w_p_r = ImageProcessing.resize(w_p, (max_w, max_h))
+        b_p_r = ImageProcessing.resize(b_p, (max_w, max_h))
+
+        combined = ImageProcessing.combine_imgs(w_p_r, b_p_r)
+
+        VisualDebug.show(combined, f"m_{piece_name}")
+        # ImageProcessing.write_img(f"chess_components/m_{piece_name}.png", combined)
+
+
+def identify_board():
+    current_path = pathlib.Path(__file__).parent.resolve()
+    dir = f"{current_path}/../../images/screenshots"
+    for img_name in (os.listdir(dir)):
+        screenshot = ImageProcessing.read_img(f"screenshots/{img_name}")
+
+        scn_gray = ImageProcessing.grayscale(screenshot)
+        scn_w = screenshot.shape[1]
+
+        empty_board = ImageProcessing.read_img("chess_components/empty_board.png")
+        eb_resized = cv2.resize(empty_board, (scn_w, scn_w), interpolation=cv2.INTER_AREA)
+        empty_board_gray = ImageProcessing.grayscale(eb_resized)
+
+        positions = ImageProcessing.locate(scn_gray, empty_board_gray)
+        if len(positions) == 1:
+            pos = positions[0]
+
+            scn_w = screenshot.shape[1]
+
+            start_point = (0, int(pos[1] - scn_w / 2))
+            end_point = (scn_w, int(pos[1] + scn_w / 2))
+            cv2.rectangle(screenshot, start_point, end_point, 128, 10)
+
+            scaled_img = ImageProcessing.scale(screenshot, 0.5)
+            VisualDebug.show(scaled_img, img_name)
+
+
+def identify_pieces():
+    scrn_img = ImageProcessing.read_img("screenshots/Screenshot.png")
+    b_img = Detector.get_board(scrn_img)
+    b_gray = ImageProcessing.grayscale(b_img)
+    b_grad = ImageProcessing.morph_grad(b_gray)
+
+    for piece_name in ("pawn", "knight", "bishop", "rook", "queen", "king"):
+        print()
+        print(piece_name)
+
+        p_img = ImageProcessing.read_img(f"chess_components/m_{piece_name}.png")
+        p_gray = ImageProcessing.grayscale(p_img)
+        p_grad = ImageProcessing.morph_grad(p_gray)
+
+        positions = ImageProcessing.locate(b_grad, p_grad, margin=12)
+
+        half_shape = np.array(p_grad.shape)[::-1] / 2
+        b_copy = b_img.copy()
+        for pos in positions:
+            start_point = np.array(pos - half_shape, dtype=int)
+            end_point = np.array(pos + half_shape, dtype=int)
+            cv2.rectangle(b_copy, start_point, end_point, 128, 4)
+        VisualDebug.show(b_copy, piece_name)
+
+
+if __name__ == '__main__':
+    identify_pieces()
+    pass

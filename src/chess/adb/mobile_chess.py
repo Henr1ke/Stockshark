@@ -28,8 +28,8 @@ class MobileChess:
 
     # TODO refatorizar
     def __is_playing_as_whites(self) -> bool:
-        white_king = ImageProcessing.read_img("chess_components", "white_king")
-        black_king = ImageProcessing.read_img("chess_components", "black_king")
+        white_king = ImageProcessing.read_img("chess_components/white_king.png")
+        black_king = ImageProcessing.read_img("chess_components/black_king.png")
         kings = white_king, black_king
 
         screenshot = self.__dao_adb.screenshot()

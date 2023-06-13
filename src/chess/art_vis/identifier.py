@@ -92,10 +92,11 @@ class Identifier:
 
     @staticmethod
     def save_fen_str(board_img: ndarray) -> None:
-        filename = Identifier.gen_fen_str(board_img)
-        alreadyExists = ImageProcessing.read_img("fen_strings", filename) is None
+        fen_str = Identifier.gen_fen_str(board_img)
+        filename = f"fen_strings/{fen_str}.png"
+        alreadyExists = ImageProcessing.read_img(filename) is None
         if alreadyExists:
-            ImageProcessing.write_img("fen_strings", filename, board_img)
+            ImageProcessing.write_img(filename, fen_str, board_img)
 
     @staticmethod
     def gen_fen_str(board_img: ndarray) -> str:
@@ -103,19 +104,19 @@ class Identifier:
         board_grad = ImageProcessing.morph_grad(board_gray)
 
         piece_imgs = [
-            ImageProcessing.read_img("chess_components", "white_pawn"),
-            ImageProcessing.read_img("chess_components", "white_rook"),
-            ImageProcessing.read_img("chess_components", "white_bishop"),
-            ImageProcessing.read_img("chess_components", "white_knight"),
-            ImageProcessing.read_img("chess_components", "white_king"),
-            ImageProcessing.read_img("chess_components", "white_queen"),
-            ImageProcessing.read_img("chess_components", "black_pawn"),
-            ImageProcessing.read_img("chess_components", "black_rook"),
-            ImageProcessing.read_img("chess_components", "black_bishop"),
-            ImageProcessing.read_img("chess_components", "black_knight"),
-            ImageProcessing.read_img("chess_components", "black_king"),
-            ImageProcessing.read_img("chess_components", "black_queen"),
-            ImageProcessing.read_img("chess_components", "empty_board")
+            ImageProcessing.read_img("chess_components/white_pawn.png"),
+            ImageProcessing.read_img("chess_components/white_rook.png"),
+            ImageProcessing.read_img("chess_components/white_bishop.png"),
+            ImageProcessing.read_img("chess_components/white_knight.png"),
+            ImageProcessing.read_img("chess_components/white_king.png"),
+            ImageProcessing.read_img("chess_components/white_queen.png"),
+            ImageProcessing.read_img("chess_components/black_pawn.png"),
+            ImageProcessing.read_img("chess_components/black_rook.png"),
+            ImageProcessing.read_img("chess_components/black_bishop.png"),
+            ImageProcessing.read_img("chess_components/black_knight.png"),
+            ImageProcessing.read_img("chess_components/black_king.png"),
+            ImageProcessing.read_img("chess_components/black_queen.png"),
+            ImageProcessing.read_img("chess_components/empty_board.png")
         ]
         piece_imgs_gray = [ImageProcessing.grayscale(img) for img in piece_imgs]
         piece_imgs_grad = [ImageProcessing.morph_grad(img) for img in piece_imgs_gray]

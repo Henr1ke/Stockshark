@@ -23,3 +23,6 @@ adb:
     -- 2 Arranjar uma solução para não usar as classes Coordinates
 
 
+------------------------------------ VERIFICAR TODOS OS TODOS -------------------------------------
+
+

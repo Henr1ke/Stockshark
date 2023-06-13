@@ -1,21 +1,23 @@
 import pathlib
-from typing import Tuple
+from typing import Tuple, List
 
 import cv2
 import numpy as np
 from numpy import ndarray
 
+from chess.art_vis.visual_debug import VisualDebug
+
 
 class ImageProcessing:
     @staticmethod
-    def read_img(folder: str, filename: str) -> ndarray:
+    def read_img(filename: str) -> ndarray:
         current_path = pathlib.Path(__file__).parent.resolve()
-        return cv2.imread(f"{current_path}/../../images/{folder}/{filename}.png")
+        return cv2.imread(f"{current_path}/../../images/{filename}")
 
     @staticmethod
-    def write_img(folder: str, filename: str, img: ndarray) -> None:
+    def write_img(filename: str, img: ndarray) -> None:
         current_path = pathlib.Path(__file__).parent.resolve()
-        return cv2.imwrite(f"{current_path}/../../images/{folder}/{filename}.png", img)
+        return cv2.imwrite(f"{current_path}/../../images/{filename}", img)
 
     @staticmethod
     def grayscale(img: ndarray) -> ndarray:
@@ -38,8 +40,8 @@ class ImageProcessing:
     @staticmethod
     def resize(img: ndarray, final_shape: Tuple[int, int]) -> ndarray:
         def get_slice_coords(i_size, f_size) -> Tuple[int, int, int, int]:
-            i_center = int(np.floor(i_size / 2))
-            f_center = int(np.floor(f_size / 2))
+            i_center = int(i_size / 2)
+            f_center = int(f_size / 2)
 
             p_i_1 = max(i_center - f_center, 0)
             p_i_2 = min(p_i_1 + f_size, i_size)
@@ -48,12 +50,12 @@ class ImageProcessing:
 
             return (p_i_1, p_i_2, p_f_1, p_f_2)
 
-        final_img = np.ones((*final_shape, *img.shape[2:]), dtype="uint8")
+        final_img = np.ones((*final_shape[::-1], *img.shape[2:]), dtype="uint8") * 255
 
-        slice_0 = get_slice_coords(img.shape[0], final_shape[0])
-        slice_1 = get_slice_coords(img.shape[1], final_shape[1])
+        slice_h = get_slice_coords(img.shape[0], final_shape[1])
+        slice_w = get_slice_coords(img.shape[1], final_shape[0])
 
-        final_img[slice_0[2]:slice_0[3], slice_1[2]:slice_1[3]] = img[slice_0[0]:slice_0[1], slice_1[0]:slice_1[1]]
+        final_img[slice_h[2]:slice_h[3], slice_w[2]:slice_w[3]] = img[slice_h[0]:slice_h[1], slice_w[0]:slice_w[1]]
         return final_img
 
     @staticmethod
@@ -61,7 +63,38 @@ class ImageProcessing:
         float_mean = (img1 * 1.0 + img2 * 1.0) / 2
         return np.array(float_mean, dtype="uint8")
 
-# if __name__ == '__main__':
-#     img = ImageProcessing.read_img("screenshots", "sakjbafb")
-#
-#     print(img is None)
+    @staticmethod
+    def get_px_similarities(img: ndarray, template: ndarray) -> ndarray:
+        similarities = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
+        p_0_start = int(template.shape[0] / 2)
+        p_0_end = template.shape[0] - p_0_start - 1
+        p_1_start = int(template.shape[1] / 2)
+        p_1_end = template.shape[1] - p_1_start - 1
+        return np.pad(similarities, ((p_0_start, p_0_end), (p_1_start, p_1_end)), "constant")
+
+    @staticmethod
+    def locate(img: ndarray, template: ndarray, threshold: float = 0.60, margin=0) -> List[Tuple[int, int]]:
+        if margin > 0:
+            template = ImageProcessing.crop(template, margin, margin, template.shape[1] - margin,
+                                            template.shape[0] - margin)
+
+        similarities = ImageProcessing.get_px_similarities(img, template)
+        half_shape = np.array(template.shape) / 2
+        positions = []
+        for i in range(16):  # Uppper limit of loops to prevent infinite loop
+            center = np.unravel_index(np.argmax(similarities), similarities.shape)
+            if similarities[center] < threshold:
+                break
+
+            positions.append((center[1], center[0]))
+            start_point = np.array(center - half_shape, dtype=int)[::-1]
+            end_point = np.array(center + half_shape, dtype=int)[::-1]
+            cv2.rectangle(similarities, start_point, end_point, 0, -1)
+
+        return positions
+
+
+if __name__ == '__main__':
+    img = ImageProcessing.read_img("chess_components/w_king.png")
+    VisualDebug.show(img)
+    ImageProcessing.write_img("debug/w_king.png", img)

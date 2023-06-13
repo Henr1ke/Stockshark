@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import cv2
 from numpy import ndarray
@@ -32,7 +32,7 @@ class VisualDebug:
     #         VisualDebug.draw_results(board_img, rect, i)
 
     @staticmethod
-    def show_img(img: ndarray, title: str = "debug") -> None:
+    def show(img: ndarray, title: str = "debug") -> None:
         cv2.imshow(title, img)
         cv2.waitKey()
         cv2.destroyAllWindows()

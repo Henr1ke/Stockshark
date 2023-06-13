@@ -16,6 +16,7 @@ def debug_show_img(img: ndarray, title: str = "debug") -> None:
     cv2.destroyAllWindows()
 
 
-# if __name__ == '__main__':
-#     printscreen(dao)
-#     pass
+if __name__ == '__main__':
+
+    printscreen()
+    pass
