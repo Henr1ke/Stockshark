@@ -43,17 +43,20 @@ class Detector:
         return x, y
 
     @staticmethod
-    def __get_piece_positions(board: ndarray, piece_name: str) -> List[Position]:
+    def __get_piece_locations(board: ndarray, piece_name: str) -> List[Tuple[int, int]]:
         board_gray = ImageProcessing.grayscale(board)
-        board_w = board.shape[1]
 
         piece = ImageProcessing.read_img(f"chess_components/m_{piece_name}.png")
-        size = (int(board_w / 8), int(board_w / 8))
+        size = (int(board.shape[1] / 8), int(board.shape[1] / 8))
         piece_resized = cv2.resize(piece, size, interpolation=cv2.INTER_AREA)
         piece_gray = ImageProcessing.grayscale(piece_resized)
 
-        locations = ImageProcessing.locate(board_gray, piece_gray, margin=12)
-        positions = [Detector.loc_to_pos(loc, board_w) for loc in locations]
+        return ImageProcessing.locate(board_gray, piece_gray, margin=12)
+
+    @staticmethod
+    def __get_piece_positions(board: ndarray, piece_name: str) -> List[Position]:
+        locations = Detector.__get_piece_locations(board, piece_name)
+        positions = [Detector.loc_to_pos(loc, board.shape[1]) for loc in locations]
         return positions
 
     @staticmethod
@@ -81,9 +84,9 @@ class Detector:
         return Detector.__get_piece_positions(board, "king")
 
 
-if __name__ == '__main__':
-    scrn_img = ImageProcessing.read_img("screenshots/Screenshot.png")
-    b_img = Detector.get_board(scrn_img)
-    positions = Detector.get_pawns_positions(b_img)
-    for pos in positions:
-        print(pos.coord)
+# if __name__ == '__main__':
+#     scrn_img = ImageProcessing.read_img("screenshots/Screenshot.png")
+#     b_img = Detector.get_board(scrn_img)
+#     positions = Detector.get_pawns_positions(b_img)
+#     for pos in positions:
+#         print(pos.coord)

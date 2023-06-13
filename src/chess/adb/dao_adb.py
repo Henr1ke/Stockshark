@@ -58,14 +58,20 @@ class DaoADB:
     def swipe_screen(self, x1: int, y1: int, x2: int, y2: int) -> None:
         self.__device.input_swipe(x1, y1, x2, y2, 0.25)
 
-    def screenshot(self, filename: str = "screenshots/Screenshot") -> ndarray:
-        idx = filename.rfind(".")
-        if idx >= 0:
-            filename = filename[:idx]
+    def screenshot(self, filename: str = "screenshots/Screenshot.png") -> ndarray:
+
+        point_idx = filename.rfind(".")
+        if point_idx >= 0:
+            filename = filename[:point_idx]
+
+        only_name = filename
+        slash_idx = only_name.rfind("/")
+        if slash_idx >= 0:
+            only_name = only_name[slash_idx+1:]
 
         current_path = pathlib.Path(__file__).parent.resolve()
-        self.__device.shell(f'screencap -p /sdcard/{filename}.png')
-        self.__device.pull(f'/sdcard/{filename}.png', f"{current_path}/../../images/{filename}.png")
+        self.__device.shell(f'screencap -p /sdcard/{only_name}.png')
+        self.__device.pull(f'/sdcard/{only_name}.png', f"{current_path}/../../images/{filename}.png")
 
         img = ImageProcessing.read_img(f"{filename}.png")
 

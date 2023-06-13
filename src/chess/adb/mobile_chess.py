@@ -20,6 +20,7 @@ class MobileChess:
         self.__dao_adb: DaoADB = dao_adb
         self.__coordinates: Coordinates = coordinates
         self.__is_vs_computer: bool = is_vs_computer
+        # self.__detector = Detector()
         self.__plays_as_whites: bool = self.__is_playing_as_whites()
 
     @property
