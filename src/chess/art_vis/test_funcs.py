@@ -4,11 +4,8 @@ import pathlib
 import cv2
 import numpy as np
 
-from chess.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
 from chess.art_vis.detector import Detector
-from chess.art_vis.identifier import Identifier
 from chess.art_vis.image_processing import ImageProcessing
-from chess.art_vis.visual_debug import VisualDebug
 
 
 def gen_mean_pieces():
@@ -24,7 +21,7 @@ def gen_mean_pieces():
 
         combined = ImageProcessing.combine_imgs(w_p_r, b_p_r)
 
-        VisualDebug.show(combined, f"m_{piece_name}")
+        ImageProcessing.show(combined, f"m_{piece_name}")
         # ImageProcessing.write_img(f"chess_components/m_{piece_name}.png", combined)
 
 
@@ -52,24 +49,25 @@ def identify_board():
             cv2.rectangle(screenshot, start_point, end_point, 128, 10)
 
             scaled_img = ImageProcessing.scale(screenshot, 0.5)
-            VisualDebug.show(scaled_img, img_name)
+            ImageProcessing.show(scaled_img, img_name)
 
 
 def identify_pieces():
     scrn_img = ImageProcessing.read_img("screenshots/Screenshot.png")
-    b_img = Detector.get_board(scrn_img)
+    b_img, _ = Detector.get_board(scrn_img)
     b_gray = ImageProcessing.grayscale(b_img)
     b_grad = ImageProcessing.morph_grad(b_gray)
 
     for piece_name in ("pawn", "knight", "bishop", "rook", "queen", "king"):
-        print()
-        print(piece_name)
-
         p_img = ImageProcessing.read_img(f"chess_components/m_{piece_name}.png")
         p_gray = ImageProcessing.grayscale(p_img)
         p_grad = ImageProcessing.morph_grad(p_gray)
 
+        print()
+        print(piece_name)
+
         positions = ImageProcessing.locate(b_grad, p_grad, margin=12)
+        print(positions)
 
         half_shape = np.array(p_grad.shape)[::-1] / 2
         b_copy = b_img.copy()
@@ -77,7 +75,7 @@ def identify_pieces():
             start_point = np.array(pos - half_shape, dtype=int)
             end_point = np.array(pos + half_shape, dtype=int)
             cv2.rectangle(b_copy, start_point, end_point, 128, 4)
-        VisualDebug.show(b_copy, piece_name)
+        ImageProcessing.show(b_copy, piece_name)
 
 
 if __name__ == '__main__':

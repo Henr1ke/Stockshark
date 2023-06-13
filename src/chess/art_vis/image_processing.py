@@ -5,8 +5,6 @@ import cv2
 import numpy as np
 from numpy import ndarray
 
-from chess.art_vis.visual_debug import VisualDebug
-
 
 class ImageProcessing:
     @staticmethod
@@ -20,7 +18,15 @@ class ImageProcessing:
         return cv2.imwrite(f"{current_path}/../../images/{filename}", img)
 
     @staticmethod
+    def show(img: ndarray, title: str = "image") -> None:
+        cv2.imshow(title, img)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+
+    @staticmethod
     def grayscale(img: ndarray) -> ndarray:
+        if len(img.shape) == 2:
+            return img
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     @staticmethod
@@ -73,7 +79,7 @@ class ImageProcessing:
         return np.pad(similarities, ((p_0_start, p_0_end), (p_1_start, p_1_end)), "constant")
 
     @staticmethod
-    def locate(img: ndarray, template: ndarray, threshold: float = 0.60, margin=0) -> List[Tuple[int, int]]:
+    def locate(img: ndarray, template: ndarray, threshold: float = 0.55, margin=0) -> List[Tuple[int, int]]:
         if margin > 0:
             template = ImageProcessing.crop(template, margin, margin, template.shape[1] - margin,
                                             template.shape[0] - margin)
@@ -81,7 +87,7 @@ class ImageProcessing:
         similarities = ImageProcessing.get_px_similarities(img, template)
         half_shape = np.array(template.shape) / 2
         positions = []
-        for i in range(16):  # Uppper limit of loops to prevent infinite loop
+        for i in range(64):  # Uppper limit of loops to prevent infinite loop
             center = np.unravel_index(np.argmax(similarities), similarities.shape)
             if similarities[center] < threshold:
                 break
@@ -93,8 +99,15 @@ class ImageProcessing:
 
         return positions
 
+    @staticmethod
+    def get_value_count(img: ndarray, value: int) -> int:
+        return int(np.sum(img == value))
 
-if __name__ == '__main__':
-    img = ImageProcessing.read_img("chess_components/w_king.png")
-    VisualDebug.show(img)
-    ImageProcessing.write_img("debug/w_king.png", img)
+    @staticmethod
+    def get_square(img: ndarray, center: Tuple[int, int], side: int) -> ndarray:
+        x1 = int(center[0] - side / 2)
+        y1 = int(center[1] - side / 2)
+        x2 = int(center[0] + side / 2)
+        y2 = int(center[1] + side / 2)
+
+        return ImageProcessing.crop(img, x1, y1, x2, y2)

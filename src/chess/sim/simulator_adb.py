@@ -3,6 +3,7 @@ from typing import Optional
 from chess.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
 from chess.adb.dao_adb import DaoADB
 from chess.adb.mobile_chess import MobileChess
+from chess.art_vis.detector import Detector
 from chess.chessGame.chess_game import ChessGame
 from chess.player.player import Player
 from chess.player.player_random import PlayerRandom
@@ -15,10 +16,10 @@ class SimulatorADB(Simulator):
         super().__init__(game, vis)
         self._player: Player = player
         self._mobile: MobileChess = mobile
-        self._plays_as_whites: bool = mobile.plays_as_whites
+        self._on_white_side: bool = mobile.on_white_side
 
     def _update_game(self) -> None:
-        if self._game.is_white_turn == self._plays_as_whites:
+        if self._game.is_white_turn == self._on_white_side:
             move = self._player.gen_move(self._game)
             sucess = self._game.play(move)
             if sucess:
@@ -33,9 +34,10 @@ if __name__ == '__main__':
     d = DaoADB()
     d.connect()
 
-    c = CoordinatesPixel4()
+    screenshot = d.screenshot()
+    board, center = Detector.get_board(screenshot)
 
-    m = MobileChess(d, c, True)
+    m = MobileChess(d, board, center)
 
     g = ChessGame()
 

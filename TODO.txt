@@ -15,7 +15,6 @@ player:
 img_process:
     -- 2 refatorizar as classes
     -- 2 mudar os nomes
-    -- 4 guardar as imgs com o fen str
     -- melhorar o VisualDebug() para mostrar tiles, etc... (que se chama visualizer)
 
 adb:

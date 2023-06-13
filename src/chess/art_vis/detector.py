@@ -1,20 +1,49 @@
 from typing import Optional, Tuple, List
 
 import cv2
+import numpy as np
 from numpy import ndarray
 
 from chess.art_vis.image_processing import ImageProcessing
-from chess.art_vis.visual_debug import VisualDebug
+from chess.util.move import Move
 from chess.util.position import Position
 
 
 class Detector:
+    PAWN = "pawn"
+    KNIGHT = "knight"
+    BISHOP = "bishop"
+    ROOK = "rook"
+    QUEEN = "queen"
+    KING = "king"
 
-    # --------- TODO ------------- fazer com q o detector não seja uma classe estática pq tem de guardar o is_white para poder sar as funções loc_to_pos e pos_to_loc
-    # TODO meter aqui as funções importantes do indentifier
+    W_PIECE_COLOR: int = 248
+    B_PIECE_COLOR: int = 84
+
+    W_TILE_COLOR: int = 235
+    B_TILE_COLOR: int = 133
+
+    W_TILE_SELECTED_COLOR: int = 131
+    B_TILE_SELECTED_COLOR: int = 187
+
+    BOARD_MARGIN_FRACT = 0.002
+    TILE_MARGIN_FRACT = 0.09
+
+    PIECE_NAME_TO_LETTER = {PAWN: "p", KNIGHT: "n", BISHOP: "b", ROOK: "r", QUEEN: "q", KING: "k"}
+
+    def __init__(self, initial_board: ndarray) -> None:
+        on_white_side = Detector.is_on_white_side(initial_board)
+        if on_white_side is None:
+            raise ValueError("Couldn't detect the board orientation")
+
+        self.__on_white_side: bool = on_white_side
+
+    @property
+    def on_white_side(self) -> bool:
+        return self.__on_white_side
 
     @staticmethod
-    def get_board(screenshot: ndarray) -> Optional[ndarray]:
+    def get_board(screenshot: ndarray) -> Tuple[Optional[ndarray], Optional[Tuple[int, int]]]:
         scn_gray = ImageProcessing.grayscale(screenshot)
         scn_w = screenshot.shape[1]
 
@@ -23,70 +52,176 @@ class Detector:
         eb_resized = cv2.resize(empty_board, size, interpolation=cv2.INTER_AREA)
         empty_board_gray = ImageProcessing.grayscale(eb_resized)
 
-        positions = ImageProcessing.locate(scn_gray, empty_board_gray, margin=2)
+        margin = int(screenshot.shape[1] * Detector.BOARD_MARGIN_FRACT)
+        positions = ImageProcessing.locate(scn_gray, empty_board_gray, margin=margin)
         if len(positions) == 1:
-            pos = positions[0]
-            board = ImageProcessing.crop(screenshot, 0, int(pos[1] - scn_w / 2), scn_w, int(pos[1] + scn_w / 2))
-            return board
-        return None
-
-    @staticmethod
-    def loc_to_pos(loc: Tuple[int, int], board_w: int) -> Position:
-        col = int(8 * loc[0] / board_w)
-        row = 7 - int(8 * loc[1] / board_w)
-        return Position(col, row)
-
-    @staticmethod
-    def pos_to_loc(pos: Position, board_w: int) -> Tuple[int, int]:
-        x = int(board_w / 2 + pos.col * board_w / 8)
-        y = int(board_w / 2 + (7 - pos.row) * board_w / 8)
-        return x, y
+            center = positions[0]
+            board = ImageProcessing.get_square(screenshot, center, screenshot.shape[1])
+            return board, center
+        return None, None
 
     @staticmethod
     def __get_piece_locations(board: ndarray, piece_name: str) -> List[Tuple[int, int]]:
         board_gray = ImageProcessing.grayscale(board)
+        board_grad = ImageProcessing.morph_grad(board_gray)
 
         piece = ImageProcessing.read_img(f"chess_components/m_{piece_name}.png")
         size = (int(board.shape[1] / 8), int(board.shape[1] / 8))
         piece_resized = cv2.resize(piece, size, interpolation=cv2.INTER_AREA)
         piece_gray = ImageProcessing.grayscale(piece_resized)
+        piece_grad = ImageProcessing.morph_grad(piece_gray)
 
-        return ImageProcessing.locate(board_gray, piece_gray, margin=12)
+        margin = int(board.shape[1] / 8 * Detector.TILE_MARGIN_FRACT)
+        return ImageProcessing.locate(board_grad, piece_grad, margin=margin)
 
     @staticmethod
-    def __get_piece_positions(board: ndarray, piece_name: str) -> List[Position]:
+    def is_on_white_side(board: ndarray) -> Optional[bool]:
+        positions = Detector.__get_piece_locations(board, Detector.KING)
+
+        lowest_pos = None
+        for i, pos in enumerate(positions):
+            if lowest_pos is None or pos[1] >= lowest_pos[1]:
+                lowest_pos = pos
+
+        if lowest_pos is None:
+            return None
+
+        tile = Detector.get_tile(board, lowest_pos)
+        return Detector.is_piece_white(tile)
+
+    @staticmethod
+    def get_tile(board: ndarray, center: Tuple[int, int]) -> ndarray:
+        margin = board.shape[1] / 8 * Detector.TILE_MARGIN_FRACT
+        tile_w = board.shape[1] / 8 - 2 * margin
+        return ImageProcessing.get_square(board, center, tile_w)
+
+    @staticmethod
+    def is_tile_empty(tile: ndarray) -> bool:
+        thresh_val = 20
+        gs = ImageProcessing.grayscale(tile)
+        std = np.std(gs)
+        return std < thresh_val
+
+    @staticmethod
+    def is_piece_white(piece_img: ndarray) -> Optional[bool]:
+        if Detector.is_tile_empty(piece_img):
+            return None
+
+        w_pixel_count = ImageProcessing.get_value_count(piece_img, Detector.W_PIECE_COLOR)
+        b_pixel_count = ImageProcessing.get_value_count(piece_img, Detector.B_PIECE_COLOR)
+        return w_pixel_count >= b_pixel_count
+
+    @staticmethod
+    def is_tile_selected(tile: ndarray) -> bool:
+        thresh_val = tile.shape[0] * tile.shape[1] * 0.02  # 2% of all tile pixels
+        w_sel_count = ImageProcessing.get_value_count(tile[:, :, 0], Detector.W_TILE_SELECTED_COLOR)
+        b_sel_count = ImageProcessing.get_value_count(tile[:, :, 2], Detector.B_TILE_SELECTED_COLOR)
+        return w_sel_count > thresh_val or b_sel_count > thresh_val
+
+    @staticmethod
+    def get_castle_move(pos1: Position, pos2: Position) -> Optional[Move]:
+        if pos1.row != pos2.row or pos1.row != 0 and pos1.row != 7:
+            return None
+
+        start_pos, other_pos = (pos1, pos2) if pos1.col == 4 else (pos2, pos1)
+        end_pos = Position(2 if other_pos.col == 0 else 6, start_pos.row)
+
+        return Move(start_pos, end_pos)
+
+    def pos_to_loc(self, pos: Position, board_w: int) -> Tuple[int, int]:
+        tile_w = board_w / 8
+        if not self.__on_white_side:
+            pos = -pos
+
+        x = int(tile_w / 2 + tile_w * pos.col)
+        y = int(tile_w / 2 + tile_w * (7 - pos.row))
+        return x, y
+
+    def loc_to_pos(self, loc: Tuple[int, int], board_w: int) -> Position:
+        col = int(8 * loc[0] / board_w)
+        row = 7 - int(8 * loc[1] / board_w)
+        pos = Position(col, row)
+
+        if not self.__on_white_side:
+            pos = -pos
+        return pos
+
+    def get_piece_positions(self, board: ndarray, piece_name: str) -> List[Position]:
+        if piece_name not in Detector.PIECE_NAME_TO_LETTER.keys():
+            raise ValueError("Piece name is not valid")
+
         locations = Detector.__get_piece_locations(board, piece_name)
-        positions = [Detector.loc_to_pos(loc, board.shape[1]) for loc in locations]
+        positions = [self.loc_to_pos(loc, board.shape[1]) for loc in locations]
         return positions
 
-    @staticmethod
-    def get_pawns_positions(board: ndarray) -> List[Position]:
-        return Detector.__get_piece_positions(board, "pawn")
+    def get_selected_move(self, board: ndarray) -> Optional[Move]:
+        start_pos = None
+        end_pos = None
+        for row_idx in range(8):
+            for col_idx in range(8):
+                pos = Position(col_idx, row_idx)
+                loc = self.pos_to_loc(pos, board.shape[1])
+                tile = Detector.get_tile(board, loc)
 
-    @staticmethod
-    def get_knights_positions(board: ndarray) -> List[Position]:
-        return Detector.__get_piece_positions(board, "knight")
+                if Detector.is_tile_selected(tile):
+                    if Detector.is_tile_empty(tile):
+                        if start_pos is not None:
+                            # Two empty selected tiles found, it's a castle movve
+                            return Detector.get_castle_move(start_pos, pos)
+                        else:
+                            start_pos = pos
+                    else:
+                        end_pos = pos
 
-    @staticmethod
-    def get_bishops_positions(board: ndarray) -> List[Position]:
-        return Detector.__get_piece_positions(board, "bishop")
+                    if start_pos is not None and end_pos is not None:
+                        break
+            if start_pos is not None and end_pos is not None:
+                break
 
-    @staticmethod
-    def get_rooks_positions(board: ndarray) -> List[Position]:
-        return Detector.__get_piece_positions(board, "rook")
+        if start_pos is None or end_pos is None:
+            return None
 
-    @staticmethod
-    def get_queens_positions(board: ndarray) -> List[Position]:
-        return Detector.__get_piece_positions(board, "queen")
+        return Move(start_pos, end_pos)
 
-    @staticmethod
-    def get_kings_positions(board: ndarray) -> List[Position]:
-        return Detector.__get_piece_positions(board, "king")
+    def save_fen_str(self, board_img: ndarray) -> None:
+        fen_str = self.gen_fen_str(board_img)
+        fen_str = fen_str.replace("/", ";")
+        filename = f"fen_strings/{fen_str}.png"
+        alreadyExists = ImageProcessing.read_img(filename) is None
+        if alreadyExists:
+            ImageProcessing.write_img(filename, board_img)
 
+    def gen_fen_str(self, board: ndarray) -> str:
+        pos_to_piece = {}
 
-# if __name__ == '__main__':
-#     scrn_img = ImageProcessing.read_img("screenshots/Screenshot.png")
-#     b_img = Detector.get_board(scrn_img)
-#     positions = Detector.get_pawns_positions(b_img)
-#     for pos in positions:
-#         print(pos.coord)
+        board_w = board.shape[1]
+
+        for piece_name in Detector.PIECE_NAME_TO_LETTER.keys():
+            letter = Detector.PIECE_NAME_TO_LETTER[piece_name]
+
+            piece_positions = self.get_piece_positions(board, piece_name)
+            for pos in piece_positions:
+                loc = self.pos_to_loc(pos, board_w)
+                tile = Detector.get_tile(board, loc)
+                is_white = Detector.is_piece_white(tile)
+                letter_to_add = letter.upper() if is_white else letter
+                pos_to_piece[pos] = letter_to_add
+
+        fen_rows = []
+        for row_idx in range(7, -1, -1):
+            fen_row = ""
+            tile_skips = 0
+            for col_idx in range(8):
+                pos = Position(col_idx, row_idx)
+                if pos not in pos_to_piece.keys():
+                    tile_skips += 1
+                else:
+                    if tile_skips > 0:
+                        fen_row += str(tile_skips)
+                        tile_skips = 0
+                    fen_row += pos_to_piece[pos]
+            if tile_skips > 0:
+                fen_row += str(tile_skips)
+            fen_rows.append(fen_row)
+
+        return "/".join(fen_rows)
