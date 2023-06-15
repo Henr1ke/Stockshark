@@ -28,17 +28,12 @@ class Piece(ABC):
     def __repr__(self) -> str:
         return self.__symbol
 
-    def get_pos(self, board) -> Position:
-        if self not in board.pieces_pos.keys():
-            raise ChessException("The board does not contain the piece")
-        return board.pieces_pos[self]
-
     @abstractmethod
     def gen_moves(self, game) -> List[Move]:
         pass
 
     def _gen_slider_moves(self, board, is_diag: bool) -> List[Move]:
-        start_pos = self.get_pos(board)
+        start_pos = board.pieces_pos[self]
         moves = []
 
         directions = ((1, 1), (1, -1), (-1, -1), (-1, 1)) if is_diag else ((0, 1), (1, 0), (0, -1), (-1, 0))
@@ -61,7 +56,7 @@ class Piece(ABC):
         return moves
 
     def _gen_inc_moves(self, board, incs: List[Tuple[int, int]]) -> List[Move]:
-        start_pos = self.get_pos(board)
+        start_pos = board.pieces_pos[self]
         moves = []
 
         for inc in incs:

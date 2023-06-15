@@ -26,7 +26,8 @@ class ChessGame:
         self.__halfclock: int = int(fen_str_fields[4])
         self.__fullclock: int = int(fen_str_fields[5])
         self.__played_moves: List[Move] = []
-        self.__legal_moves: List[Move] = self.__gen_legal_moves(test_checks=False)
+        # self.__legal_moves: List[Move] = self.__gen_legal_moves(test_checks=False)
+        self.__legal_piece_moves: Dict[Piece, List[Move]] = dict()
         self.__state: State = State.IN_PROGRESS
 
     @property
@@ -57,9 +58,9 @@ class ChessGame:
     def played_moves(self) -> List[Move]:
         return copy(self.__played_moves)
 
-    @property
-    def legal_moves(self) -> List[Move]:
-        return copy(self.__legal_moves)
+    # @property
+    # def legal_moves(self) -> List[Move]:
+    #     return copy(self.__legal_moves)
 
     @property
     def state(self) -> State:
@@ -69,19 +70,38 @@ class ChessGame:
         cls = self.__class__
         game = cls.__new__(cls)
         for key, value in self.__dict__.items():
-            setattr(game, key, copy(value))
+            if key == "_Game__legal_piece_moves":
+                legal_piece_moves = {piece: copy(moves) for piece, moves in self.__legal_piece_moves.items()}
+                setattr(game, key, legal_piece_moves)
+            else:
+                setattr(game, key, copy(value))
         return game
 
-    def __gen_legal_moves(self, test_checks: bool = True) -> List[Move]:
-        legal_moves = []
-        for piece, pos in self.__board.pieces_pos.items():
-            if piece.is_white == self.__is_white_turn:
-                moves = piece.gen_moves(self)
-                if not test_checks:
-                    legal_moves += moves
-                else:
-                    legal_moves += [move for move in moves if not ChessRules.leaves_king_under_atk(self, move)]
-        return legal_moves
+    # def __gen_legal_moves(self, test_checks: bool = True) -> List[Move]:
+    #     legal_moves = []
+    #     for piece, pos in self.__board.pieces_pos.items():
+    #         if piece.is_white == self.__is_white_turn:
+    #             moves = piece.gen_moves(self)
+    #             if not test_checks:
+    #                 legal_moves += moves
+    #             else:
+    #                 legal_moves += [move for move in moves if not ChessRules.leaves_king_under_atk(self, move)]
+    #     return legal_moves
+
+    def get_legal_piece_moves(self, piece: Piece) -> List[Move]:
+        if piece not in self.__legal_piece_moves:
+            moves = piece.gen_moves(self)
+
+            legal_moves = [move for move in moves if not ChessRules.leaves_king_under_atk(self, move)]
+
+            # Updates the dictionary
+            self.__legal_piece_moves[piece] = legal_moves
+
+        return self.__legal_piece_moves[piece]
+
+    def get_available_pieces_pos(self) -> Dict[Piece, Position]:
+        return {piece: pos for piece, pos in self.board.pieces_pos.items()
+                if piece.is_white is self.is_white_turn and len(self.get_legal_piece_moves(piece)) > 0}
 
     def gen_fen_str(self) -> str:
         fen_str_fields = [
@@ -133,11 +153,23 @@ class ChessGame:
                 self.__board.make_move(Move(start_pos, end_pos, piece))
 
     def __get_new_state(self) -> State:
-        if len(self.__legal_moves) == 0:
+        can_make_move = False
+        for p in self.__board.pieces_pos.keys():
+            if p.is_white is self.__is_white_turn and len(self.get_legal_piece_moves(p)) > 0:
+                can_make_move = True
+                break
+
+        if not can_make_move:
             if ChessRules.king_is_under_atk(self, self.__is_white_turn):
                 return State.WIN_B if self.__is_white_turn else State.WIN_W
             else:
                 return State.DRAW
+
+        # if len(self.__legal_moves) == 0:
+        #     if ChessRules.king_is_under_atk(self, self.__is_white_turn):
+        #         return State.WIN_B if self.__is_white_turn else State.WIN_W
+        #     else:
+        #         return State.DRAW
 
         elif self.__halfclock >= 100:
             return State.DRAW
@@ -145,7 +177,10 @@ class ChessGame:
         return State.IN_PROGRESS
 
     def play(self, move: Move, is_test=False) -> bool:
-        if not is_test and move not in self.__legal_moves:
+        # if not is_test and move not in self.__legal_moves:
+        #     return False
+
+        if not is_test and move not in self.get_legal_piece_moves(move.piece):
             return False
 
         should_reset_halfclock = move.eaten_piece is not None
@@ -175,13 +210,16 @@ class ChessGame:
             self.__fullclock += 1
 
         if not is_test:
-            # Update self.__legal_moves
-            self.__legal_moves = self.__gen_legal_moves()
+            # # Update self.__legal_moves
+            # self.__legal_moves = self.__gen_legal_moves()
 
             # Update self.__state
             self.__state = self.__get_new_state()
 
         # Update self.__moves_played
         self.__played_moves.append(move)
+
+        # Reset self.__possible_poss
+        self.__legal_piece_moves.clear()
 
         return True

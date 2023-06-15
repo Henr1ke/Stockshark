@@ -22,7 +22,11 @@ class PlayerMinMax(Player):
         return value
 
     def minmax(self, curr_depth: int, max_depth: int, game: ChessGame) -> Tuple[float, Move]:
-        moves = game.legal_moves
+        # moves = game.legal_moves
+        moves = []
+        pieces_pos = game.get_available_pieces_pos()
+        for piece in pieces_pos.keys():
+            moves += game.get_legal_piece_moves(piece)
 
         best_val, best_move = -math.inf if game.is_white_turn else math.inf, None
         for move in moves:
@@ -47,7 +51,11 @@ class PlayerMinMax(Player):
 
     def minmax_ab(self, curr_depth: int, max_depth: int, game: ChessGame, alpha: float = -math.inf,
                   beta: float = math.inf) -> Tuple[float, Move]:
-        moves = game.legal_moves
+        # moves = game.legal_moves
+        moves = []
+        pieces_pos = game.get_available_pieces_pos()
+        for piece in pieces_pos.keys():
+            moves += game.get_legal_piece_moves(piece)
 
         best_val, best_move = -math.inf if game.is_white_turn else math.inf, None
         for move in moves:
@@ -77,7 +85,11 @@ class PlayerMinMax(Player):
 
     def minmax_ab_sorted(self, curr_depth: int, max_depth: int, game: ChessGame, alpha: float = -math.inf,
                          beta: float = math.inf) -> Tuple[float, Move]:
-        moves = game.legal_moves
+        # moves = game.legal_moves
+        moves = []
+        pieces_pos = game.get_available_pieces_pos()
+        for piece in pieces_pos.keys():
+            moves += game.get_legal_piece_moves(piece)
 
         moves.sort(reverse=not game.is_white_turn)
 
