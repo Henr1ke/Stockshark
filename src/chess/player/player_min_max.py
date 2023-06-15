@@ -91,48 +91,33 @@ class PlayerMinMax(Player):
 
 
 if __name__ == '__main__':
-    # # A simple Python3 program to find
-    # # maximum score that
-    # # maximizing player can get
-    # import math
-    #
-    #
-    # def minimax(curDepth, nodeIndex, maxTurn, scores, targetDepth):
-    #
-    #     # base case : targetDepth reached
-    #     if curDepth == targetDepth:
-    #         return scores[nodeIndex]
-    #
-    #     val1 = minimax(curDepth + 1, nodeIndex * 2, not maxTurn, scores, targetDepth)
-    #     val2 = minimax(curDepth + 1, nodeIndex * 2 + 1, not maxTurn, scores, targetDepth)
-    #
-    #     return max(val1, val2) if maxTurn else min(val1, val2)
-    #
-    #
-    # # Driver code
-    # scores = [3, 5, 2, 9, 12, 5, 23, 23]
-    #
-    # treeDepth = math.log(len(scores), 2)
-    #
-    # print("The optimal value is : ", end="")
-    # print(minimax(0, 0, True, scores, treeDepth))
-
-    # This code is contributed
-    # by rootshadow
-
     game = ChessGame("1r2r1k1/5ppp/8/q1b3n1/3P3P/2P2BP1/PPN2P2/3KQ2R w - - 0 1")
 
     vis = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
     vis.show(game)
 
     p_mm = PlayerMinMax()
-    depth = 3
+    depth = 2
 
     ti = time.time()
-    # val, move = p_mm.minmax(0, depth, game)
+    val, move = p_mm.minmax_ab_sorted(0, depth, game)
+    tf = time.time()
+    print("minmax alpha beta sorting moves:")
+    print(f"result: {val, move}")
+    print(f"duration: {round(tf - ti, 3)}s")
+    print()
+
+    ti = time.time()
     val, move = p_mm.minmax_ab(0, depth, game)
     tf = time.time()
+    print("minmax alpha beta:")
+    print(f"result: {val, move}")
+    print(f"duration: {round(tf - ti, 3)}s")
+    print()
 
-    print(val)
-    print(move)
-    print(tf - ti)
+    ti = time.time()
+    val, move = p_mm.minmax(0, depth, game)
+    tf = time.time()
+    print("basic minmax:")
+    print(f"result: {val, move}")
+    print(f"duration: {round(tf - ti, 3)}s")
