@@ -26,7 +26,3 @@ class ChessRules:
         game_copy = copy(game)
         game_copy.play(move, is_test=True)
         return ChessRules.king_is_under_atk(game_copy, not game_copy.is_white_turn)
-        # game.play(move, is_test=True)
-        # is_under_atk = ChessRules.king_is_under_atk(game, not game.is_white_turn)
-        # game.unmake_move()
-        # return is_under_atk

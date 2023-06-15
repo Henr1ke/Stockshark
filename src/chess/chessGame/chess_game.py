@@ -28,7 +28,6 @@ class ChessGame:
         self.__played_moves: List[Move] = []
         self.__legal_moves: List[Move] = self.__gen_legal_moves(test_checks=False)
         self.__state: State = State.IN_PROGRESS
-        # self.__last_move_vars: Optional[Tuple[str, Position, int, int, List[Move]]] = None
 
     @property
     def board(self) -> Board:
@@ -70,13 +69,6 @@ class ChessGame:
         cls = self.__class__
         game = cls.__new__(cls)
         for key, value in self.__dict__.items():
-            # if key == "_Board__last_move_vars":
-            #     last_move_vars = None
-            #     if self.__last_move_vars is not None:
-            #         last_move_vars = (copy(value) for value in self.__last_move_vars)
-            #     setattr(game, key, last_move_vars)
-            # else:
-            #     setattr(game, key, copy(value))
             setattr(game, key, copy(value))
         return game
 
@@ -156,11 +148,7 @@ class ChessGame:
         if not is_test and move not in self.__legal_moves:
             return False
 
-        # # Update self.__last_move_vars
-        # self.__last_move_vars = (self.__castlings, self.__en_passant_target, self.__halfclock, self.__fullclock,
-        #                          copy(self.__legal_moves))
-
-        should_reset_halfclock = move.eaten_piece is not None  # TODO mudar para move.eaten_piece
+        should_reset_halfclock = move.eaten_piece is not None
 
         # Update self.__board
         self.__board.make_move(move)
@@ -197,19 +185,3 @@ class ChessGame:
         self.__played_moves.append(move)
 
         return True
-
-    # def unmake_move(self) -> bool:
-    #     if len(self.__played_moves) == 0:
-    #         return False
-    #
-    #     move = self.__played_moves.pop(-1)
-    #
-    #     self.__board.unmake_move(move)
-    #
-    #     self.__is_white_turn = not self.__is_white_turn
-    #
-    #     self.__castlings, self.__en_passant_target, self.__halfclock, self.__fullclock, self.__legal_moves = self.__last_move_vars
-    #
-    #     self.__state = State.IN_PROGRESS
-    #
-    #     return True

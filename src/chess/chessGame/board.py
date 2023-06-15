@@ -18,6 +18,7 @@ from chess.util.position import Position
 class Board:
     CHAR_TO_PIECE_CLASS: Dict[str, Type[Piece]] = {"p": Pawn, "n": Knight, "b": Bishop, "r": Rook, "q": Queen,
                                                    "k": King}
+
     def __init__(self, fen_str: str = "8/8/8/8/8/8/8/8") -> None:
 
         self.__tiles: List[List[Optional[Piece]]] = [[None] * 8 for _ in range(8)]
@@ -82,20 +83,6 @@ class Board:
         self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = move.piece
 
         self.__pieces_pos[move.piece] = move.end_pos
-
-    # def unmake_move(self, move: Move) -> None:
-    #     if move.piece != self[move.end_pos]:
-    #         raise ChessException("The moved piece does not exist or is not valid")
-    #
-    #     self.__tiles[8 - 1 - move.start_pos.row][move.start_pos.col] = move.piece
-    #     self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = None
-    #
-    #     self.__pieces_pos[move.piece] = move.start_pos
-    #
-    #     if move.eaten_piece is not None:
-    #         self.add_piece(move.eaten_piece, move.end_pos)
-    #
-    #     return move.piece
 
     def clear_pos(self, *pos_args) -> Optional[Piece]:
         pos = Position(*pos_args)
