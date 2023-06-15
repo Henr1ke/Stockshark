@@ -2,31 +2,33 @@ from typing import List
 
 from chess.piece.piece import Piece
 from chess.util.chess_exception import ChessException
-from chess.util.position import Position
+from chess.util.move import Move
 
 
 class Pawn(Piece):
 
     def __init__(self, is_white: bool):
-        super().__init__(is_white, 100)
+        super().__init__(is_white, 100, "♟", "♙")
 
-    def gen_positions(self, game) -> List[Position]:
+    def gen_moves(self, game) -> List[Move]:
         board = game.board
         start_pos = self.get_pos(board)
-        positions = []
+        moves = []
 
         try:
             inc = (0, 1) if self.is_white else (0, -1)
             end_pos = start_pos + inc
             if board[end_pos] is None:
                 # Corresponding to one step forward
-                positions.append(end_pos)
+                move = Move(start_pos, end_pos, self)
+                moves.append(move)
 
                 inc = (0, 2) if self.is_white else (0, -2)
                 end_pos = start_pos + inc
                 if start_pos.row == (1 if self.is_white else 6) and board[end_pos] is None:
                     # Corresponding to two steps forward
-                    positions.append(end_pos)
+                    move = Move(start_pos, end_pos, self)
+                    moves.append(move)
         except ChessException:
             pass
 
@@ -34,11 +36,21 @@ class Pawn(Piece):
         for inc in increments:
             try:
                 end_pos = start_pos + inc
+
                 piece = board[end_pos]
-                if (piece is not None and piece.is_white is not self.is_white) or end_pos == game.en_passant_target:
-                    # Corresponding to En Passant or eating a piece in the diagonal
-                    positions.append(end_pos)
+                if piece is not None and piece.is_white is not self.is_white:
+                    # Corresponding eating a piece in the diagonal
+                    move = Move(start_pos, end_pos, self, piece)
+                    moves.append(move)
+
+                elif end_pos == game.en_passant_target:
+                    # Corresponding to En Passant
+                    piece_pos = game.en_passant_target + ((0, -1) if self.is_white else (0, 1))
+                    piece = board[piece_pos]
+                    move = Move(start_pos, end_pos, self, piece)
+                    moves.append(move)
+
             except ChessException:
                 pass
 
-        return positions
+        return moves

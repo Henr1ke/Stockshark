@@ -36,7 +36,7 @@ class PlayerMinMax(Player):
         moves = []
         pieces_pos = game.get_available_pieces_pos()
         for piece, start_pos in pieces_pos.items():
-            positions = game.get_legal_piece_pos(piece)
+            positions = game.get_legal_piece_moves(piece)
             for end_pos in positions:
                 move = Move(start_pos, end_pos)
                 game_copy = copy(game)
@@ -58,7 +58,7 @@ class PlayerMinMax(Player):
         moves = []
         pieces_pos = game.get_available_pieces_pos()
         for piece, start_pos in pieces_pos.items():
-            positions = game.get_legal_piece_pos(piece)
+            positions = game.get_legal_piece_moves(piece)
             moves += [Move(start_pos, end_pos) for end_pos in positions]
 
         # moves.sort(reverse=game.is_white_turn)

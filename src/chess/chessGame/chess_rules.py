@@ -4,24 +4,20 @@ from chess.util.move import Move
 
 
 class ChessRules:
-    @staticmethod
-    def is_legal_move(game, move: Move) -> bool:
-        piece = game.board[move.start_pos]
-        return piece is not None and piece.is_white is game.is_white_turn and \
-            move.end_pos in game.get_legal_piece_pos(piece)
 
     @staticmethod
-    def king_is_under_atk(game, is_white) -> bool:
+    def king_is_under_atk(game, is_white: bool) -> bool:
         board = game.board
 
-        if is_white not in board.kings_pos.keys():
+        if is_white not in board.kings.keys():
             return False
-        king_pos = board.kings_pos[is_white]
 
-        atk_pieces_pos = {piece: pos for piece, pos in board.pieces_pos.items() if piece.is_white is not is_white}
+        king = board.kings[is_white]
+        atk_pieces = [piece for piece in board.pieces_pos.keys() if piece.is_white is not is_white]
 
-        for atk_piece in atk_pieces_pos.keys():
-            if king_pos in atk_piece.gen_positions(game):
+        for atk_piece in atk_pieces:
+            moves = atk_piece.gen_moves(game)
+            if king in [move.eaten_piece for move in moves]:
                 return True
         return False
 
@@ -29,4 +25,8 @@ class ChessRules:
     def leaves_king_under_atk(game, move: Move) -> bool:
         game_copy = copy(game)
         game_copy.play(move, is_test=True)
-        return ChessRules.king_is_under_atk(game_copy, game.is_white_turn)
+        return ChessRules.king_is_under_atk(game_copy, not game_copy.is_white_turn)
+        # game.play(move, is_test=True)
+        # is_under_atk = ChessRules.king_is_under_atk(game, not game.is_white_turn)
+        # game.unmake_move()
+        # return is_under_atk

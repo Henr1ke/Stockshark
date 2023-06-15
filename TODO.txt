@@ -3,6 +3,9 @@ Prioridades: 1 -> pouca .... 5 -> muita
 -- 4 Criar um objeto geral que apenas tem o metodo execute e faz todo o processo da app
 -- os time.sleeps() entre taps são feitos dentro desse objeto geral e não nas classes DaoADB / MenuNavigator / MobileChess
 
+sim:
+    -- 2 refatorizar visualizer para o parametro de entrada ser o tipo de charset
+
 chessGame:
     -- 5 Alterar o sistema todo para as peças retornarem moves em vez de possible positions
     -- 1 promotion tá hardcoded para Queen
@@ -13,6 +16,7 @@ player:
     -- 3 refatorizar os behaviours talvez como em IASA
 
 art_vis:
+    -- 5 mudar o return do find_board
     -- 1 fazer um menuDetector para navegar nos botoes do menu
 
 adb:

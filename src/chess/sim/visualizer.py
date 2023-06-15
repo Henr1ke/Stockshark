@@ -12,7 +12,7 @@ from chess.util.constants import FILE_LETTERS
 
 
 class Visualizer:
-    W_PIECE_CHARSET_LETTER: Dict[Type[Piece], str] = {
+    W_LETTERS: Dict[Type[Piece], str] = {
         Pawn: "P",
         Knight: "N",
         Bishop: "B",
@@ -20,7 +20,7 @@ class Visualizer:
         Queen: "Q",
         King: "K"
     }
-    B_PIECE_CHARSET_LETTER: Dict[Type[Piece], str] = {
+    B_LETTERS: Dict[Type[Piece], str] = {
         Pawn: "p",
         Knight: "n",
         Bishop: "b",
@@ -29,15 +29,15 @@ class Visualizer:
         King: "k"
     }
 
-    W_PIECE_CHARSET_SYMBOL: Dict[Type[Piece], str] = {
+    W_SYMBOLS: Dict[Type[Piece], str] = {
         Pawn: "♟",
-        Knight: "♛",
-        Bishop: "♜",
-        Rook: "♝",
-        Queen: "♞",
+        Knight: "♞",
+        Bishop: "♝",
+        Rook: "♜",
+        Queen: "♛",
         King: "♚︎"
     }
-    B_PIECE_CHARSET_SYMBOL: Dict[Type[Piece], str] = {
+    B_SYMBOLS: Dict[Type[Piece], str] = {
         Pawn: "♙",
         Knight: "♘",
         Bishop: "♗",
@@ -46,9 +46,18 @@ class Visualizer:
         King: "♔"
     }
 
-    def __init__(self, w_piece_charset: Dict[Type[Piece], str], b_piece_charset: Dict[Type[Piece], str]) -> None:
-        self.__w_piece_charset = w_piece_charset
-        self.__b_piece_charset = b_piece_charset
+    CHARSET_SYMBOL = 0
+    CHARSET_LETTER = 1
+
+    def __init__(self, charset: int) -> None:
+        if charset == Visualizer.CHARSET_LETTER:
+            self.__w_piece_charset = Visualizer.W_LETTERS
+            self.__b_piece_charset = Visualizer.B_LETTERS
+        elif charset == Visualizer.CHARSET_SYMBOL:
+            self.__w_piece_charset = Visualizer.W_SYMBOLS
+            self.__b_piece_charset = Visualizer.B_SYMBOLS
+        else:
+            raise ValueError("The charset is not valid")
 
     def show(self, game) -> None:
         print()

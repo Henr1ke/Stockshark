@@ -16,7 +16,7 @@ class EatBehaviour(Behaviour):
         board = game.board
 
         for piece, start_pos in pieces_pos.items():
-            piece_pos = game.get_legal_piece_pos(piece)
+            piece_pos = game.get_legal_piece_moves(piece)
             for end_pos in piece_pos:
                 attacked_piece = board[end_pos]
                 if attacked_piece is not None:

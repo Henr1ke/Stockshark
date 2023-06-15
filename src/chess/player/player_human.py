@@ -31,7 +31,7 @@ class PlayerHuman(Player):
     def get_end_pos(game: ChessGame, start_pos: Position) -> Position:
         board = game.board
         piece = board[start_pos]
-        positions = game.get_legal_piece_pos(piece)
+        positions = game.get_legal_piece_moves(piece)
 
         while True:
             try:

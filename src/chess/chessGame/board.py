@@ -18,7 +18,7 @@ class Board:
 
         self.__tiles: List[List[Optional[Piece]]] = [[None] * 8 for _ in range(8)]
         self.__pieces_pos: Dict[Piece, Position] = dict()
-        self.__kings_pos: Dict[bool, Position] = dict()
+        self.__kings: Dict[bool, King] = dict()
 
         for row, fen_substr in enumerate(fen_str.split("/")[::-1]):
             col = 0
@@ -38,7 +38,7 @@ class Board:
         if isinstance(pos_args[0], tuple):
             pos_args = pos_args[0]
         pos = Position(*pos_args)
-        return self.__tiles[8 - 1 - pos.row][pos.col]
+        return self.__tiles[7 - pos.row][pos.col]
 
     def __copy__(self) -> Board:
         cls = self.__class__
@@ -54,7 +54,7 @@ class Board:
     def add_piece(self, piece: Piece, *pos_args) -> None:
         if not isinstance(piece, Piece):
             raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")
-        if isinstance(piece, King) and piece.is_white in self.__kings_pos.keys():
+        if isinstance(piece, King) and piece.is_white in self.__kings.keys():
             raise ChessException(f"The board already contains a king of that color, it is not allowed to add another")
 
         pos = Position(*pos_args)
@@ -62,36 +62,45 @@ class Board:
             self.clear_pos(pos)
 
         if isinstance(piece, King):
-            self.__kings_pos[piece.is_white] = pos
+            self.__kings[piece.is_white] = piece
         self.__pieces_pos[piece] = pos
 
         self.__tiles[8 - 1 - pos.row][pos.col] = piece
 
-    def make_move(self, move: Move) -> Piece:
-        piece = self[move.start_pos]
-        if not isinstance(piece, Piece):
-            raise ChessException("There is no piece on the move starting position")
+    def make_move(self, move: Move) -> None:
+        if move.piece != self[move.start_pos]:
+            raise ChessException("The moved piece does not exist or is not valid")
 
         if self[move.end_pos] is not None:
             self.clear_pos(move.end_pos)
 
-        if isinstance(piece, King):
-            self.__kings_pos[piece.is_white] = move.end_pos
-        self.__pieces_pos[piece] = move.end_pos
-
         self.__tiles[8 - 1 - move.start_pos.row][move.start_pos.col] = None
-        self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = piece
+        self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = move.piece
 
-        return piece
+        self.__pieces_pos[move.piece] = move.end_pos
 
-    def clear_pos(self, *pos_args) -> None:
+    def unmake_move(self, move: Move) -> None:
+        if move.piece != self[move.end_pos]:
+            raise ChessException("The moved piece does not exist or is not valid")
+
+        self.__tiles[8 - 1 - move.start_pos.row][move.start_pos.col] = move.piece
+        self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = None
+
+        self.__pieces_pos[move.piece] = move.start_pos
+
+        if move.eaten_piece is not None:
+            self.add_piece(move.eaten_piece, move.end_pos)
+
+        return move.piece
+
+    def clear_pos(self, *pos_args) -> Optional[Piece]:
         pos = Position(*pos_args)
         piece = self.__tiles[8 - 1 - pos.row][pos.col]
 
         if piece is not None:
             self.__pieces_pos.pop(piece, None)
             if isinstance(piece, King):
-                self.__kings_pos.pop(piece.is_white, None)
+                self.__kings.pop(piece.is_white, None)
             self.__tiles[8 - 1 - pos.row][pos.col] = None
 
         return piece
@@ -101,8 +110,8 @@ class Board:
         return copy(self.__pieces_pos)
 
     @property
-    def kings_pos(self) -> Dict[bool, Position]:
-        return copy(self.__kings_pos)
+    def kings(self) -> Dict[bool, King]:
+        return copy(self.__kings)
 
     def gen_fen_str(self) -> str:
         piece_class_to_char = {piece_class: char for char, piece_class in CHAR_TO_PIECE_CLASS.items()}
@@ -127,41 +136,3 @@ class Board:
             fen_substrs.append(fen_substr)
 
         return "/".join(fen_substrs)
-
-
-if __name__ == '__main__':
-    v = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
-    b = Board()
-
-    b.add_piece(Pawn(True), "b3")
-    b.add_piece(King(False), 0, 0)
-    b.add_piece(Pawn(False), Position(4, 7))
-    v.print_board(b)
-    print()
-
-    print(b["b3"])
-    print(b[0, 0])
-    print(b[Position(4, 7)])
-    print()
-
-    bc = copy(b)
-    print(b["b3"] == bc["b3"])
-    print()
-
-    sp = Position("b3")
-    ep = sp + (2, 0)
-    bc.make_move(Move(sp, ep))
-    v.print_board(b)
-    v.print_board(bc)
-    print({key: str(value) for key, value in b.kings_pos.items()})
-    print({key: str(value) for key, value in bc.pieces_pos.items()})
-    print()
-
-    print(b.gen_fen_str())
-    print()
-
-    b.clear_pos("b3")
-    b.clear_pos(0, 0)
-    b.clear_pos(Position(4, 7))
-    v.print_board(b)
-    print()

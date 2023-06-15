@@ -1,16 +1,16 @@
 from typing import List
 
 from chess.piece.piece import Piece
-from chess.util.position import Position
+from chess.util.move import Move
 
 
 class Queen(Piece):
 
     def __init__(self, is_white: bool):
-        super().__init__(is_white, 900)
+        super().__init__(is_white, 900, "♛","♕")
 
-    def gen_positions(self, game) -> List[Position]:
+    def gen_moves(self, game) -> List[Move]:
         board = game.board
-        position = self._gen_slider_positions(board, is_diag=True)
-        position += self._gen_slider_positions(board, is_diag=False)
-        return position
+        moves = self._gen_slider_moves(board, is_diag=True)
+        moves += self._gen_slider_moves(board, is_diag=False)
+        return moves
