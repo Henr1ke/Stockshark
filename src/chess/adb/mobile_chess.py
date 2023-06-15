@@ -33,10 +33,11 @@ class MobileChess:
     def get_adv_move(self, game: ChessGame) -> Optional[Move]:
         while True:
             screenshot = self.__dao_adb.screenshot()
-            board, _ = Detector.get_board(screenshot)
-            if board is None:
+            board_info = Detector.find_board(screenshot)
+            if board_info is None:
                 return None
 
+            board, _ = board_info
             selected_move = self.__detector.get_selected_move(board)
             if selected_move is not None:
                 played_moves = game.played_moves

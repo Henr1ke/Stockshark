@@ -1,19 +1,23 @@
 from __future__ import annotations
 
 from copy import copy
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Type
 
-from chess.piece.constants import CHAR_TO_PIECE_CLASS
+from chess.piece.bishop import Bishop
+from chess.piece.knight import Knight
 from chess.piece.pawn import Pawn
 from chess.piece.piece import Piece
 from chess.piece.king import King
-from chess.sim.visualizer import Visualizer
+from chess.piece.queen import Queen
+from chess.piece.rook import Rook
 from chess.util.chess_exception import ChessException
 from chess.util.move import Move
 from chess.util.position import Position
 
 
 class Board:
+    CHAR_TO_PIECE_CLASS: Dict[str, Type[Piece]] = {"p": Pawn, "n": Knight, "b": Bishop, "r": Rook, "q": Queen,
+                                                   "k": King}
     def __init__(self, fen_str: str = "8/8/8/8/8/8/8/8") -> None:
 
         self.__tiles: List[List[Optional[Piece]]] = [[None] * 8 for _ in range(8)]
@@ -27,7 +31,7 @@ class Board:
                     col += int(char)
 
                 else:
-                    piece_class = CHAR_TO_PIECE_CLASS[char.lower()]
+                    piece_class = Board.CHAR_TO_PIECE_CLASS[char.lower()]
                     is_white = char.isupper()
                     piece = piece_class(is_white)
 
@@ -79,19 +83,19 @@ class Board:
 
         self.__pieces_pos[move.piece] = move.end_pos
 
-    def unmake_move(self, move: Move) -> None:
-        if move.piece != self[move.end_pos]:
-            raise ChessException("The moved piece does not exist or is not valid")
-
-        self.__tiles[8 - 1 - move.start_pos.row][move.start_pos.col] = move.piece
-        self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = None
-
-        self.__pieces_pos[move.piece] = move.start_pos
-
-        if move.eaten_piece is not None:
-            self.add_piece(move.eaten_piece, move.end_pos)
-
-        return move.piece
+    # def unmake_move(self, move: Move) -> None:
+    #     if move.piece != self[move.end_pos]:
+    #         raise ChessException("The moved piece does not exist or is not valid")
+    #
+    #     self.__tiles[8 - 1 - move.start_pos.row][move.start_pos.col] = move.piece
+    #     self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = None
+    #
+    #     self.__pieces_pos[move.piece] = move.start_pos
+    #
+    #     if move.eaten_piece is not None:
+    #         self.add_piece(move.eaten_piece, move.end_pos)
+    #
+    #     return move.piece
 
     def clear_pos(self, *pos_args) -> Optional[Piece]:
         pos = Position(*pos_args)
@@ -114,7 +118,7 @@ class Board:
         return copy(self.__kings)
 
     def gen_fen_str(self) -> str:
-        piece_class_to_char = {piece_class: char for char, piece_class in CHAR_TO_PIECE_CLASS.items()}
+        piece_class_to_char = {piece_class: char for char, piece_class in Board.CHAR_TO_PIECE_CLASS.items()}
 
         fen_substrs = []
 

@@ -85,13 +85,6 @@ class ChessGame:
         for piece, pos in self.__board.pieces_pos.items():
             if piece.is_white == self.__is_white_turn:
                 moves = piece.gen_moves(self)
-                # if not test_checks:
-                #     legal_moves += moves
-                # else:
-                #     only_legal_moves = [move for move in moves if not ChessRules.leaves_king_under_atk(self, move)]
-                #     only_legal_moves = [move for move in moves if not ChessRules.leaves_king_under_atk(self, move)]
-                #     legal_moves += only_legal_moves
-
                 if not test_checks:
                     legal_moves += moves
                 else:

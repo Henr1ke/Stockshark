@@ -7,7 +7,7 @@ from chess.util.move import Move
 class Queen(Piece):
 
     def __init__(self, is_white: bool):
-        super().__init__(is_white, 900, "♛","♕")
+        super().__init__(is_white, 900, "Q", "q")
 
     def gen_moves(self, game) -> List[Move]:
         board = game.board

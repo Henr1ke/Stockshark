@@ -8,7 +8,7 @@ from chess.util.move import Move
 class Pawn(Piece):
 
     def __init__(self, is_white: bool):
-        super().__init__(is_white, 100, "♟", "♙")
+        super().__init__(is_white, 100, "P", "p")
 
     def gen_moves(self, game) -> List[Move]:
         board = game.board

@@ -39,13 +39,17 @@ if __name__ == '__main__':
     d.connect()
 
     screenshot = d.screenshot()
-    board, center = Detector.get_board(screenshot)
+    board_info = Detector.find_board(screenshot)
+    if board_info is None:
+        exit()
+
+    board, center = board_info
 
     m = MobileChess(d, board, center)
 
     g = ChessGame()
 
-    v = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
+    v = Visualizer(Visualizer.CHARSET_LETTER)
 
     simulator = SimulatorADB(PlayerRandom(), m, g, v)
     simulator.execute()

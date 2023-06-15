@@ -54,7 +54,11 @@ def identify_board():
 
 def identify_pieces():
     scrn_img = ImageProcessing.read_img("screenshots/Screenshot.png")
-    b_img, _ = Detector.get_board(scrn_img)
+    board_info = Detector.find_board(scrn_img)
+    if board_info is None:
+        exit()
+
+    b_img, _ = board_info
     b_gray = ImageProcessing.grayscale(b_img)
     b_grad = ImageProcessing.morph_grad(b_gray)
 

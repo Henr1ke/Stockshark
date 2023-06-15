@@ -18,6 +18,9 @@ from chess.sim.simulator_adb import SimulatorADB
 from chess.sim.visualizer import Visualizer
 
 
+# adb start-server
+# emulator -avd Pixel_4_API_33 -port 5556
+
 # python main.py --player reactive --model pixel4 friend --username Henrike01
 # python main.py --player reactive --model pixel4 computer --diff_lvl 1
 
@@ -98,10 +101,11 @@ print("A detetar o ecrã de jogo\n")
 board, center = None, None
 for _ in range(60):
     screenshot = dao_adb.screenshot()
-    board, center = Detector.get_board(screenshot)
-    if board is None:
+    board_info = Detector.find_board(screenshot)
+    if board_info is None:
         time.sleep(1)
     else:
+        board, center = board_info
         break
 
 if board is None:
@@ -112,7 +116,7 @@ print("A iniciar simulação\n")
 mobile_chess = MobileChess(dao_adb, board, center)
 
 game = ChessGame()
-vis = Visualizer(Visualizer.W_PIECE_CHARSET_LETTER, Visualizer.B_PIECE_CHARSET_LETTER)
+vis = Visualizer(Visualizer.CHARSET_LETTER)
 
 simulator = SimulatorADB(player, mobile_chess, game, vis)
 simulator.execute()
