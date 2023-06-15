@@ -89,7 +89,7 @@ class ChessGame:
             positions = piece.gen_positions(self)
 
             # Only keeps the position if the move does not leave the king in check
-            start_pos = piece.get_pos(self.board)
+            start_pos = self.__board.pieces_pos[piece]
             legal_pos = [end_pos for end_pos in positions
                          if not ChessRules.leaves_king_under_atk(self, Move(start_pos, end_pos))]
 

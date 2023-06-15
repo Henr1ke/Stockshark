@@ -10,7 +10,7 @@ class King(Piece):
 
     def gen_positions(self, game) -> List[Position]:
         board = game.board
-        start_pos = self.get_pos(board)
+        start_pos = board.pieces_pos[self]
 
         increments = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
         positions = self._gen_inc_positions(board, increments)

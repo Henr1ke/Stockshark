@@ -12,7 +12,7 @@ class Pawn(Piece):
 
     def gen_positions(self, game) -> List[Position]:
         board = game.board
-        start_pos = self.get_pos(board)
+        start_pos = board.pieces_pos[self]
         positions = []
 
         try:

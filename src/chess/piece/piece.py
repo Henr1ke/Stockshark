@@ -29,7 +29,7 @@ class Piece(ABC):
         return board.pieces_pos[self]
 
     def _gen_slider_positions(self, board, is_diag: bool) -> List[Position]:
-        start_pos = self.get_pos(board)
+        start_pos = board.pieces_pos[self]
         positions = []
 
         directions = ((1, 1), (1, -1), (-1, -1), (-1, 1)) if is_diag else ((0, 1), (1, 0), (0, -1), (-1, 0))
@@ -49,7 +49,7 @@ class Piece(ABC):
         return positions
 
     def _gen_inc_positions(self, board, incs: List[Tuple[int, int]]) -> List[Position]:
-        start_pos = self.get_pos(board)
+        start_pos = board.pieces_pos[self]
         positions = []
 
         for inc in incs:
