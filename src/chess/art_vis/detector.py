@@ -10,18 +10,8 @@ from chess.util.position import Position
 
 
 class Detector:
-    PAWN = "pawn"
-    KNIGHT = "knight"
-    BISHOP = "bishop"
-    ROOK = "rook"
-    QUEEN = "queen"
-    KING = "king"
-
     W_PIECE_COLOR: int = 248
     B_PIECE_COLOR: int = 84
-
-    W_TILE_COLOR: int = 235
-    B_TILE_COLOR: int = 133
 
     W_TILE_SELECTED_COLOR: int = 131
     B_TILE_SELECTED_COLOR: int = 187
@@ -29,18 +19,30 @@ class Detector:
     BOARD_MARGIN_FRACT = 0.002
     TILE_MARGIN_FRACT = 0.09
 
+    PAWN = "pawn"
+    KNIGHT = "knight"
+    BISHOP = "bishop"
+    ROOK = "rook"
+    QUEEN = "queen"
+    KING = "king"
+
     PIECE_NAME_TO_LETTER = {PAWN: "p", KNIGHT: "n", BISHOP: "b", ROOK: "r", QUEEN: "q", KING: "k"}
 
     def __init__(self, initial_board: ndarray) -> None:
-        on_white_side = Detector.is_on_white_side(initial_board)
+        on_white_side = Detector.__is_on_white_side(initial_board)
         if on_white_side is None:
             raise ValueError("Couldn't detect the board orientation")
 
         self.__on_white_side: bool = on_white_side
+        self.__board_w: int = initial_board.shape[1]
 
     @property
     def on_white_side(self) -> bool:
         return self.__on_white_side
+
+    @property
+    def board_w(self) -> int:
+        return self.__board_w
 
     @staticmethod
     def get_board(screenshot: ndarray) -> Tuple[Optional[ndarray], Optional[Tuple[int, int]]]:
@@ -61,7 +63,10 @@ class Detector:
         return None, None
 
     @staticmethod
-    def __get_piece_locations(board: ndarray, piece_name: str) -> List[Tuple[int, int]]:
+    def get_piece_locations(board: ndarray, piece_name: str) -> List[Tuple[int, int]]:
+        if piece_name not in Detector.PIECE_NAME_TO_LETTER.keys():
+            raise ValueError("Piece name is not valid")
+
         board_gray = ImageProcessing.grayscale(board)
         board_grad = ImageProcessing.morph_grad(board_gray)
 
@@ -75,8 +80,8 @@ class Detector:
         return ImageProcessing.locate(board_grad, piece_grad, margin=margin)
 
     @staticmethod
-    def is_on_white_side(board: ndarray) -> Optional[bool]:
-        positions = Detector.__get_piece_locations(board, Detector.KING)
+    def __is_on_white_side(board: ndarray) -> Optional[bool]:
+        positions = Detector.get_piece_locations(board, Detector.KING)
 
         lowest_pos = None
         for i, pos in enumerate(positions):
@@ -103,12 +108,12 @@ class Detector:
         return std < thresh_val
 
     @staticmethod
-    def is_piece_white(piece_img: ndarray) -> Optional[bool]:
-        if Detector.is_tile_empty(piece_img):
+    def is_piece_white(tile: ndarray) -> Optional[bool]:
+        if Detector.is_tile_empty(tile):
             return None
 
-        w_pixel_count = ImageProcessing.get_value_count(piece_img, Detector.W_PIECE_COLOR)
-        b_pixel_count = ImageProcessing.get_value_count(piece_img, Detector.B_PIECE_COLOR)
+        w_pixel_count = ImageProcessing.get_value_count(tile, Detector.W_PIECE_COLOR)
+        b_pixel_count = ImageProcessing.get_value_count(tile, Detector.B_PIECE_COLOR)
         return w_pixel_count >= b_pixel_count
 
     @staticmethod
@@ -128,8 +133,8 @@ class Detector:
 
         return Move(start_pos, end_pos)
 
-    def pos_to_loc(self, pos: Position, board_w: int) -> Tuple[int, int]:
-        tile_w = board_w / 8
+    def pos_to_loc(self, pos: Position) -> Tuple[int, int]:
+        tile_w = self.__board_w / 8
         if not self.__on_white_side:
             pos = -pos
 
@@ -137,9 +142,9 @@ class Detector:
         y = int(tile_w / 2 + tile_w * (7 - pos.row))
         return x, y
 
-    def loc_to_pos(self, loc: Tuple[int, int], board_w: int) -> Position:
-        col = int(8 * loc[0] / board_w)
-        row = 7 - int(8 * loc[1] / board_w)
+    def loc_to_pos(self, loc: Tuple[int, int]) -> Position:
+        col = int(8 * loc[0] / self.__board_w)
+        row = 7 - int(8 * loc[1] / self.__board_w)
         pos = Position(col, row)
 
         if not self.__on_white_side:
@@ -150,7 +155,7 @@ class Detector:
         if piece_name not in Detector.PIECE_NAME_TO_LETTER.keys():
             raise ValueError("Piece name is not valid")
 
-        locations = Detector.__get_piece_locations(board, piece_name)
+        locations = Detector.get_piece_locations(board, piece_name)
         positions = [self.loc_to_pos(loc, board.shape[1]) for loc in locations]
         return positions
 
@@ -183,25 +188,23 @@ class Detector:
 
         return Move(start_pos, end_pos)
 
-    def save_fen_str(self, board_img: ndarray) -> None:
-        fen_str = self.gen_fen_str(board_img)
+    def save_fen_str(self, board: ndarray) -> None:
+        fen_str = self.gen_fen_str(board)
         fen_str = fen_str.replace("/", ";")
         filename = f"fen_strings/{fen_str}.png"
         alreadyExists = ImageProcessing.read_img(filename) is None
         if alreadyExists:
-            ImageProcessing.write_img(filename, board_img)
+            ImageProcessing.write_img(filename, board)
 
     def gen_fen_str(self, board: ndarray) -> str:
         pos_to_piece = {}
-
-        board_w = board.shape[1]
 
         for piece_name in Detector.PIECE_NAME_TO_LETTER.keys():
             letter = Detector.PIECE_NAME_TO_LETTER[piece_name]
 
             piece_positions = self.get_piece_positions(board, piece_name)
             for pos in piece_positions:
-                loc = self.pos_to_loc(pos, board_w)
+                loc = self.pos_to_loc(pos, self.__board_w)
                 tile = Detector.get_tile(board, loc)
                 is_white = Detector.is_piece_white(tile)
                 letter_to_add = letter.upper() if is_white else letter

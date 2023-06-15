@@ -5,6 +5,8 @@ from chess.util.position import Position
 
 
 class King(Piece):
+    def __init__(self, is_white: bool):
+        super().__init__(is_white, 3000)
 
     def gen_positions(self, game) -> List[Position]:
         board = game.board

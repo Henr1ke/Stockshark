@@ -39,7 +39,7 @@ class ImageProcessing:
         return img.copy()[y1: y2, x1: x2]
 
     @staticmethod
-    def scale(img: ndarray, scale: float = 0.4) -> ndarray:
+    def scale(img: ndarray, scale: float) -> ndarray:
         dim = (int(img.shape[1] * scale), int(img.shape[0] * scale))
         return cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
 

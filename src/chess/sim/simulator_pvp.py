@@ -5,7 +5,6 @@ from chess.chessGame.chess_game import ChessGame
 from chess.player.behaviour.eat_behaviour import EatBehaviour
 from chess.player.behaviour.random_behaviour import RandomBehaviour
 from chess.player.player import Player
-from chess.player.player_human import PlayerHuman
 from chess.player.player_random import PlayerRandom
 from chess.player.player_reactive import PlayerReactive
 from chess.sim.simulator import Simulator

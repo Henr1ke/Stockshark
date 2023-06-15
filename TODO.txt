@@ -4,12 +4,13 @@ Prioridades: 1 -> pouca .... 5 -> muita
 -- os time.sleeps() entre taps são feitos dentro desse objeto geral e não nas classes DaoADB / MenuNavigator / MobileChess
 
 chessGame:
+    -- 5 Alterar o sistema todo para as peças retornarem moves em vez de possible positions
     -- 1 promotion tá hardcoded para Queen
     -- 1 tornar a cena de ver os checks mais eficiente
 
 player:
-    -- 5 MinMax
-    -- 2 refatorizar os behaviours talvez como em IASA
+    -- 5 MinMax (E ALTERAR A FUNC EVALUATE_GAME PARA USAR OS piece.value)
+    -- 3 refatorizar os behaviours talvez como em IASA
 
 art_vis:
     -- 1 fazer um menuDetector para navegar nos botoes do menu

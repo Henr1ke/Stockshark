@@ -6,5 +6,8 @@ from chess.util.position import Position
 
 class Rook(Piece):
 
+    def __init__(self, is_white: bool):
+        super().__init__(is_white, 500)
+
     def gen_positions(self, game) -> List[Position]:
         return self._gen_slider_positions(game.board, is_diag=False)

@@ -7,12 +7,17 @@ from chess.util.position import Position
 
 class Piece(ABC):
 
-    def __init__(self, is_white: bool) -> None:
+    def __init__(self, is_white: bool, value: float) -> None:
         self.__is_white: bool = is_white
+        self.__value: float = value
 
     @property
     def is_white(self) -> bool:
         return self.__is_white
+
+    @property
+    def value(self) -> float:
+        return self.__value
 
     @abstractmethod
     def gen_positions(self, game) -> List[Position]:

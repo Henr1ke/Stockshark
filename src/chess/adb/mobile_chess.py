@@ -17,9 +17,8 @@ class MobileChess:
         self.__detector: Detector = Detector(initial_board)
         self.__on_white_side: bool = self.__detector.on_white_side
 
-        self.__board_w: int = initial_board.shape[1]
         self.__board_tl_corner: Tuple[int, int] = (
-            int(board_center[0] - self.__board_w / 2), int(board_center[1] - self.__board_w / 2))
+            int(board_center[0] - self.__detector.board_w / 2), int(board_center[1] - self.__detector.board_w / 2))
 
     @property
     def on_white_side(self) -> bool:
@@ -27,7 +26,7 @@ class MobileChess:
 
     def play(self, move: Move) -> None:
         for pos in (move.start_pos, move.end_pos):
-            x, y = self.__detector.pos_to_loc(pos, self.__board_w)
+            x, y = self.__detector.pos_to_loc(pos)
             self.__dao_adb.tap_screen(self.__board_tl_corner[0] + x, self.__board_tl_corner[1] + y)
             time.sleep(MobileChess.WAIT_TIME)
 
