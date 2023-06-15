@@ -21,21 +21,17 @@ class Move:
                           Move) and self.start_pos == other.start_pos and self.end_pos == other.end_pos and self.__eaten_piece == other.eaten_piece
 
     def __gt__(self, other: Move) -> bool:
-        if self.__eaten_piece is not None:
-            if other.__eaten_piece is None:
-                return True
-            return self.__eaten_piece.value > other.__eaten_piece.value
-        return False
+        return self.value() > other.value()
 
     def __lt__(self, other: Move) -> bool:
-        if self.__eaten_piece is not None:
-            if other.__eaten_piece is None:
-                return False
-            return self.__eaten_piece.value < other.__eaten_piece.value
-        return False
+        return self.value() < other.value()
 
     def __repr__(self) -> str:
         return f"[{self.start_pos} -> {self.end_pos}]"
+
+    def value(self) -> float:
+        value = 0 if self.__eaten_piece is None else self.__eaten_piece.value
+        return value
 
     @property
     def start_pos(self) -> Position:
