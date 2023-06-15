@@ -1,16 +1,8 @@
 import math
 import time
 from copy import copy
-import heapq
-from typing import Tuple, Dict, Type, List, Optional
+from typing import Tuple
 
-from chess.piece.bishop import Bishop
-from chess.piece.king import King
-from chess.piece.knight import Knight
-from chess.piece.pawn import Pawn
-from chess.piece.piece import Piece
-from chess.piece.queen import Queen
-from chess.piece.rook import Rook
 from chess.player.player import Player
 from chess.chessGame.chess_game import ChessGame
 from chess.sim.visualizer import Visualizer
@@ -18,8 +10,6 @@ from chess.util.move import Move
 
 
 class PlayerMinMax(Player):
-    PIECES_VALUES: Dict[Type[Piece], float] = {Pawn: 100, Knight: 300, Bishop: 300, Rook: 500, Queen: 900, King: 3000}
-
     def gen_move(self, game: ChessGame) -> Move:
         pass
 
@@ -28,8 +18,7 @@ class PlayerMinMax(Player):
 
         pieces_pos = game.board.pieces_pos
         for piece in pieces_pos.keys():
-            piece_val = PlayerMinMax.PIECES_VALUES[type(piece)]
-            value += piece_val if piece.is_white else -piece_val
+            value += piece.value if piece.is_white else -piece.value
         return value
 
     def minmax(self, curr_depth: int, max_depth: int, game: ChessGame) -> Tuple[float, Move]:
