@@ -9,7 +9,9 @@ chessGame:
     -- 1 promotion tá hardcoded para Queen
 
 player:
-    -- 5 MinMax (E ALTERAR A FUNC EVALUATE_GAME PARA USAR OS piece.value)
+    -- 5 MinMax
+        -- Tornar o game engine mais eficiente
+        -- Tornar o algoritmo mais eficiente (outras heuristicas)
         -- melhorar a func de avaliar o move
             -- Usar o mapa de posições das peças
         -- melhorar a func de avaliar o jogo
