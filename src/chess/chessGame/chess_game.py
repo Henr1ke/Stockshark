@@ -26,7 +26,6 @@ class ChessGame:
         self.__halfclock: int = int(fen_str_fields[4])
         self.__fullclock: int = int(fen_str_fields[5])
         self.__played_moves: List[Move] = []
-        # self.__legal_moves: List[Move] = self.__gen_legal_moves(test_checks=False)
         self.__legal_piece_moves: Dict[Piece, List[Move]] = dict()
         self.__state: State = State.IN_PROGRESS
 
@@ -58,10 +57,6 @@ class ChessGame:
     def played_moves(self) -> List[Move]:
         return copy(self.__played_moves)
 
-    # @property
-    # def legal_moves(self) -> List[Move]:
-    #     return copy(self.__legal_moves)
-
     @property
     def state(self) -> State:
         return self.__state
@@ -76,17 +71,6 @@ class ChessGame:
             else:
                 setattr(game, key, copy(value))
         return game
-
-    # def __gen_legal_moves(self, test_checks: bool = True) -> List[Move]:
-    #     legal_moves = []
-    #     for piece, pos in self.__board.pieces_pos.items():
-    #         if piece.is_white == self.__is_white_turn:
-    #             moves = piece.gen_moves(self)
-    #             if not test_checks:
-    #                 legal_moves += moves
-    #             else:
-    #                 legal_moves += [move for move in moves if not ChessRules.leaves_king_under_atk(self, move)]
-    #     return legal_moves
 
     def get_legal_piece_moves(self, piece: Piece) -> List[Move]:
         if piece not in self.__legal_piece_moves:
@@ -165,21 +149,12 @@ class ChessGame:
             else:
                 return State.DRAW
 
-        # if len(self.__legal_moves) == 0:
-        #     if ChessRules.king_is_under_atk(self, self.__is_white_turn):
-        #         return State.WIN_B if self.__is_white_turn else State.WIN_W
-        #     else:
-        #         return State.DRAW
-
         elif self.__halfclock >= 100:
             return State.DRAW
 
         return State.IN_PROGRESS
 
     def play(self, move: Move, is_test=False) -> bool:
-        # if not is_test and move not in self.__legal_moves:
-        #     return False
-
         if not is_test and move not in self.get_legal_piece_moves(move.piece):
             return False
 
@@ -210,9 +185,6 @@ class ChessGame:
             self.__fullclock += 1
 
         if not is_test:
-            # # Update self.__legal_moves
-            # self.__legal_moves = self.__gen_legal_moves()
-
             # Update self.__state
             self.__state = self.__get_new_state()
 

@@ -43,7 +43,6 @@ class MenuNavigator:
     def vs_computer(self, diff_lvl: int, is_white: Optional[bool] = None) -> None:
         accepted_diff_lvls = [1, 2, 3, 4, 5]
         assert diff_lvl in accepted_diff_lvls, "O nivel de dificuldade não está disponível"
-        # TODO As options dos adversarios vão mudar no final de maio, refazer isto depois
 
         self.__tap_screen(*self.__coordinates.init_screen_play_coords())  # play
         self.__tap_screen(*self.__coordinates.vs_computer_coords())  # vs computer

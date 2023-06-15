@@ -1,25 +1,29 @@
 Prioridades: 1 -> pouca .... 5 -> muita
 
--- 4 Criar um objeto geral que apenas tem o metodo execute e faz todo o processo da app
--- os time.sleeps() entre taps são feitos dentro desse objeto geral e não nas classes DaoADB / MenuNavigator / MobileChess
-
+ficheiro main:
+    -- 4 Criar um objeto geral que apenas tem o metodo execute e faz todo o processo da app
+        -- os time.sleeps() entre taps são feitos dentro desse objeto geral e não nas classes DaoADB / MenuNavigator / MobileChess
 
 chessGame:
-    -- 5 Alterar o sistema todo para as peças retornarem moves em vez de possible positions
+    -- 5 otimizar o engine
     -- 1 promotion tá hardcoded para Queen
-    -- 3 tornar a cena de ver os checks mais eficiente
 
 player:
     -- 5 MinMax (E ALTERAR A FUNC EVALUATE_GAME PARA USAR OS piece.value)
+        -- melhorar a func de avaliar o move
+            -- Usar o mapa de posições das peças
+        -- melhorar a func de avaliar o jogo
+            -- Verificar os check e os ataques bloqueios de peças
+
+
     -- 3 refatorizar os behaviours talvez como em IASA
 
 art_vis:
-    -- 5 mudar o return do find_board
     -- 1 fazer um menuDetector para navegar nos botoes do menu
 
 adb:
     -- 1 mudar o nome do mobile_chess
-    -- 2 Arranjar uma solução para não usar as classes Coordinates
+    -- 2 Arranjar uma solução para não usar as classes Coordinates (seria o menu detector)
 
 
 ------------------------------------ VERIFICAR TODOS OS TODOS -------------------------------------

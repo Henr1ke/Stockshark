@@ -22,7 +22,6 @@ def gen_mean_pieces():
         combined = ImageProcessing.combine_imgs(w_p_r, b_p_r)
 
         ImageProcessing.show(combined, f"m_{piece_name}")
-        # ImageProcessing.write_img(f"chess_components/m_{piece_name}.png", combined)
 
 
 def identify_board():
