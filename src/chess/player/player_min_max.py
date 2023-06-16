@@ -127,7 +127,7 @@ if __name__ == '__main__':
     vis.show(game)
 
     p_mm = PlayerMinMax()
-    depth = 2
+    depth = 3
 
     ti = time.time()
     val, move = p_mm.minmax_ab_sorted(0, depth, game)
