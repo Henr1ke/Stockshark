@@ -22,14 +22,15 @@ class StockSharkRunnable:
         self.__coordinates = coordinates
         self.__menu_navigator = MenuNavigator(self.__dao_adb, coordinates)
 
-    def open_app(self):
-        self.__menu_navigator.open_app()
+    def open_app(self, wait_time: float = 5):
+        self.__menu_navigator.open_app(wait_time)
 
-    def start_game_computer(self, diff_lvl: int, on_white_side: Optional[bool]):
-        self.__menu_navigator.vs_computer(diff_lvl, on_white_side)
+    def start_game_computer(self, diff_lvl: int, on_white_side: Optional[bool], wait_time: float = 2):
+        self.__menu_navigator.vs_computer(diff_lvl, on_white_side, wait_time=wait_time)
 
-    def start_game_friend(self, username: str, on_white_side: Optional[bool], duration: Optional[int]):
-        self.__menu_navigator.vs_friend(username, on_white_side, duration)
+    def start_game_friend(self, username: str, on_white_side: Optional[bool], duration: Optional[int],
+                          wait_time: float = 2):
+        self.__menu_navigator.vs_friend(username, on_white_side, duration, wait_time=wait_time)
 
     def run_game(self, player: Player, show_simulation: bool = True) -> bool:
         board, center = None, None

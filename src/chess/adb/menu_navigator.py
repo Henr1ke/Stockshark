@@ -7,14 +7,14 @@ from chess.adb.dao_adb import DaoADB
 
 
 class MenuNavigator:
-    WAIT_TIME = 1.5
-    APP_BOOT_TIME = 5
+    WAIT_TIME = 2
 
     def __init__(self, dao_adb: DaoADB, coordinates: Coordinates) -> None:
         self.__dao_adb: DaoADB = dao_adb
         self.__coordinates: Coordinates = coordinates
+        self.__tap_wait_time = MenuNavigator.WAIT_TIME
 
-    def open_app(self) -> None:
+    def open_app(self, wait_time: float = 5) -> None:
         # para encontrar o nome do package da app pretendida instalei na Play Store
         # uma app chamada "Package Name Viewer 2.0"
         # encontrar a app (com.chessEngine é o nome do Android package):
@@ -23,9 +23,11 @@ class MenuNavigator:
         # open app in package @app_path
         # self.__dao_adb.open_app("com.chess/.home.HomeActivity")
         self.__dao_adb.open_app("com.chess/.splash.SplashActivity")
-        time.sleep(MenuNavigator.APP_BOOT_TIME)
+        time.sleep(wait_time)
 
-    def vs_friend(self, name: str, on_white_side: Optional[bool] = None, duration: Optional[int] = None) -> None:
+    def vs_friend(self, name: str, on_white_side: Optional[bool] = None, duration: Optional[int] = None,
+                  wait_time: float = 2) -> None:
+        self.__tap_wait_time = wait_time
         if duration is not None:
             assert duration in [1, 3, 5, 10, 30], "O tempo de jogo tem de ser 1, 3, 5, 10 ou 30 minutos"
 
@@ -40,7 +42,8 @@ class MenuNavigator:
         self.__tap_screen(*self.__coordinates.player_color_coords(on_white_side))  # choose color
         self.__tap_screen(*self.__coordinates.bottom_green_btn_coords())  # play
 
-    def vs_computer(self, diff_lvl: int, on_white_side: Optional[bool] = None) -> None:
+    def vs_computer(self, diff_lvl: int, on_white_side: Optional[bool] = None, wait_time: float = 2) -> None:
+        self.__tap_wait_time = wait_time
         accepted_diff_lvls = [1, 2, 3, 4, 5]
         assert diff_lvl in accepted_diff_lvls, "O nivel de dificuldade não está disponível"
 
@@ -53,7 +56,7 @@ class MenuNavigator:
 
     def __tap_screen(self, x: int, y: int) -> None:
         self.__dao_adb.tap_screen(x, y)
-        time.sleep(MenuNavigator.WAIT_TIME)
+        time.sleep(self.__tap_wait_time)
 
 
 if __name__ == '__main__':

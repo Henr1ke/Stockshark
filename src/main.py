@@ -88,7 +88,7 @@ if coordinates is None:
 print("--- Starting STOCKSHARK ---")
 stockshark = StockSharkRunnable(coordinates)
 
-stockshark.open_app()
+stockshark.open_app(8)
 print("Opening app")
 
 vs_bot = args.opponent_type.casefold() == "computer"
@@ -96,13 +96,13 @@ if vs_bot:
     diff_lvl = args.diff_lvl
     on_white_side = get_paw_response(args.play_as_whites)
     print("Starting a game against the computer")
-    stockshark.start_game_computer(diff_lvl, on_white_side)
+    stockshark.start_game_computer(diff_lvl, on_white_side, 3)
 else:
     username = args.username
     on_white_side = get_paw_response(args.play_as_whites)
     duration = args.duration
     print("Starting a game against a friend")
-    stockshark.start_game_friend(username, on_white_side, duration)
+    stockshark.start_game_friend(username, on_white_side, duration, 3)
 
 print("Playing the game")
 stockshark.run_game(player)

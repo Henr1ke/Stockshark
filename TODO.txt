@@ -22,6 +22,7 @@ player:
 
 art_vis:
     -- 1 fazer um menuDetector para navegar nos botoes do menu
+        -- 2 ao selecionar a difficuldade do bot, da scroll ate ao fim e utiliza o slider
 
 adb:
     -- 1 mudar o nome do mobile_chess
