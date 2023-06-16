@@ -11,7 +11,8 @@ from chess.util.move import Move
 
 class PlayerMinMax(Player):
     def gen_move(self, game: ChessGame) -> Move:
-        pass
+        _, move = self.minmax_ab_sorted(0, 2, game)
+        return move
 
     def evaluate_game(self, game: ChessGame) -> float:
         value = 0

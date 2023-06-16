@@ -12,6 +12,7 @@ from chess.art_vis.detector import Detector
 from chess.chessGame.chess_game import ChessGame
 from chess.player.player import Player
 from chess.player.player_human import PlayerHuman
+from chess.player.player_min_max import PlayerMinMax
 from chess.player.player_random import PlayerRandom
 from chess.player.player_reactive import PlayerReactive
 from chess.sim.simulator_adb import SimulatorADB
@@ -39,6 +40,8 @@ def get_player(player: str) -> Optional[Player]:
         return PlayerRandom()
     if player.casefold() == "reactive".casefold():
         return PlayerReactive()
+    if player.casefold() == "minmax".casefold():
+        return PlayerMinMax()
     return None
 
 
