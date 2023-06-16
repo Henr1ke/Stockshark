@@ -33,7 +33,7 @@ class MobileChess:
     def get_adv_move(self, game: ChessGame) -> Optional[Move]:
         while True:
             screenshot = self.__dao_adb.screenshot()
-            board, _ = Detector.get_board(screenshot)
+            board, _ = Detector.get_board(screenshot, self.__detector)
             if board is None:
                 return None
 

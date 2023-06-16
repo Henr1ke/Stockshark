@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+import os
+import pathlib
 from typing import Optional, Tuple, List
 
 import cv2
@@ -45,7 +49,8 @@ class Detector:
         return self.__board_w
 
     @staticmethod
-    def get_board(screenshot: ndarray) -> Tuple[Optional[ndarray], Optional[Tuple[int, int]]]:
+    def get_board(screenshot: ndarray, detector: Optional[Detector] = None) -> Tuple[
+        Optional[ndarray], Optional[Tuple[int, int]]]:
         scn_gray = ImageProcessing.grayscale(screenshot)
         scn_w = screenshot.shape[1]
 
@@ -59,6 +64,8 @@ class Detector:
         if len(positions) == 1:
             center = positions[0]
             board = ImageProcessing.get_square(screenshot, center, screenshot.shape[1])
+            if detector is not None:
+                detector.save_fen_str(board)
             return board, center
         return None, None
 
@@ -156,7 +163,7 @@ class Detector:
             raise ValueError("Piece name is not valid")
 
         locations = Detector.get_piece_locations(board, piece_name)
-        positions = [self.loc_to_pos(loc, board.shape[1]) for loc in locations]
+        positions = [self.loc_to_pos(loc) for loc in locations]
         return positions
 
     def get_selected_move(self, board: ndarray) -> Optional[Move]:
@@ -165,7 +172,7 @@ class Detector:
         for row_idx in range(8):
             for col_idx in range(8):
                 pos = Position(col_idx, row_idx)
-                loc = self.pos_to_loc(pos, board.shape[1])
+                loc = self.pos_to_loc(pos)
                 tile = Detector.get_tile(board, loc)
 
                 if Detector.is_tile_selected(tile):
@@ -191,9 +198,14 @@ class Detector:
     def save_fen_str(self, board: ndarray) -> None:
         fen_str = self.gen_fen_str(board)
         fen_str = fen_str.replace("/", ";")
+        current_path = pathlib.Path(__file__).parent.resolve()
         filename = f"fen_strings/{fen_str}.png"
-        alreadyExists = ImageProcessing.read_img(filename) is None
-        if alreadyExists:
+
+        # os.path.exists(filename)
+
+        # alreadyExists = ImageProcessing.read_img(filename) is None
+        if not os.path.exists(f"{current_path}/../../images/{filename}"):
+            print("fen doesnt exist")
             ImageProcessing.write_img(filename, board)
 
     def gen_fen_str(self, board: ndarray) -> str:
@@ -204,7 +216,7 @@ class Detector:
 
             piece_positions = self.get_piece_positions(board, piece_name)
             for pos in piece_positions:
-                loc = self.pos_to_loc(pos, self.__board_w)
+                loc = self.pos_to_loc(pos)
                 tile = Detector.get_tile(board, loc)
                 is_white = Detector.is_piece_white(tile)
                 letter_to_add = letter.upper() if is_white else letter

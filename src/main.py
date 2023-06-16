@@ -36,6 +36,8 @@ def get_player(player: str) -> Optional[Player]:
         return PlayerRandom()
     if player.casefold() == "reactive".casefold():
         return PlayerReactive()
+    if player.casefold() == "minmax".casefold():
+        return PlayerReactive()
     return None
 
 
