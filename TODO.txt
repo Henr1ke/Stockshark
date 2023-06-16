@@ -12,9 +12,9 @@ player:
     -- 5 MinMax
         -- Tornar o game engine mais eficiente
         -- Tornar o algoritmo mais eficiente (outras heuristicas)
-        -- melhorar a func de avaliar o move
+        -- 3 melhorar a func de avaliar o move
             -- Usar o mapa de posições das peças
-        -- melhorar a func de avaliar o jogo
+        -- 3 melhorar a func de avaliar o jogo
             -- Verificar os check e os ataques bloqueios de peças
 
 

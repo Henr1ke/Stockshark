@@ -49,8 +49,8 @@ class Detector:
         return self.__board_w
 
     @staticmethod
-    def get_board(screenshot: ndarray, detector: Optional[Detector] = None) -> Tuple[
-        Optional[ndarray], Optional[Tuple[int, int]]]:
+    def find_board(screenshot: ndarray, detector: Optional[Detector] = None) -> Optional[
+        Tuple[ndarray], Tuple[int, int]]:
         scn_gray = ImageProcessing.grayscale(screenshot)
         scn_w = screenshot.shape[1]
 

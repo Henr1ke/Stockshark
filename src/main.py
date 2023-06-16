@@ -15,6 +15,7 @@ from chess.player.player_human import PlayerHuman
 from chess.player.player_min_max import PlayerMinMax
 from chess.player.player_random import PlayerRandom
 from chess.player.player_reactive import PlayerReactive
+from chess.run.stockshark_runnable import StockSharkRunnable
 from chess.sim.simulator_adb import SimulatorADB
 from chess.sim.visualizer import Visualizer
 
@@ -67,7 +68,6 @@ computer.add_argument("--diff_lvl", type=int, required=True)
 computer.add_argument("--play_as_whites", type=str, required=False)
 
 args = parser.parse_args()
-print("\n--- A INICIAR STOCKSHARK ---\n")
 
 player = get_player(args.player)
 if player is None:
@@ -77,49 +77,32 @@ coordinates = get_coordinates(args.model)
 if coordinates is None:
     raise ValueError("The model is not available to playtest")
 
-dao_adb = DaoADB()
-connected = dao_adb.connect()
-if not connected:
-    raise RuntimeError("Error connecting to the device")
+player = get_player(args.player)
+if player is None:
+    raise ValueError("The player type is not recognized")
 
-print("A abrir aplicação\n")
+coordinates = get_coordinates(args.model)
+if coordinates is None:
+    raise ValueError("The model is not available to playtest")
 
-menu_navigator = MenuNavigator(dao_adb, coordinates)
-menu_navigator.open_app()
-print("A selecionar o adversário\n")
+print("--- Starting STOCKSHARK ---")
+stockshark = StockSharkRunnable(coordinates)
+
+stockshark.open_app()
+print("Opening app")
 
 vs_bot = args.opponent_type.casefold() == "computer"
 if vs_bot:
     diff_lvl = args.diff_lvl
-    is_white = get_paw_response(args.play_as_whites)
-    menu_navigator.vs_computer(diff_lvl, is_white)
-
+    on_white_side = get_paw_response(args.play_as_whites)
+    print("Starting a game against the computer")
+    stockshark.start_game_computer(diff_lvl, on_white_side)
 else:
-    name = args.username
-    is_white = get_paw_response(args.play_as_whites)
+    username = args.username
+    on_white_side = get_paw_response(args.play_as_whites)
     duration = args.duration
-    menu_navigator.vs_player(name, is_white, duration)
+    print("Starting a game against a friend")
+    stockshark.start_game_friend(username, on_white_side, duration)
 
-print("A detetar o ecrã de jogo\n")
-board, center = None, None
-for _ in range(60):
-    screenshot = dao_adb.screenshot()
-    board_info = Detector.find_board(screenshot)
-    if board_info is None:
-        time.sleep(1)
-    else:
-        board, center = board_info
-        break
-
-if board is None:
-    print("Escedeu o tempo de espera limite. A terminar a aplicação\n")
-    quit()
-
-print("A iniciar simulação\n")
-mobile_chess = MobileChess(dao_adb, board, center)
-
-game = ChessGame()
-vis = Visualizer(Visualizer.CHARSET_LETTER)
-
-simulator = SimulatorADB(player, mobile_chess, game, vis)
-simulator.execute()
+print("Playing the game")
+stockshark.run_game(player)

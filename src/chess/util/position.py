@@ -43,6 +43,10 @@ class Position:
             raise ValueError(
                 f"Cannot initialize a Position with parameter types {[type(parameter) for parameter in args]}")
 
+    def __hash__(self) -> int:
+        number = 8 * self.row + self.col
+        return hash(number)
+
     def __eq__(self, pos: Position) -> bool:
         return isinstance(pos, Position) and self.__row == pos.__row and self.__col == pos.__col
 
