@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+import os
+import pathlib
 from typing import Optional, Tuple, List
 
 import cv2
@@ -45,7 +49,8 @@ class Detector:
         return self.__board_w
 
     @staticmethod
-    def find_board(screenshot: ndarray) -> Optional[Tuple[ndarray, Tuple[int, int]]]:
+    def get_board(screenshot: ndarray, detector: Optional[Detector] = None) -> Tuple[
+        Optional[ndarray], Optional[Tuple[int, int]]]:
         scn_gray = ImageProcessing.grayscale(screenshot)
         scn_w = screenshot.shape[1]
 
@@ -59,8 +64,10 @@ class Detector:
         if len(positions) == 1:
             center = positions[0]
             board = ImageProcessing.get_square(screenshot, center, screenshot.shape[1])
+            if detector is not None:
+                detector.save_fen_str(board)
             return board, center
-        return None
+        return None, None
 
     @staticmethod
     def get_piece_locations(board: ndarray, piece_name: str) -> List[Tuple[int, int]]:
@@ -191,9 +198,14 @@ class Detector:
     def save_fen_str(self, board: ndarray) -> None:
         fen_str = self.gen_fen_str(board)
         fen_str = fen_str.replace("/", ";")
+        current_path = pathlib.Path(__file__).parent.resolve()
         filename = f"fen_strings/{fen_str}.png"
-        alreadyExists = ImageProcessing.read_img(filename) is None
-        if alreadyExists:
+
+        # os.path.exists(filename)
+
+        # alreadyExists = ImageProcessing.read_img(filename) is None
+        if not os.path.exists(f"{current_path}/../../images/{filename}"):
+            print("fen doesnt exist")
             ImageProcessing.write_img(filename, board)
 
     def gen_fen_str(self, board: ndarray) -> str:
