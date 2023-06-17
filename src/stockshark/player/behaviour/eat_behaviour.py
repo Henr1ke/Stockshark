@@ -2,14 +2,14 @@ from typing import Optional
 
 from heapq import heappop, heappush
 
-from stockshark.chessGame.chess_game import ChessGame
+from stockshark.chess_engine.game import Game
 from stockshark.player.behaviour.behaviour import Behaviour
 from stockshark.util.move import Move
 
 
 class EatBehaviour(Behaviour):
 
-    def gen_move(self, game: ChessGame) -> Optional[Move]:
+    def gen_move(self, game: Game) -> Optional[Move]:
         actions = []
 
         pieces_pos = game.get_available_pieces_pos()

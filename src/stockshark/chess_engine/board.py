@@ -56,6 +56,19 @@ class Board:
                 setattr(board, key, copy(value))
         return board
 
+    def make_move(self, move: Move) -> None:
+        piece = self[move.start_pos]
+        if piece is None:
+            raise ChessException("There is no piece at the move start position")
+
+        if self[move.end_pos] is not None:
+            self.clear_pos(move.end_pos)
+
+        self.__tiles[8 - 1 - move.start_pos.row][move.start_pos.col] = None
+        self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = piece
+
+        self.__pieces_pos[piece] = move.end_pos
+
     def add_piece(self, piece: Piece, *pos_args) -> None:
         if not isinstance(piece, Piece):
             raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")
@@ -71,19 +84,6 @@ class Board:
         self.__pieces_pos[piece] = pos
 
         self.__tiles[8 - 1 - pos.row][pos.col] = piece
-
-    def make_move(self, move: Move) -> None:
-        piece = self[move.start_pos]
-        if piece is None:
-            raise ChessException("There is no piece at the move start position")
-
-        if self[move.end_pos] is not None:
-            self.clear_pos(move.end_pos)
-
-        self.__tiles[8 - 1 - move.start_pos.row][move.start_pos.col] = None
-        self.__tiles[8 - 1 - move.end_pos.row][move.end_pos.col] = piece
-
-        self.__pieces_pos[piece] = move.end_pos
 
     def clear_pos(self, *pos_args) -> Optional[Piece]:
         pos = Position(*pos_args)

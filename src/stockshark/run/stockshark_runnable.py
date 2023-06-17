@@ -6,7 +6,7 @@ from stockshark.adb.dao_adb import DaoADB
 from stockshark.adb.menu_navigator import MenuNavigator
 from stockshark.adb.mobile_chess import MobileChess
 from stockshark.art_vis.detector import Detector
-from stockshark.chessGame.chess_game import ChessGame
+from stockshark.chess_engine.game import Game
 from stockshark.player.player import Player
 from stockshark.sim.simulator_adb import SimulatorADB
 from stockshark.sim.visualizer import Visualizer
@@ -48,7 +48,7 @@ class StockSharkRunnable:
 
         mobile_chess = MobileChess(self.__dao_adb, board, center)
 
-        game = ChessGame()
+        game = Game()
         vis = None if not show_simulation else Visualizer(Visualizer.CHARSET_LETTER)
 
         simulator = SimulatorADB(player, mobile_chess, game, vis)

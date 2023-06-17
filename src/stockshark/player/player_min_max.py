@@ -4,17 +4,17 @@ from copy import copy
 from typing import Tuple
 
 from stockshark.player.player import Player
-from stockshark.chessGame.chess_game import ChessGame
+from stockshark.chess_engine.game import Game
 from stockshark.sim.visualizer import Visualizer
 from stockshark.util.move import Move
 
 
 class PlayerMinMax(Player):
-    def gen_move(self, game: ChessGame) -> Move:
+    def gen_move(self, game: Game) -> Move:
         _, move = self.minmax_ab_sorted(0, 2, game)
         return move
 
-    def minmax(self, curr_depth: int, max_depth: int, game: ChessGame) -> Tuple[float, Move]:
+    def minmax(self, curr_depth: int, max_depth: int, game: Game) -> Tuple[float, Move]:
         moves = []
         pieces_pos = game.get_available_pieces_pos()
         for piece in pieces_pos.keys():
@@ -41,7 +41,7 @@ class PlayerMinMax(Player):
 
         return best_val, best_move
 
-    def minmax_ab(self, curr_depth: int, max_depth: int, game: ChessGame, alpha: float = -math.inf,
+    def minmax_ab(self, curr_depth: int, max_depth: int, game: Game, alpha: float = -math.inf,
                   beta: float = math.inf) -> Tuple[float, Move]:
         # moves = game.legal_moves
         moves = []
@@ -75,7 +75,7 @@ class PlayerMinMax(Player):
 
         return best_val, best_move
 
-    def minmax_ab_sorted(self, curr_depth: int, max_depth: int, game: ChessGame, alpha: float = -math.inf,
+    def minmax_ab_sorted(self, curr_depth: int, max_depth: int, game: Game, alpha: float = -math.inf,
                          beta: float = math.inf) -> Tuple[float, Move]:
         # moves = game.legal_moves
         moves = []
@@ -113,7 +113,7 @@ class PlayerMinMax(Player):
 
 
 if __name__ == '__main__':
-    game = ChessGame("1r2r1k1/5ppp/8/q1b3n1/3P3P/2P2BP1/PPN2P2/3KQ2R w - - 0 1")
+    game = Game("1r2r1k1/5ppp/8/q1b3n1/3P3P/2P2BP1/PPN2P2/3KQ2R w - - 0 1")
 
     vis = Visualizer(Visualizer.CHARSET_LETTER)
     vis.show(game)

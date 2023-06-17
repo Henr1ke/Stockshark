@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from stockshark.chessGame.chess_game import ChessGame
+from stockshark.chess_engine.game import Game
 from stockshark.piece.bishop import Bishop
 from stockshark.piece.king import King
 from stockshark.piece.knight import Knight
@@ -15,5 +15,5 @@ from stockshark.util.move import Move
 class Behaviour(ABC):
 
     @abstractmethod
-    def gen_move(self, game: ChessGame) -> Optional[Move]:
+    def gen_move(self, game: Game) -> Optional[Move]:
         pass

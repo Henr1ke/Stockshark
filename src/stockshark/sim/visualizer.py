@@ -7,7 +7,7 @@ from stockshark.piece.pawn import Pawn
 from stockshark.piece.piece import Piece
 from stockshark.piece.queen import Queen
 from stockshark.piece.rook import Rook
-from stockshark.chessGame.state import State
+from stockshark.chess_engine.state import State
 from stockshark.util.constants import FILE_LETTERS
 
 

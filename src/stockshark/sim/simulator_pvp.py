@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Optional
 
-from stockshark.chessGame.chess_game import ChessGame
+from stockshark.chess_engine.game import Game
 from stockshark.player.player import Player
 from stockshark.player.player_random import PlayerRandom
 from stockshark.sim.simulator import Simulator
@@ -9,7 +9,7 @@ from stockshark.sim.visualizer import Visualizer
 
 
 class SimulatorPVP(Simulator, ABC):
-    def __init__(self, player_w: Player, player_b: Player, game: ChessGame, vis: Optional[Visualizer]) -> None:
+    def __init__(self, player_w: Player, player_b: Player, game: Game, vis: Optional[Visualizer]) -> None:
         super().__init__(game, vis)
         self._player_w: Player = player_w
         self._player_b: Player = player_b
@@ -22,7 +22,7 @@ class SimulatorPVP(Simulator, ABC):
 
 
 if __name__ == '__main__':
-    game = ChessGame()
+    game = Game()
     player_w = PlayerRandom()
     player_b = PlayerRandom()
     visualizer = Visualizer(Visualizer.CHARSET_LETTER)

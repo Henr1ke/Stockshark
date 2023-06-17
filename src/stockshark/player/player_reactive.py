@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from stockshark.chessGame.chess_game import ChessGame
+from stockshark.chess_engine.game import Game
 from stockshark.player.behaviour.behaviour import Behaviour
 from stockshark.player.behaviour.eat_behaviour import EatBehaviour
 from stockshark.player.behaviour.random_behaviour import RandomBehaviour
@@ -17,7 +17,7 @@ class PlayerReactive(Player):
         self.__behaviours = behaviours
         self.__random_behaviour = RandomBehaviour()
 
-    def gen_move(self, game: ChessGame) -> Move:
+    def gen_move(self, game: Game) -> Move:
         for behaviour in self.__behaviours:
             move = behaviour.gen_move(game)
             if move is not None:

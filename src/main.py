@@ -9,7 +9,7 @@ from stockshark.adb.dao_adb import DaoADB
 from stockshark.adb.menu_navigator import MenuNavigator
 from stockshark.adb.mobile_chess import MobileChess
 from stockshark.art_vis.detector import Detector
-from stockshark.chessGame.chess_game import ChessGame
+from stockshark.chess_engine.game import Game
 from stockshark.player.player import Player
 from stockshark.player.player_human import PlayerHuman
 from stockshark.player.player_min_max import PlayerMinMax

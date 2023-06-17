@@ -3,7 +3,12 @@ from copy import copy
 from stockshark.util.move import Move
 
 
-class ChessRules:
+class GameRules:
+
+    @staticmethod
+    def is_legal(game, move: Move) -> bool:
+        piece = game.board[move.start_pos]
+        return move not in game.get_legal_piece_moves(piece)
 
     @staticmethod
     def king_is_under_atk(game, is_white: bool) -> bool:
@@ -25,4 +30,4 @@ class ChessRules:
     def leaves_king_under_atk(game, move: Move) -> bool:
         game_copy = copy(game)
         game_copy.play(move, is_test=True)
-        return ChessRules.king_is_under_atk(game_copy, not game_copy.is_white_turn)
+        return GameRules.king_is_under_atk(game_copy, not game_copy.is_white_turn)

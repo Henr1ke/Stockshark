@@ -8,14 +8,14 @@ from stockshark.piece.pawn import Pawn
 from stockshark.piece.piece import Piece
 from stockshark.piece.queen import Queen
 from stockshark.piece.rook import Rook
-from stockshark.chessGame.board import Board
-from stockshark.chessGame.chess_rules import ChessRules
-from stockshark.chessGame.state import State
+from stockshark.chess_engine.board import Board
+from stockshark.chess_engine.game_rules import GameRules
+from stockshark.chess_engine.state import State
 from stockshark.util.move import Move
 from stockshark.util.position import Position
 
 
-class ChessGame:
+class Game:
     def __init__(self, fen_str: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") -> None:
         fen_str_fields = fen_str.split()
 
@@ -61,7 +61,7 @@ class ChessGame:
     def state(self) -> State:
         return self.__state
 
-    def __copy__(self) -> ChessGame:
+    def __copy__(self) -> Game:
         cls = self.__class__
         game = cls.__new__(cls)
         for key, value in self.__dict__.items():
@@ -76,7 +76,7 @@ class ChessGame:
         if piece not in self.__legal_piece_moves:
             moves = piece.gen_moves(self)
 
-            legal_moves = [move for move in moves if not ChessRules.leaves_king_under_atk(self, move)]
+            legal_moves = [move for move in moves if not GameRules.leaves_king_under_atk(self, move)]
 
             # Updates the dictionary
             self.__legal_piece_moves[piece] = legal_moves
@@ -152,7 +152,7 @@ class ChessGame:
                 break
 
         if not can_make_move:
-            if ChessRules.king_is_under_atk(self, self.__is_white_turn):
+            if GameRules.king_is_under_atk(self, self.__is_white_turn):
                 return State.WIN_B if self.__is_white_turn else State.WIN_W
             else:
                 return State.DRAW
@@ -164,7 +164,7 @@ class ChessGame:
 
     def play(self, move: Move, is_test=False) -> bool:
         piece = self.__board[move.start_pos]
-        if not is_test and move not in self.get_legal_piece_moves(piece):
+        if not is_test and GameRules.is_legal(self, move):
             return False
 
         eaten_piece = self.__board[move.end_pos]

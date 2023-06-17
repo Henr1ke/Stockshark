@@ -1,5 +1,5 @@
 from stockshark.player.player import Player
-from stockshark.chessGame.chess_game import ChessGame
+from stockshark.chess_engine.game import Game
 from stockshark.util.chess_exception import ChessException
 from stockshark.util.move import Move
 from stockshark.util.position import Position
@@ -8,7 +8,7 @@ from stockshark.util.position import Position
 class PlayerHuman(Player):
 
     @staticmethod
-    def get_start_pos(game: ChessGame) -> Position:
+    def get_start_pos(game: Game) -> Position:
         positions = list(game.get_available_pieces_pos().values())
 
         while True:
@@ -26,7 +26,7 @@ class PlayerHuman(Player):
                 print("Try again!")
 
     @staticmethod
-    def get_end_pos(game: ChessGame, start_pos: Position) -> Position:
+    def get_end_pos(game: Game, start_pos: Position) -> Position:
         piece = game.board[start_pos]
         moves = game.get_legal_piece_moves(piece)
 
@@ -46,7 +46,7 @@ class PlayerHuman(Player):
                 print(e)
                 print("Try again!")
 
-    def gen_move(self, game: ChessGame) -> Move:
+    def gen_move(self, game: Game) -> Move:
         start_pos = PlayerHuman.get_start_pos(game)
         end_pos = PlayerHuman.get_end_pos(game, start_pos)
         return Move(start_pos, end_pos)
