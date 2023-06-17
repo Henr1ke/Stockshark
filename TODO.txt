@@ -7,6 +7,7 @@ ficheiro main:
 chessGame:
     -- 5 otimizar o engine
     -- 1 promotion tá hardcoded para Queen
+    -- 4 meter threads
 
 player:
     -- 5 MinMax
@@ -27,6 +28,8 @@ art_vis:
 adb:
     -- 1 mudar o nome do mobile_chess
     -- 2 Arranjar uma solução para não usar as classes Coordinates (seria o menu detector)
+
+
 
 
 ------------------------------------ VERIFICAR TODOS OS TODOS -------------------------------------

@@ -1,7 +1,7 @@
 import cv2
 from numpy import ndarray
 
-from chess.adb.dao_adb import DaoADB
+from stockshark.adb.dao_adb import DaoADB
 
 
 def printscreen() -> None:

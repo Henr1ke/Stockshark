@@ -2,22 +2,22 @@ import argparse
 import time
 from typing import Optional
 
-from chess.adb.coordinates.coordinates import Coordinates
-from chess.adb.coordinates.coordinates_mi_8_lite import CoordinatesMi8Lite
-from chess.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
-from chess.adb.dao_adb import DaoADB
-from chess.adb.menu_navigator import MenuNavigator
-from chess.adb.mobile_chess import MobileChess
-from chess.art_vis.detector import Detector
-from chess.chessGame.chess_game import ChessGame
-from chess.player.player import Player
-from chess.player.player_human import PlayerHuman
-from chess.player.player_min_max import PlayerMinMax
-from chess.player.player_random import PlayerRandom
-from chess.player.player_reactive import PlayerReactive
-from chess.run.stockshark_runnable import StockSharkRunnable
-from chess.sim.simulator_adb import SimulatorADB
-from chess.sim.visualizer import Visualizer
+from stockshark.adb.coordinates.coordinates import Coordinates
+from stockshark.adb.coordinates.coordinates_mi_8_lite import CoordinatesMi8Lite
+from stockshark.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
+from stockshark.adb.dao_adb import DaoADB
+from stockshark.adb.menu_navigator import MenuNavigator
+from stockshark.adb.mobile_chess import MobileChess
+from stockshark.art_vis.detector import Detector
+from stockshark.chessGame.chess_game import ChessGame
+from stockshark.player.player import Player
+from stockshark.player.player_human import PlayerHuman
+from stockshark.player.player_min_max import PlayerMinMax
+from stockshark.player.player_random import PlayerRandom
+from stockshark.player.player_reactive import PlayerReactive
+from stockshark.run.stockshark_runnable import StockSharkRunnable
+from stockshark.sim.simulator_adb import SimulatorADB
+from stockshark.sim.visualizer import Visualizer
 
 
 # adb start-server
