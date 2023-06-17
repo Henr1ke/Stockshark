@@ -89,8 +89,3 @@ class DaoADB:
             return self.__device.shell("getprop ro.product.model").strip()
         return avd_name
 
-
-if __name__ == '__main__':
-    dao_adb = DaoADB()
-    dao_adb.connect()
-    dao_adb.get_device_model()

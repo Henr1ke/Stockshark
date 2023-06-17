@@ -1,30 +1,22 @@
 import argparse
-import time
 from typing import Optional
 
 from stockshark.adb.coordinates.coordinates import Coordinates
 from stockshark.adb.coordinates.coordinates_mi_8_lite import CoordinatesMi8Lite
 from stockshark.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
-from stockshark.adb.dao_adb import DaoADB
-from stockshark.adb.menu_navigator import MenuNavigator
-from stockshark.adb.mobile_chess import MobileChess
-from stockshark.art_vis.detector import Detector
-from stockshark.chess_engine.game import Game
-from stockshark.player.player import Player
-from stockshark.player.player_human import PlayerHuman
-from stockshark.player.player_min_max import PlayerMinMax
-from stockshark.player.player_random import PlayerRandom
-from stockshark.player.player_reactive import PlayerReactive
+from stockshark.agent.agent import Agent
+from stockshark.agent.agent_human import AgentHuman
+from stockshark.agent.agent_min_max import AgentMinMax
+from stockshark.agent.agent_random import AgentRandom
+from stockshark.agent.agent_reactive import AgentReactive
 from stockshark.run.stockshark_runnable import StockSharkRunnable
-from stockshark.sim.simulator_adb import SimulatorADB
-from stockshark.sim.visualizer import Visualizer
 
 
 # adb start-server
 # emulator -avd Pixel_4_API_33 -port 5556
 
-# python main.py --player reactive --model pixel4 friend --username Henrike01
-# python main.py --player reactive --model pixel4 computer --diff_lvl 1
+# python main.py --agent reactive --model pixel4 friend --username Henrike01
+# python main.py --agent reactive --model pixel4 computer --diff_lvl 1
 
 def get_coordinates(model: str) -> Optional[Coordinates]:
     if model.casefold() == "pixel4".casefold():
@@ -34,15 +26,15 @@ def get_coordinates(model: str) -> Optional[Coordinates]:
     return None
 
 
-def get_player(player: str) -> Optional[Player]:
-    if player.casefold() == "human".casefold():
-        return PlayerHuman()
-    if player.casefold() == "random".casefold():
-        return PlayerRandom()
-    if player.casefold() == "reactive".casefold():
-        return PlayerReactive()
-    if player.casefold() == "minmax".casefold():
-        return PlayerMinMax()
+def get_agent(agent: str) -> Optional[Agent]:
+    if agent.casefold() == "human".casefold():
+        return AgentHuman()
+    if agent.casefold() == "random".casefold():
+        return AgentRandom()
+    if agent.casefold() == "reactive".casefold():
+        return AgentReactive()
+    if agent.casefold() == "minmax".casefold():
+        return AgentMinMax()
     return None
 
 
@@ -53,7 +45,7 @@ def get_paw_response(play_as_whites: str) -> Optional[bool]:
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--player', type=str, required=True, help="Which player model to run on the simulation")
+parser.add_argument('--agent', type=str, required=True, help="Which agent model to run on the simulation")
 parser.add_argument('--model', type=str, required=True, help='Which smartphone model the ADB connects to')
 subparser = parser.add_subparsers(dest='opponent_type', required=True,
                                   help="Insert 'friend' to play against another friend or 'computer' to play against a computer")
@@ -69,17 +61,9 @@ computer.add_argument("--play_as_whites", type=str, required=False)
 
 args = parser.parse_args()
 
-player = get_player(args.player)
-if player is None:
-    raise ValueError("The player type is not recognized")
-
-coordinates = get_coordinates(args.model)
-if coordinates is None:
-    raise ValueError("The model is not available to playtest")
-
-player = get_player(args.player)
-if player is None:
-    raise ValueError("The player type is not recognized")
+agent = get_agent(args.agent)
+if agent is None:
+    raise ValueError("The agent type is not recognized")
 
 coordinates = get_coordinates(args.model)
 if coordinates is None:
@@ -105,4 +89,4 @@ else:
     stockshark.start_game_friend(username, on_white_side, duration, 3)
 
 print("Playing the game")
-stockshark.run_game(player)
+stockshark.run_game(agent)

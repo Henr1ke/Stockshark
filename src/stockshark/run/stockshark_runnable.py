@@ -4,10 +4,10 @@ from typing import Optional
 from stockshark.adb.coordinates.coordinates import Coordinates
 from stockshark.adb.dao_adb import DaoADB
 from stockshark.adb.menu_navigator import MenuNavigator
-from stockshark.adb.mobile_chess import MobileChess
+from stockshark.adb.mobile_player import MobilePlayer
 from stockshark.art_vis.detector import Detector
 from stockshark.chess_engine.game import Game
-from stockshark.player.player import Player
+from stockshark.agent.agent import Agent
 from stockshark.sim.simulator_adb import SimulatorADB
 from stockshark.sim.visualizer import Visualizer
 
@@ -32,7 +32,7 @@ class StockSharkRunnable:
                           wait_time: float = 2):
         self.__menu_navigator.vs_friend(username, on_white_side, duration, wait_time=wait_time)
 
-    def run_game(self, player: Player, show_simulation: bool = True) -> bool:
+    def run_game(self, agent: Agent, show_simulation: bool = True) -> bool:
         board, center = None, None
         for _ in range(60):
             screenshot = self.__dao_adb.screenshot()
@@ -46,12 +46,12 @@ class StockSharkRunnable:
         if board is None:
             return False
 
-        mobile_chess = MobileChess(self.__dao_adb, board, center)
+        mobile_chess = MobilePlayer(self.__dao_adb, board, center)
 
         game = Game()
         vis = None if not show_simulation else Visualizer(Visualizer.CHARSET_LETTER)
 
-        simulator = SimulatorADB(player, mobile_chess, game, vis)
+        simulator = SimulatorADB(agent, mobile_chess, game, vis)
         simulator.execute()
 
         return True

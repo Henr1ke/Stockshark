@@ -3,13 +3,13 @@ import time
 from copy import copy
 from typing import Tuple
 
-from stockshark.player.player import Player
+from stockshark.agent.agent import Agent
 from stockshark.chess_engine.game import Game
 from stockshark.sim.visualizer import Visualizer
 from stockshark.util.move import Move
 
 
-class PlayerMinMax(Player):
+class AgentMinMax(Agent):
     def gen_move(self, game: Game) -> Move:
         _, move = self.minmax_ab_sorted(0, 2, game)
         return move
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     vis = Visualizer(Visualizer.CHARSET_LETTER)
     vis.show(game)
 
-    p_mm = PlayerMinMax()
+    p_mm = AgentMinMax()
     depth = 2
 
     ti = time.time()

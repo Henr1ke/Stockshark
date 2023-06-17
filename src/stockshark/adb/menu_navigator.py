@@ -21,8 +21,8 @@ class MenuNavigator:
         # adb shell dumpsys package | findstr Activity | findstr com.chessEngine
 
         # open app in package @app_path
-        # self.__dao_adb.open_app("com.stockshark/.home.HomeActivity")
-        self.__dao_adb.open_app("com.stockshark/.splash.SplashActivity")
+        # self.__dao_adb.open_app("com.chess/.home.HomeActivity")
+        self.__dao_adb.open_app("com.chess/.splash.SplashActivity")
         time.sleep(wait_time)
 
     def vs_friend(self, name: str, on_white_side: Optional[bool] = None, duration: Optional[int] = None,

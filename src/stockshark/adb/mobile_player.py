@@ -9,7 +9,7 @@ from stockshark.util.move import Move
 from stockshark.art_vis.detector import Detector
 
 
-class MobileChess:
+class MobilePlayer:
     WAIT_TIME = 0.5
 
     def __init__(self, dao_adb: DaoADB, initial_board: ndarray, board_center: Tuple[int, int]) -> None:
@@ -28,7 +28,7 @@ class MobileChess:
         for pos in (move.start_pos, move.end_pos):
             x, y = self.__detector.pos_to_loc(pos)
             self.__dao_adb.tap_screen(self.__board_tl_corner[0] + x, self.__board_tl_corner[1] + y)
-            time.sleep(MobileChess.WAIT_TIME)
+            time.sleep(MobilePlayer.WAIT_TIME)
 
     def get_adv_move(self, game: Game) -> Optional[Move]:
         while True:

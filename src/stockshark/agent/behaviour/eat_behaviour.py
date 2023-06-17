@@ -3,7 +3,7 @@ from typing import Optional
 from heapq import heappop, heappush
 
 from stockshark.chess_engine.game import Game
-from stockshark.player.behaviour.behaviour import Behaviour
+from stockshark.agent.behaviour.behaviour import Behaviour
 from stockshark.util.move import Move
 
 

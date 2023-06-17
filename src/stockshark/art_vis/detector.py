@@ -205,7 +205,6 @@ class Detector:
 
         # alreadyExists = ImageProcessing.read_img(filename) is None
         if not os.path.exists(f"{current_path}/../../images/{filename}"):
-            print("fen doesnt exist")
             ImageProcessing.write_img(filename, board)
 
     def gen_fen_str(self, board: ndarray) -> str:

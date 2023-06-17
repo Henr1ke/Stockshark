@@ -10,6 +10,7 @@ chessGame:
     -- 4 meter threads
 
 player:
+    -- 5 Criar classes player para cada variação de minmax
     -- 5 MinMax
         -- Tornar o game engine mais eficiente
         -- Tornar o algoritmo mais eficiente (outras heuristicas)

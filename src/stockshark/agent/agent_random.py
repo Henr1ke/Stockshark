@@ -1,10 +1,11 @@
-from stockshark.player.behaviour.random_behaviour import RandomBehaviour
-from stockshark.player.player import Player
+from stockshark.agent.behaviour.random_behaviour import RandomBehaviour
+
+from stockshark.agent.agent import Agent
 from stockshark.chess_engine.game import Game
 from stockshark.util.move import Move
 
 
-class PlayerRandom(Player):
+class AgentRandom(Agent):
     def __init__(self):
         self.__behaviour = RandomBehaviour()
 

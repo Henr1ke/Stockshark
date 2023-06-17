@@ -2,30 +2,30 @@ from abc import ABC
 from typing import Optional
 
 from stockshark.chess_engine.game import Game
-from stockshark.player.player import Player
-from stockshark.player.player_random import PlayerRandom
+from stockshark.agent.agent import Agent
+from stockshark.agent.agent_random import AgentRandom
 from stockshark.sim.simulator import Simulator
 from stockshark.sim.visualizer import Visualizer
 
 
 class SimulatorPVP(Simulator, ABC):
-    def __init__(self, player_w: Player, player_b: Player, game: Game, vis: Optional[Visualizer]) -> None:
+    def __init__(self, agent_w: Agent, agent_b: Agent, game: Game, vis: Optional[Visualizer]) -> None:
         super().__init__(game, vis)
-        self._player_w: Player = player_w
-        self._player_b: Player = player_b
+        self._agent_w: Agent = agent_w
+        self._agent_b: Agent = agent_b
 
     def _update_game(self) -> bool:
-        player = self._player_w if self._game.is_white_turn else self._player_b
-        move = player.gen_move(self._game)
+        agent = self._agent_w if self._game.is_white_turn else self._agent_b
+        move = agent.gen_move(self._game)
         self._game.make_move(move)
         return True
 
 
 if __name__ == '__main__':
     game = Game()
-    player_w = PlayerRandom()
-    player_b = PlayerRandom()
+    agent_w = AgentRandom()
+    agent_b = AgentRandom()
     visualizer = Visualizer(Visualizer.CHARSET_LETTER)
 
-    simulator = SimulatorPVP(player_w, player_b, game, visualizer)
+    simulator = SimulatorPVP(agent_w, agent_b, game, visualizer)
     simulator.execute()

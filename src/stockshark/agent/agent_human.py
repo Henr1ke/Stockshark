@@ -1,11 +1,11 @@
-from stockshark.player.player import Player
+from stockshark.agent.agent import Agent
 from stockshark.chess_engine.game import Game
 from stockshark.util.chess_exception import ChessException
 from stockshark.util.move import Move
 from stockshark.util.position import Position
 
 
-class PlayerHuman(Player):
+class AgentHuman(Agent):
 
     @staticmethod
     def get_start_pos(game: Game) -> Position:
@@ -47,6 +47,6 @@ class PlayerHuman(Player):
                 print("Try again!")
 
     def gen_move(self, game: Game) -> Move:
-        start_pos = PlayerHuman.get_start_pos(game)
-        end_pos = PlayerHuman.get_end_pos(game, start_pos)
+        start_pos = AgentHuman.get_start_pos(game)
+        end_pos = AgentHuman.get_end_pos(game, start_pos)
         return Move(start_pos, end_pos)
