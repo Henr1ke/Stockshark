@@ -162,7 +162,7 @@ class Game:
 
         return State.IN_PROGRESS
 
-    def play(self, move: Move, is_test=False) -> bool:
+    def make_move(self, move: Move, is_test=False) -> bool:
         piece = self.__board[move.start_pos]
         if not is_test and GameRules.is_legal(self, move):
             return False

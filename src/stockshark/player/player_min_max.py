@@ -23,7 +23,7 @@ class PlayerMinMax(Player):
         best_val, best_move = -math.inf if game.is_white_turn else math.inf, None
         for move in moves:
             game_copy = copy(game)
-            game_copy.play(move)
+            game_copy.make_move(move)
 
             if curr_depth + 1 == max_depth:
                 value = game_copy.evaluate_game()
@@ -52,7 +52,7 @@ class PlayerMinMax(Player):
         best_val, best_move = -math.inf if game.is_white_turn else math.inf, None
         for move in moves:
             game_copy = copy(game)
-            game_copy.play(move)
+            game_copy.make_move(move)
 
             if curr_depth + 1 == max_depth:
                 value = game_copy.evaluate_game()
@@ -88,7 +88,7 @@ class PlayerMinMax(Player):
         best_val, best_move = -math.inf if game.is_white_turn else math.inf, None
         for move in moves:
             game_copy = copy(game)
-            game_copy.play(move)
+            game_copy.make_move(move)
 
             if curr_depth + 1 == max_depth:
                 value = game_copy.evaluate_game()

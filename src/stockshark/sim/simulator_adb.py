@@ -20,7 +20,7 @@ class SimulatorADB(Simulator):
     def _update_game(self) -> bool:
         if self._game.is_white_turn == self._on_white_side:
             move = self._player.gen_move(self._game)
-            sucess = self._game.play(move)
+            sucess = self._game.make_move(move)
             if sucess:
                 self._mobile.play(move)
 
@@ -29,7 +29,7 @@ class SimulatorADB(Simulator):
             if move is None:
                 return False
 
-            self._game.play(move)
+            self._game.make_move(move)
 
         return True
 

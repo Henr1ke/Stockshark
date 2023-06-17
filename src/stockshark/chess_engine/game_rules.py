@@ -29,5 +29,5 @@ class GameRules:
     @staticmethod
     def leaves_king_under_atk(game, move: Move) -> bool:
         game_copy = copy(game)
-        game_copy.play(move, is_test=True)
+        game_copy.make_move(move, is_test=True)
         return GameRules.king_is_under_atk(game_copy, not game_copy.is_white_turn)
