@@ -120,29 +120,37 @@ class Game:
         if abs(move.start_pos.row - move.end_pos.row) == 2:
             return move.end_pos + ((0, -1) if piece.is_white else (0, 1))
 
-    def __rook_actions(self, move: Move) -> None:
-        piece = self.__board[move.end_pos]
-        initial_row = 0 if piece.is_white else 7
-        if move.start_pos.row == initial_row:
-            if move.start_pos.col == 0:
-                self.__castlings = self.__castlings.replace("Q" if piece.is_white else "q", "")
-            elif move.start_pos.col == 7:
-                self.__castlings = self.__castlings.replace("K" if piece.is_white else "k", "")
+    def __update_castlings(self, move: Move) -> None:
+        king_col_idx = 4
+        q_side_col_idx = 0
+        k_side_col_idx = 7
 
-    def __king_actions(self, move: Move) -> None:
         piece = self.__board[move.end_pos]
-        if move.start_pos == Position(4, 0 if piece.is_white else 7):
-            self.__castlings = self.__castlings.replace("Q" if piece.is_white else "q", "")
-            self.__castlings = self.__castlings.replace("K" if piece.is_white else "k", "")
 
-            if move.end_pos.col == 2:
-                start_pos = Position(0, move.end_pos.row)
-                end_pos = move.end_pos + (1, 0)
-                self.__board.make_move(Move(start_pos, end_pos))
-            elif move.end_pos.col == 6:
-                start_pos = Position(7, move.end_pos.row)
-                end_pos = move.end_pos + (-1, 0)
-                self.__board.make_move(Move(start_pos, end_pos))
+        for row_idx in (0, 7):
+            if isinstance(piece, King) and move.start_pos == Position(king_col_idx, row_idx):
+                self.__castlings = self.__castlings.replace("Q" if row_idx == 0 else "q", "")
+                self.__castlings = self.__castlings.replace("K" if row_idx == 0 else "k", "")
+
+                if move.end_pos.col == 2:
+                    start_pos = Position(0, row_idx)
+                    end_pos = move.end_pos + (1, 0)
+                    self.__board.make_move(Move(start_pos, end_pos))
+                elif move.end_pos.col == 6:
+                    start_pos = Position(7, row_idx)
+                    end_pos = move.end_pos + (-1, 0)
+                    self.__board.make_move(Move(start_pos, end_pos))
+
+                return
+
+            elif move.start_pos == Position(q_side_col_idx, row_idx) \
+                    or move.end_pos == Position(q_side_col_idx, row_idx):
+                self.__castlings = self.__castlings.replace("Q" if row_idx == 0 else "q", "")
+                return
+            elif move.start_pos == Position(k_side_col_idx, row_idx) \
+                    or move.end_pos == Position(k_side_col_idx, row_idx):
+                self.__castlings = self.__castlings.replace("K" if row_idx == 0 else "k", "")
+                return
 
     def __get_new_state(self) -> State:
         can_make_move = False
@@ -168,18 +176,18 @@ class Game:
             return False
 
         eaten_piece = self.__board[move.end_pos]
-        should_reset_halfclock = eaten_piece is not None
 
+
+        should_reset_halfclock = eaten_piece is not None
         # Update self.__board
         self.__board.make_move(move)
 
-        # Update self.__castlings and self.__en_passants
+        # Update self.__castlings
+        self.__update_castlings(move)
+
+        # Update self.__en_passants
         e_p_target = None
-        if isinstance(piece, Rook):
-            self.__rook_actions(move)
-        elif isinstance(piece, King):
-            self.__king_actions(move)
-        elif isinstance(piece, Pawn):
+        if isinstance(piece, Pawn):
             should_reset_halfclock = True
             e_p_target = self.__pawn_actions(move)
         self.__en_passant_target = e_p_target
