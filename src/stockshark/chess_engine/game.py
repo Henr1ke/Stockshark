@@ -72,6 +72,10 @@ class Game:
                 setattr(game, key, copy(value))
         return game
 
+    def get_available_pieces_pos(self) -> Dict[Piece, Position]:
+        return {piece: pos for piece, pos in self.__board.pieces_pos.items()
+                if piece.is_white is self.__is_white_turn and len(self.get_legal_piece_moves(piece)) > 0}
+
     def get_legal_piece_moves(self, piece: Piece) -> List[Move]:
         if piece not in self.__legal_piece_moves:
             moves = piece.gen_moves(self)
@@ -82,10 +86,6 @@ class Game:
             self.__legal_piece_moves[piece] = legal_moves
 
         return self.__legal_piece_moves[piece]
-
-    def get_available_pieces_pos(self) -> Dict[Piece, Position]:
-        return {piece: pos for piece, pos in self.__board.pieces_pos.items()
-                if piece.is_white is self.__is_white_turn and len(self.get_legal_piece_moves(piece)) > 0}
 
     def gen_fen_str(self) -> str:
         fen_str_fields = [
