@@ -16,7 +16,7 @@ from stockshark.run.stockshark_runnable import StockSharkRunnable
 # emulator -avd Pixel_4_API_33 -port 5556
 
 # python main.py --agent reactive --model pixel4 friend --username Henrike01
-# python main.py --agent reactive --model pixel4 computer --diff_lvl 1
+# python main.py --agent minmax --model pixel4 computer --diff_lvl 1
 
 def get_coordinates(model: str) -> Optional[Coordinates]:
     if model.casefold() == "pixel4".casefold():

@@ -98,11 +98,11 @@ class Detector:
         if lowest_coord is None:
             return None
 
-        tile = Detector.get_tile(board, lowest_coord)
-        return Detector.is_piece_white(tile)
+        tile_img = Detector.get_tile_img(board, lowest_coord)
+        return Detector.is_piece_white(tile_img)
 
     @staticmethod
-    def get_tile(board: ndarray, center: Tuple[int, int]) -> ndarray:
+    def get_tile_img(board: ndarray, center: Tuple[int, int]) -> ndarray:
         margin = board.shape[1] / 8 * Detector.TILE_MARGIN_FRACT
         tile_w = board.shape[1] / 8 - 2 * margin
         return ImageProcessing.get_square(board, center, tile_w)
@@ -173,10 +173,10 @@ class Detector:
             for col_idx in range(8):
                 tile = Tile(col_idx, row_idx)
                 coord = self.tile_to_coord(tile)
-                tile = Detector.get_tile(board, coord)
+                tile_img = Detector.get_tile_img(board, coord)
 
-                if Detector.is_tile_selected(tile):
-                    if Detector.is_tile_empty(tile):
+                if Detector.is_tile_selected(tile_img):
+                    if Detector.is_tile_empty(tile_img):
                         if start_tile is not None:
                             # Two empty selected tiles found, it's a castle movve
                             return Detector.get_castle_move(start_tile, tile)
@@ -216,8 +216,8 @@ class Detector:
             piece_tiles = self.get_piece_tiles(board, piece_name)
             for tile in piece_tiles:
                 coord = self.tile_to_coord(tile)
-                tile = Detector.get_tile(board, coord)
-                is_white = Detector.is_piece_white(tile)
+                tile_img = Detector.get_tile_img(board, coord)
+                is_white = Detector.is_piece_white(tile_img)
                 letter_to_add = letter.upper() if is_white else letter
                 tile_to_piece[tile] = letter_to_add
 
