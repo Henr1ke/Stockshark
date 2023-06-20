@@ -66,8 +66,8 @@ class ImageProcessing:
 
     @staticmethod
     def combine_imgs(img1: ndarray, img2: ndarray) -> ndarray:
-        float_mean = (img1 * 1.0 + img2 * 1.0) / 2
-        return np.array(float_mean, dtype="uint8")
+        float_average = (img1 * 1.0 + img2 * 1.0) / 2
+        return np.array(float_average, dtype="uint8")
 
     @staticmethod
     def get_px_similarities(img: ndarray, template: ndarray) -> ndarray:

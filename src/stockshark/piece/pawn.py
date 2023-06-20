@@ -3,6 +3,7 @@ from typing import List
 from stockshark.piece.piece import Piece
 from stockshark.util.chess_exception import ChessException
 from stockshark.util.move import Move
+from stockshark.util.tile import Tile
 
 
 class Pawn(Piece):
@@ -52,3 +53,14 @@ class Pawn(Piece):
                 pass
 
         return moves
+
+    def __add_moves(self, start_tile: Tile, end_tile: Tile) -> List[Move]:
+        if self.is_white and start_tile.row == 6 and end_tile.row == 7 or \
+                not self.is_white and start_tile.row == 1 and end_tile.row == 0:
+            return [
+                Move(start_tile, end_tile, Move.PROMOTE_N),
+                Move(start_tile, end_tile, Move.PROMOTE_B),
+                Move(start_tile, end_tile, Move.PROMOTE_R),
+                Move(start_tile, end_tile, Move.PROMOTE_Q),
+            ]
+        return [Move(start_tile, end_tile)]

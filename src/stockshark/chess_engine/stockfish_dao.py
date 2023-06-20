@@ -1,7 +1,10 @@
+import time
 from threading import Thread
 from subprocess import Popen, PIPE, STDOUT
 from queue import Queue, Empty
-from typing import Optional
+from typing import Optional, List
+
+from stockshark.util.move import Move
 
 
 class StockFishDao:
@@ -108,6 +111,9 @@ class StockFishDao:
         idx = response.find(search_word)
         return response[:idx].strip("\n")
 
+    def make_moves(self, fen_string: str, moves: List[Move]):
+        pass
+
     def __del__(self) -> None:
         if self._stockfish.poll() is None and not self._is_closing:
             self._send_command("quit")
@@ -116,9 +122,11 @@ class StockFishDao:
 
 
 if __name__ == '__main__':
+
     sf_dao = StockFishDao()
     success = sf_dao.new_game()
     fen = sf_dao.get_fen_string()
     board_repr = sf_dao.get_board_repr()
     print(fen)
     print(board_repr)
+
