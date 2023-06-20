@@ -23,6 +23,8 @@ class Detector:
     BOARD_MARGIN_FRACT = 0.002
     TILE_MARGIN_FRACT = 0.09
 
+    TILE_EMPTY_THRESH = 20
+
     PAWN = "pawn"
     KNIGHT = "knight"
     BISHOP = "bishop"
@@ -63,7 +65,7 @@ class Detector:
         coordinates = ImageProcessing.locate(scn_gray, empty_board_gray, margin=margin)
         if len(coordinates) == 1:
             center = coordinates[0]
-            board = ImageProcessing.get_square(screenshot, center, screenshot.shape[1])
+            board = ImageProcessing.get_square(screenshot, center, scn_w)
             if detector is not None:
                 detector.save_fen_str(board)
             return board, center
@@ -109,10 +111,9 @@ class Detector:
 
     @staticmethod
     def is_tile_empty(tile: ndarray) -> bool:
-        thresh_val = 20
         gs = ImageProcessing.grayscale(tile)
         std = np.std(gs)
-        return std < thresh_val
+        return std < Detector.TILE_EMPTY_THRESH
 
     @staticmethod
     def is_piece_white(tile: ndarray) -> Optional[bool]:
@@ -178,7 +179,7 @@ class Detector:
                 if Detector.is_tile_selected(tile_img):
                     if Detector.is_tile_empty(tile_img):
                         if start_tile is not None:
-                            # Two empty selected tiles found, it's a castle movve
+                            # Two empty selected tiles found, it's a castle move
                             return Detector.get_castle_move(start_tile, tile)
                         else:
                             start_tile = tile
