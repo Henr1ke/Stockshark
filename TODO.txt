@@ -7,6 +7,7 @@ ChessRules para MoveValidator
 
 -------------------------------------- RELATORIO --------------------------------------------------------------
 não sabemos como referenciar as imagens q fomo buscar (Ex fig 3.7 da wikipedia)
+onde eq se fala do main.py
 
 
 

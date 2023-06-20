@@ -2,7 +2,7 @@ from abc import ABC
 from typing import Optional
 
 from stockshark.agent.agent_human import AgentHuman
-from stockshark.chess_engine.game import Game
+from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.agent.agent import Agent
 from stockshark.agent.agent_random import AgentRandom
 from stockshark.sim.simulator import Simulator
@@ -10,7 +10,7 @@ from stockshark.sim.visualizer import Visualizer
 
 
 class SimulatorPVP(Simulator, ABC):
-    def __init__(self, agent_w: Agent, agent_b: Agent, game: Game, vis: Optional[Visualizer]) -> None:
+    def __init__(self, agent_w: Agent, agent_b: Agent, game: GameEngine, vis: Optional[Visualizer]) -> None:
         super().__init__(game, vis)
         self._agent_w: Agent = agent_w
         self._agent_b: Agent = agent_b
@@ -23,9 +23,9 @@ class SimulatorPVP(Simulator, ABC):
 
 
 if __name__ == '__main__':
-    game = Game()
-    agent_w = AgentRandom()
-    agent_b = AgentRandom()
+    game = GameEngine("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 0 1")
+    agent_w = AgentHuman()
+    agent_b = AgentHuman()
     visualizer = Visualizer(Visualizer.CHARSET_LETTER)
 
     simulator = SimulatorPVP(agent_w, agent_b, game, visualizer)

@@ -3,7 +3,7 @@ from typing import Optional
 from stockshark.adb.dao_adb import DaoADB
 from stockshark.adb.mobile_player import MobilePlayer
 from stockshark.art_vis.detector import Detector
-from stockshark.chess_engine.game import Game
+from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.agent.agent import Agent
 from stockshark.agent.agent_random import AgentRandom
 from stockshark.sim.simulator import Simulator
@@ -11,7 +11,7 @@ from stockshark.sim.visualizer import Visualizer
 
 
 class SimulatorADB(Simulator):
-    def __init__(self, agent: Agent, mobile: MobilePlayer, game: Game, vis: Optional[Visualizer]) -> None:
+    def __init__(self, agent: Agent, mobile: MobilePlayer, game: GameEngine, vis: Optional[Visualizer]) -> None:
         super().__init__(game, vis)
         self._agent: Agent = agent
         self._mobile: MobilePlayer = mobile
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     m = MobilePlayer(d, board, center)
 
-    g = Game()
+    g = GameEngine()
 
     v = Visualizer(Visualizer.CHARSET_LETTER)
 

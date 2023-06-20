@@ -4,7 +4,7 @@ from typing import Tuple, Optional
 from numpy import ndarray
 
 from stockshark.adb.dao_adb import DaoADB
-from stockshark.chess_engine.game import Game
+from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.util.move import Move
 from stockshark.art_vis.detector import Detector
 
@@ -30,7 +30,7 @@ class MobilePlayer:
             self.__dao_adb.tap_screen(self.__board_tl_corner[0] + x, self.__board_tl_corner[1] + y)
             time.sleep(MobilePlayer.WAIT_TIME)
 
-    def get_adv_move(self, game: Game) -> Optional[Move]:
+    def get_adv_move(self, game: GameEngine) -> Optional[Move]:
         while True:
             screenshot = self.__dao_adb.screenshot()
             board_info = Detector.find_board(screenshot, self.__detector)

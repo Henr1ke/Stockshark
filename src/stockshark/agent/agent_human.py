@@ -1,7 +1,7 @@
 from copy import copy
 
 from stockshark.agent.agent import Agent
-from stockshark.chess_engine.game import Game
+from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.util.move import Move
 
 
@@ -45,7 +45,7 @@ class AgentHuman(Agent):
     #             print(e)
     #             print("Try again!")
 
-    def gen_move(self, game: Game) -> Move:
+    def gen_move(self, game: GameEngine) -> Move:
         moves = []
         for piece in game.get_available_pieces_tiles().keys():
             moves += game.get_legal_piece_moves(piece)

@@ -17,7 +17,7 @@ from stockshark.util.move import Move
 from stockshark.util.tile import Tile
 
 
-class Game:
+class GameEngine:
     def __init__(self, fen_str: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") -> None:
         fen_str_fields = fen_str.split()
 
@@ -63,7 +63,7 @@ class Game:
     def state(self) -> State:
         return self.__state
 
-    def __copy__(self) -> Game:
+    def __copy__(self) -> GameEngine:
         cls = self.__class__
         game = cls.__new__(cls)
         for key, value in self.__dict__.items():
@@ -226,3 +226,23 @@ class Game:
         self.__legal_piece_moves.clear()
 
         return True
+
+
+if __name__ == '__main__':
+    game = GameEngine("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 0 1")
+
+
+    def a(depth):
+        if depth <= 0:
+            return 1
+
+        num = 0
+        for piece in game.get_available_pieces_tiles().keys():
+            for move in game.get_legal_piece_moves(piece):
+                game_copy = copy(game)
+                game_copy.make_move(move)
+                num += a(depth - 1)
+        return num
+
+    for d in range(5):
+        print(a(d))

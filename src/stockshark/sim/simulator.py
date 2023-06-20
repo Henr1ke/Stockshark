@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from stockshark.chess_engine.game import Game
+from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.chess_engine.state import State
 from stockshark.sim.visualizer import Visualizer
 
 
 class Simulator(ABC):
-    def __init__(self, game: Game, vis: Optional[Visualizer] = None) -> None:
+    def __init__(self, game: GameEngine, vis: Optional[Visualizer] = None) -> None:
         self._game = game
         self._vis = vis
 
