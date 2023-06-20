@@ -21,8 +21,7 @@ class Pawn(Piece):
             end_tile = start_tile + inc
             if board[end_tile] is None:
                 # Corresponding to one step forward
-                move = Move(start_tile, end_tile)
-                moves.append(move)
+                moves += self.__get_moves(start_tile, end_tile)
 
                 inc = (0, 2) if self.is_white else (0, -2)
                 end_tile = start_tile + inc
@@ -41,8 +40,7 @@ class Pawn(Piece):
                 piece = board[end_tile]
                 if piece is not None and piece.is_white is not self.is_white:
                     # Corresponding eating a piece in the diagonal
-                    move = Move(start_tile, end_tile)
-                    moves.append(move)
+                    moves += self.__get_moves(start_tile, end_tile)
 
                 elif end_tile == game.en_passant_target:
                     # Corresponding to En Passant
@@ -54,7 +52,7 @@ class Pawn(Piece):
 
         return moves
 
-    def __add_moves(self, start_tile: Tile, end_tile: Tile) -> List[Move]:
+    def __get_moves(self, start_tile: Tile, end_tile: Tile) -> List[Move]:
         if self.is_white and start_tile.row == 6 and end_tile.row == 7 or \
                 not self.is_white and start_tile.row == 1 and end_tile.row == 0:
             return [
