@@ -1,5 +1,6 @@
 import threading
 import subprocess
+from queue import Queue, Empty
 import time
 from typing import List, Optional
 
@@ -16,15 +17,12 @@ class StockFishDao:
             stderr=subprocess.STDOUT,
         )
 
-        self._new_lines = []
-        self._new_lines_lock = threading.Lock()
+        self._sf_output = Queue()
 
         self._line_reader = threading.Thread(target=StockFishDao._thread_read_contents,
-                                             args=(self._stockfish, self._new_lines, self._new_lines_lock,),
+                                             args=(self._stockfish, self._sf_output,),
                                              daemon=True)
         self._line_reader.start()
-        with self._new_lines_lock:
-            self._new_lines.clear()
 
         self._is_closing = False
 
@@ -43,26 +41,30 @@ class StockFishDao:
             time.sleep(0.1)
 
     def _read_line(self) -> Optional[str]:
-        with self._new_lines_lock:
-            if len(self._new_lines) > 0:
-                return self._new_lines.pop(0)
+        try:
+            line = self._sf_output.get_nowait()
+            # line = self._sf_output.get(timeout=0.1)
+            return line
+        except Empty:
+            return None
 
     def _read_response(self) -> Optional[str]:
-        with self._new_lines_lock:
-            if len(self._new_lines) > 0:
-                return "".join(self._new_lines)
+        lines = []
+        line = self._read_line()
+        while line is not None:
+            lines.append(line)
+            line = self._read_line()
+        return "\n".join(lines)
 
     @staticmethod
-    def _thread_read_contents(sf_process: subprocess.Popen, new_lines: List[str],
-                              new_lines_lock: threading.Lock) -> None:
+    def _thread_read_contents(sf_process: subprocess.Popen, sf_output: Queue) -> None:
         while True:
             if not sf_process.stdout:
                 raise BrokenPipeError()
             if sf_process.poll() is not None:
                 raise ConnectionError("The Stockfish process has crashed")
             line = sf_process.stdout.readline().strip()
-            with new_lines_lock:
-                new_lines.append(line)
+            sf_output.put(line)
 
     def close(self):
         self._send_command("quit")
