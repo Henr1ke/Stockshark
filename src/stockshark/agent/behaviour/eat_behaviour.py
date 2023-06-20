@@ -18,7 +18,7 @@ class EatBehaviour(Behaviour):
         for piece, start_pos in pieces_pos.items():
             moves = game.get_legal_piece_moves(piece)
             for move in moves:
-                attacked_piece = board[move.end_pos]
+                attacked_piece = board[move.end_tile]
                 if attacked_piece is not None:
                     prio = -attacked_piece.value
                     heappush(actions, (prio, move))

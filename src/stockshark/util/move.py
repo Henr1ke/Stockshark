@@ -1,27 +1,30 @@
 from __future__ import annotations
 
 from stockshark.util.chess_exception import ChessException
-from stockshark.util.position import Position
+from stockshark.util.tile import Tile
 
 
 class Move:
-    def __init__(self, start_pos: Position, end_pos: Position) -> None:
-        if start_pos == end_pos:
+    def __init__(self, start_tile_args, end_tile_args) -> None:
+        start_tile = Tile(start_tile_args)
+        end_tile = Tile(end_tile_args)
+
+        if start_tile == end_tile:
             raise ChessException("A move cannot start and end on itself")
 
-        self.__start_pos: Position = start_pos
-        self.__end_pos: Position = end_pos
+        self.__start_tile: Tile = start_tile
+        self.__end_tile: Tile = end_tile
 
     def __eq__(self, other: Move) -> bool:
-        return isinstance(other, Move) and self.start_pos == other.start_pos and self.end_pos == other.end_pos
+        return isinstance(other, Move) and self.start_tile == other.start_tile and self.end_tile == other.end_tile
 
     def __repr__(self) -> str:
-        return f"{self.__start_pos}{self.__end_pos}"
+        return f"{self.__start_tile}{self.__end_tile}"
 
     @property
-    def start_pos(self) -> Position:
-        return self.__start_pos
+    def start_tile(self) -> Tile:
+        return self.__start_tile
 
     @property
-    def end_pos(self) -> Position:
-        return self.__end_pos
+    def end_tile(self) -> Tile:
+        return self.__end_tile

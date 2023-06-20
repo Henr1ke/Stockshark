@@ -10,7 +10,7 @@ from numpy import ndarray
 
 from stockshark.art_vis.image_processing import ImageProcessing
 from stockshark.util.move import Move
-from stockshark.util.position import Position
+from stockshark.util.tile import Tile
 
 
 class Detector:
@@ -131,16 +131,16 @@ class Detector:
         return w_sel_count > thresh_val or b_sel_count > thresh_val
 
     @staticmethod
-    def get_castle_move(pos1: Position, pos2: Position) -> Optional[Move]:
+    def get_castle_move(pos1: Tile, pos2: Tile) -> Optional[Move]:
         if pos1.row != pos2.row or pos1.row != 0 and pos1.row != 7:
             return None
 
         start_pos, other_pos = (pos1, pos2) if pos1.col == 4 else (pos2, pos1)
-        end_pos = Position(2 if other_pos.col == 0 else 6, start_pos.row)
+        end_pos = Tile(2 if other_pos.col == 0 else 6, start_pos.row)
 
         return Move(start_pos, end_pos)
 
-    def pos_to_loc(self, pos: Position) -> Tuple[int, int]:
+    def pos_to_loc(self, pos: Tile) -> Tuple[int, int]:
         tile_w = self.__board_w / 8
         if not self.__on_white_side:
             pos = -pos
@@ -149,16 +149,16 @@ class Detector:
         y = int(tile_w / 2 + tile_w * (7 - pos.row))
         return x, y
 
-    def loc_to_pos(self, loc: Tuple[int, int]) -> Position:
+    def loc_to_pos(self, loc: Tuple[int, int]) -> Tile:
         col = int(8 * loc[0] / self.__board_w)
         row = 7 - int(8 * loc[1] / self.__board_w)
-        pos = Position(col, row)
+        pos = Tile(col, row)
 
         if not self.__on_white_side:
             pos = -pos
         return pos
 
-    def get_piece_positions(self, board: ndarray, piece_name: str) -> List[Position]:
+    def get_piece_positions(self, board: ndarray, piece_name: str) -> List[Tile]:
         if piece_name not in Detector.PIECE_NAME_TO_LETTER.keys():
             raise ValueError("Piece name is not valid")
 
@@ -171,7 +171,7 @@ class Detector:
         end_pos = None
         for row_idx in range(8):
             for col_idx in range(8):
-                pos = Position(col_idx, row_idx)
+                pos = Tile(col_idx, row_idx)
                 loc = self.pos_to_loc(pos)
                 tile = Detector.get_tile(board, loc)
 
@@ -226,7 +226,7 @@ class Detector:
             fen_row = ""
             tile_skips = 0
             for col_idx in range(8):
-                pos = Position(col_idx, row_idx)
+                pos = Tile(col_idx, row_idx)
                 if pos not in pos_to_piece.keys():
                     tile_skips += 1
                 else:

@@ -5,10 +5,10 @@ from stockshark.util.constants import FILE_LETTERS
 from stockshark.util.chess_exception import ChessException
 
 
-class Position:
+class Tile:
     """
-    Position representation
-            - by a pair of integeres:                                   - by a string coordinate:
+    Tile representation
+            - by a pair of indices:                                   - by the string name:
                ╔════╦════╦════╦════╦════╦════╦════╦════╗                  ╔════╦════╦════╦════╦════╦════╦════╦════╗
                ║ 0,7║ 1,7║ 2,7║ 3,7║ 4,7║ 5,7║ 6,7║ 7,7║                  ║ a8 ║ b8 ║ c8 ║ d8 ║ e8 ║ f8 ║ g8 ║ h8 ║
                ╠════╬════╬════╬════╬════╬════╬════╬════╣                  ╠════╬════╬════╬════╬════╬════╬════╬════╣
@@ -30,49 +30,52 @@ class Position:
     """
 
     def __init__(self, *args) -> None:
-        if len(args) == 1 and type(args[0]) == Position:
-            self._init_with_pos(args[0])
+        if len(args) == 1 and type(args[0]) == Tile:
+            self._init_with_tiles(args[0])
 
         elif len(args) == 1 and type(args[0]) == str:
-            self._init_with_coord(args[0])
+            self._init_with_name(args[0])
+
+        elif len(args) == 1 and type(args[0]) == tuple and type(args[0][0]) == int and type(args[0][1]) == int:
+            self._init_with_idxs(args[0][0], args[0][1])
 
         elif len(args) == 2 and type(args[0]) == int and type(args[1]) == int:
-            self._init_with_col_row(args[0], args[1])
+            self._init_with_idxs(args[0], args[1])
 
         else:
             raise ValueError(
-                f"Cannot initialize a Position with parameter types {[type(parameter) for parameter in args]}")
+                f"Cannot initialize a Tile with parameter types {[type(parameter) for parameter in args]}")
 
     def __hash__(self) -> int:
         number = 8 * self.row + self.col
         return hash(number)
 
-    def __eq__(self, pos: Position) -> bool:
-        return isinstance(pos, Position) and self.__row == pos.__row and self.__col == pos.__col
+    def __eq__(self, tile: Tile) -> bool:
+        return isinstance(tile, Tile) and self.__row == tile.__row and self.__col == tile.__col
 
-    def __lt__(self, pos: Position) -> bool:
-        if not isinstance(pos, Position):
+    def __lt__(self, tile: Tile) -> bool:
+        if not isinstance(tile, Tile):
             return False
 
-        if self.row != pos.row:
-            return self.row < pos.row
-        return self.col < pos.col
+        if self.row != tile.row:
+            return self.row < tile.row
+        return self.col < tile.col
 
-    def __gt__(self, pos: Position) -> bool:
-        return pos < self
+    def __gt__(self, tile: Tile) -> bool:
+        return tile < self
 
-    def __add__(self, inc: Tuple[int, int]) -> Position:
+    def __add__(self, inc: Tuple[int, int]) -> Tile:
         if not (isinstance(inc, tuple) and len(inc) == 2 and
                 isinstance(inc[0], int) and isinstance(inc[1], int)):
             raise ChessException(f"Expected a tuple containing 2 integers, got {inc} of type {type(inc)}")
 
-        return Position(self.col + inc[0], self.row + inc[1])
+        return Tile(self.col + inc[0], self.row + inc[1])
 
     def __neg__(self):
-        return Position(7 - self.col, 7 - self.row)
+        return Tile(7 - self.col, 7 - self.row)
 
     def __repr__(self) -> str:
-        return self.__coord
+        return self.__name
 
     @property
     def row(self) -> int:
@@ -83,44 +86,44 @@ class Position:
         return self.__col
 
     @property
-    def coord(self) -> str:
-        return self.__coord
+    def name(self) -> str:
+        return self.__name
 
-    def _init_with_col_row(self, col: int, row: int) -> None:
-        if not (0 <= col < 8):
-            raise ChessException(f"Column must be from 0 to 7, got {col}")
-        if not (0 <= row < 8):
-            raise ChessException(f"Row must be from 0 to 7, got {row}")
+    def _init_with_idxs(self, col_idx: int, row_idx: int) -> None:
+        if not (0 <= col_idx < 8):
+            raise ChessException(f"Column must be from 0 to 7, got {col_idx}")
+        if not (0 <= row_idx < 8):
+            raise ChessException(f"Row must be from 0 to 7, got {row_idx}")
 
-        self.__col: int = col
-        self.__row: int = row
-        self.__coord: str = FILE_LETTERS[col] + str(row + 1)
+        self.__col: int = col_idx
+        self.__row: int = row_idx
+        self.__name: str = FILE_LETTERS[col_idx] + str(row_idx + 1)
 
-    def _init_with_coord(self, coord: str) -> None:
-        if len(coord) != 2:
-            raise ChessException("The coordinate introduced must contain exactly 2 characters")
+    def _init_with_name(self, name: str) -> None:
+        if len(name) != 2:
+            raise ChessException("The name introduced must contain exactly 2 characters")
 
-        if coord[0].lower() not in FILE_LETTERS:
+        if name[0].lower() not in FILE_LETTERS:
             raise ChessException(f"The file (first character) must be a letter from \"{FILE_LETTERS[0]}\" to "
                                  f"\"{FILE_LETTERS[-1]}\"")
 
-        if not coord[1].isdigit() or not (0 < int(coord[1]) <= 8):
+        if not name[1].isdigit() or not (0 < int(name[1]) <= 8):
             raise ChessException(f"The rank (second character) must be a number from 1 to 8")
 
-        self.__col = FILE_LETTERS.index(coord[0])
-        self.__row = int(coord[1]) - 1
-        self.__coord = coord
+        self.__col = FILE_LETTERS.index(name[0])
+        self.__row = int(name[1]) - 1
+        self.__name = name
 
-    def _init_with_pos(self, pos: Position) -> None:
-        self.__col: int = pos.__col
-        self.__row: int = pos.__row
-        self.__coord: str = pos.__coord
+    def _init_with_tiles(self, tile: Tile) -> None:
+        self.__col: int = tile.__col
+        self.__row: int = tile.__row
+        self.__name: str = tile.__name
 
 
 if __name__ == '__main__':
-    for arguments in [["g5"], [0, 0], [Position("a3")], [(5, 5)], [], [19.5, 4, -7], [0, 8], ["ola"]]:
+    for arguments in [["g5"], [0, 0], [Tile("a3")], [(5, 5)], [], [19.5, 4, -7], [0, 8], ["ola"]]:
         try:
-            p = Position(*arguments)
+            p = Tile(*arguments)
             print(f"arguments = {arguments}, p = {p}")
         except ValueError as e:
             print(f"Error: {e}")

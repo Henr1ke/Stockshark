@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, Optional
 
-from stockshark.util.position import Position
+from stockshark.util.tile import Tile
 
 
 class Coordinates(ABC):

@@ -1,13 +1,19 @@
 Prioridades: 1 -> pouca .... 5 -> muita
 
-ficheiro main:
-    -- 4 Criar um objeto geral que apenas tem o metodo execute e faz todo o processo da app
-        -- os time.sleeps() entre taps são feitos dentro desse objeto geral e não nas classes DaoADB / MenuNavigator / MobileChess
+------------------------------------------------------------- MUDAR NOMES -------------------------------------------------------------
+                        (Tanto no codigo como no relatorio)
+Position para Tile
+ChessRules para MoveValidator
+
+-------------------------------------- RELATORIO --------------------------------------------------------------
+não sabemos como referenciar as imagens q fomo buscar (Ex fig 3.7 da wikipedia)
+
+
+
+--------------------------------------- CODIGO ---------------------------------------------------------------------
 
 chessGame:
-    -- 5 otimizar o engine
     -- 1 promotion tá hardcoded para Queen
-    -- 4 meter threads
 
 player:
     -- 5 Criar classes player para cada variação de minmax
@@ -27,10 +33,10 @@ art_vis:
         -- 2 ao selecionar a difficuldade do bot, da scroll ate ao fim e utiliza o slider
 
 adb:
-    -- 1 mudar o nome do mobile_chess
     -- 2 Arranjar uma solução para não usar as classes Coordinates (seria o menu detector)
 
-
+stockfish_dao:
+    -- 5 arranjar maneira de saber se ja buscou todas as linhas
 
 
 ------------------------------------ VERIFICAR TODOS OS TODOS -------------------------------------
