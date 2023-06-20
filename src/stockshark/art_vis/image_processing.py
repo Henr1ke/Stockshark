@@ -54,7 +54,7 @@ class ImageProcessing:
             p_f_1 = max(f_center - i_center, 0)
             p_f_2 = min(p_f_1 + i_size, f_size)
 
-            return (p_i_1, p_i_2, p_f_1, p_f_2)
+            return p_i_1, p_i_2, p_f_1, p_f_2
 
         final_img = np.ones((*final_shape[::-1], *img.shape[2:]), dtype="uint8") * 255
 
@@ -87,7 +87,7 @@ class ImageProcessing:
         similarities = ImageProcessing.get_px_similarities(img, template)
         half_shape = np.array(template.shape) / 2
         coordinates = []
-        for i in range(64):  # Uppper limit of loops to prevent infinite loop
+        for i in range(64):  # Upper limit of loops to prevent infinite loop
             center = np.unravel_index(np.argmax(similarities), similarities.shape)
             if similarities[center] < threshold:
                 break
