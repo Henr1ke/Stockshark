@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from copy import copy
-from typing import Dict, Optional, List, Tuple
+from typing import Dict, Optional, List
 
+from stockshark.piece.bishop import Bishop
 from stockshark.piece.king import King
+from stockshark.piece.knight import Knight
 from stockshark.piece.pawn import Pawn
 from stockshark.piece.piece import Piece
 from stockshark.piece.queen import Queen
@@ -111,14 +113,26 @@ class Game:
 
     def __pawn_actions(self, move: Move) -> Optional[Tile]:
         piece = self.__board[move.end_tile]
-        if move.end_tile == self.__en_passant_target:
-            capt_piece_tile = move.end_tile + ((0, -1) if piece.is_white else (0, 1))
-            self.__board.clear_tile(capt_piece_tile)
-        elif move.end_tile.row == (7 if piece.is_white else 0):
-            self.__board.add_piece(Queen(piece.is_white), move.end_tile)  # TODO its always promoting to queen
 
         if abs(move.start_tile.row - move.end_tile.row) == 2:
             return move.end_tile + ((0, -1) if piece.is_white else (0, 1))
+
+        if move.end_tile == self.__en_passant_target:
+            capt_piece_tile = move.end_tile + ((0, -1) if piece.is_white else (0, 1))
+            self.__board.clear_tile(capt_piece_tile)
+        elif move.promote_type is not None:
+            promote_piece = None
+            if move.promote_type == Move.PROMOTE_N:
+                promote_piece = Knight(piece.is_white)
+            elif move.promote_type == Move.PROMOTE_B:
+                promote_piece = Bishop(piece.is_white)
+            elif move.promote_type == Move.PROMOTE_R:
+                promote_piece = Rook(piece.is_white)
+            elif move.promote_type == Move.PROMOTE_Q:
+                promote_piece = Queen(piece.is_white)
+
+            if promote_piece is not None:
+                self.__board.add_piece(promote_piece, move.end_tile)
 
     def __update_castlings(self, move: Move) -> None:
         king_col_idx = 4
@@ -176,7 +190,6 @@ class Game:
             return False
 
         eaten_piece = self.__board[move.end_tile]
-
 
         should_reset_halfclock = eaten_piece is not None
         # Update self.__board

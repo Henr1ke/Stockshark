@@ -1,6 +1,7 @@
 from abc import ABC
 from typing import Optional
 
+from stockshark.agent.agent_human import AgentHuman
 from stockshark.chess_engine.game import Game
 from stockshark.agent.agent import Agent
 from stockshark.agent.agent_random import AgentRandom
