@@ -12,10 +12,10 @@ class EatBehaviour(Behaviour):
     def gen_move(self, game: Game) -> Optional[Move]:
         actions = []
 
-        pieces_pos = game.get_available_pieces_pos()
+        pieces_tile = game.get_available_pieces_tiles()
         board = game.board
 
-        for piece, start_pos in pieces_pos.items():
+        for piece, start_tile in pieces_tile.items():
             moves = game.get_legal_piece_moves(piece)
             for move in moves:
                 attacked_piece = board[move.end_tile]

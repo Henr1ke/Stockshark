@@ -33,22 +33,21 @@ class Piece(ABC):
         pass
 
     def _gen_slider_moves(self, board, is_diag: bool) -> List[Move]:
-        start_pos = board.pieces_pos[self]
+        start_tile = board.pieces_tiles[self]
         moves = []
 
         directions = ((1, 1), (1, -1), (-1, -1), (-1, 1)) if is_diag else ((0, 1), (1, 0), (0, -1), (-1, 0))
         for direction in directions:
             try:
-                # Adds to possible_pos while the path has no pieces
-                end_pos = start_pos + direction
-                while board[end_pos] is None:
-                    move = Move(start_pos, end_pos)
+                end_tile = start_tile + direction
+                while board[end_tile] is None:
+                    move = Move(start_tile, end_tile)
                     moves.append(move)
-                    end_pos += direction
+                    end_tile += direction
 
-                piece = board[end_pos]
+                piece = board[end_tile]
                 if piece.is_white is not self.is_white:
-                    move = Move(start_pos, end_pos)
+                    move = Move(start_tile, end_tile)
                     moves.append(move)
             except ChessException:
                 pass
@@ -56,18 +55,18 @@ class Piece(ABC):
         return moves
 
     def _gen_inc_moves(self, board, incs: List[Tuple[int, int]]) -> List[Move]:
-        start_pos = board.pieces_pos[self]
+        start_tile = board.pieces_tiles[self]
         moves = []
 
         for inc in incs:
             try:
-                end_pos = start_pos + inc
-                piece = board[end_pos]
+                end_tile = start_tile + inc
+                piece = board[end_tile]
                 if piece is None:
-                    move = Move(start_pos, end_pos)
+                    move = Move(start_tile, end_tile)
                     moves.append(move)
                 elif piece.is_white is not self.is_white:
-                    move = Move(start_pos, end_pos)
+                    move = Move(start_tile, end_tile)
                     moves.append(move)
             except ChessException:
                 pass

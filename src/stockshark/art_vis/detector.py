@@ -60,9 +60,9 @@ class Detector:
         empty_board_gray = ImageProcessing.grayscale(eb_resized)
 
         margin = int(screenshot.shape[1] * Detector.BOARD_MARGIN_FRACT)
-        positions = ImageProcessing.locate(scn_gray, empty_board_gray, margin=margin)
-        if len(positions) == 1:
-            center = positions[0]
+        coordinates = ImageProcessing.locate(scn_gray, empty_board_gray, margin=margin)
+        if len(coordinates) == 1:
+            center = coordinates[0]
             board = ImageProcessing.get_square(screenshot, center, screenshot.shape[1])
             if detector is not None:
                 detector.save_fen_str(board)
@@ -70,7 +70,7 @@ class Detector:
         return None, None
 
     @staticmethod
-    def get_piece_locations(board: ndarray, piece_name: str) -> List[Tuple[int, int]]:
+    def get_piece_coords(board: ndarray, piece_name: str) -> List[Tuple[int, int]]:
         if piece_name not in Detector.PIECE_NAME_TO_LETTER.keys():
             raise ValueError("Piece name is not valid")
 
@@ -88,17 +88,17 @@ class Detector:
 
     @staticmethod
     def __is_on_white_side(board: ndarray) -> Optional[bool]:
-        positions = Detector.get_piece_locations(board, Detector.KING)
+        coordinates = Detector.get_piece_coords(board, Detector.KING)
 
-        lowest_pos = None
-        for i, pos in enumerate(positions):
-            if lowest_pos is None or pos[1] >= lowest_pos[1]:
-                lowest_pos = pos
+        lowest_coord = None
+        for i, coord in enumerate(coordinates):
+            if lowest_coord is None or coord[1] >= lowest_coord[1]:
+                lowest_coord = coord
 
-        if lowest_pos is None:
+        if lowest_coord is None:
             return None
 
-        tile = Detector.get_tile(board, lowest_pos)
+        tile = Detector.get_tile(board, lowest_coord)
         return Detector.is_piece_white(tile)
 
     @staticmethod
@@ -131,69 +131,69 @@ class Detector:
         return w_sel_count > thresh_val or b_sel_count > thresh_val
 
     @staticmethod
-    def get_castle_move(pos1: Tile, pos2: Tile) -> Optional[Move]:
-        if pos1.row != pos2.row or pos1.row != 0 and pos1.row != 7:
+    def get_castle_move(tile1: Tile, tile2: Tile) -> Optional[Move]:
+        if tile1.row != tile2.row or tile1.row != 0 and tile1.row != 7:
             return None
 
-        start_pos, other_pos = (pos1, pos2) if pos1.col == 4 else (pos2, pos1)
-        end_pos = Tile(2 if other_pos.col == 0 else 6, start_pos.row)
+        start_tile, other_tile = (tile1, tile2) if tile1.col == 4 else (tile2, tile1)
+        end_tile = Tile(2 if other_tile.col == 0 else 6, start_tile.row)
 
-        return Move(start_pos, end_pos)
+        return Move(start_tile, end_tile)
 
-    def pos_to_loc(self, pos: Tile) -> Tuple[int, int]:
+    def tile_to_coord(self, tile: Tile) -> Tuple[int, int]:
         tile_w = self.__board_w / 8
         if not self.__on_white_side:
-            pos = -pos
+            tile = -tile
 
-        x = int(tile_w / 2 + tile_w * pos.col)
-        y = int(tile_w / 2 + tile_w * (7 - pos.row))
+        x = int(tile_w / 2 + tile_w * tile.col)
+        y = int(tile_w / 2 + tile_w * (7 - tile.row))
         return x, y
 
-    def loc_to_pos(self, loc: Tuple[int, int]) -> Tile:
-        col = int(8 * loc[0] / self.__board_w)
-        row = 7 - int(8 * loc[1] / self.__board_w)
-        pos = Tile(col, row)
+    def coord_to_tile(self, coord: Tuple[int, int]) -> Tile:
+        col = int(8 * coord[0] / self.__board_w)
+        row = 7 - int(8 * coord[1] / self.__board_w)
+        tile = Tile(col, row)
 
         if not self.__on_white_side:
-            pos = -pos
-        return pos
+            tile = -tile
+        return tile
 
-    def get_piece_positions(self, board: ndarray, piece_name: str) -> List[Tile]:
+    def get_piece_tiles(self, board: ndarray, piece_name: str) -> List[Tile]:
         if piece_name not in Detector.PIECE_NAME_TO_LETTER.keys():
             raise ValueError("Piece name is not valid")
 
-        locations = Detector.get_piece_locations(board, piece_name)
-        positions = [self.loc_to_pos(loc) for loc in locations]
-        return positions
+        coords = Detector.get_piece_coords(board, piece_name)
+        tiles = [self.coord_to_tile(coord) for coord in coords]
+        return tiles
 
     def get_selected_move(self, board: ndarray) -> Optional[Move]:
-        start_pos = None
-        end_pos = None
+        start_tile = None
+        end_tile = None
         for row_idx in range(8):
             for col_idx in range(8):
-                pos = Tile(col_idx, row_idx)
-                loc = self.pos_to_loc(pos)
-                tile = Detector.get_tile(board, loc)
+                tile = Tile(col_idx, row_idx)
+                coord = self.tile_to_coord(tile)
+                tile = Detector.get_tile(board, coord)
 
                 if Detector.is_tile_selected(tile):
                     if Detector.is_tile_empty(tile):
-                        if start_pos is not None:
+                        if start_tile is not None:
                             # Two empty selected tiles found, it's a castle movve
-                            return Detector.get_castle_move(start_pos, pos)
+                            return Detector.get_castle_move(start_tile, tile)
                         else:
-                            start_pos = pos
+                            start_tile = tile
                     else:
-                        end_pos = pos
+                        end_tile = tile
 
-                    if start_pos is not None and end_pos is not None:
+                    if start_tile is not None and end_tile is not None:
                         break
-            if start_pos is not None and end_pos is not None:
+            if start_tile is not None and end_tile is not None:
                 break
 
-        if start_pos is None or end_pos is None:
+        if start_tile is None or end_tile is None:
             return None
 
-        return Move(start_pos, end_pos)
+        return Move(start_tile, end_tile)
 
     def save_fen_str(self, board: ndarray) -> None:
         fen_str = self.gen_fen_str(board)
@@ -208,32 +208,32 @@ class Detector:
             ImageProcessing.write_img(filename, board)
 
     def gen_fen_str(self, board: ndarray) -> str:
-        pos_to_piece = {}
+        tile_to_piece = {}
 
         for piece_name in Detector.PIECE_NAME_TO_LETTER.keys():
             letter = Detector.PIECE_NAME_TO_LETTER[piece_name]
 
-            piece_positions = self.get_piece_positions(board, piece_name)
-            for pos in piece_positions:
-                loc = self.pos_to_loc(pos)
-                tile = Detector.get_tile(board, loc)
+            piece_tiles = self.get_piece_tiles(board, piece_name)
+            for tile in piece_tiles:
+                coord = self.tile_to_coord(tile)
+                tile = Detector.get_tile(board, coord)
                 is_white = Detector.is_piece_white(tile)
                 letter_to_add = letter.upper() if is_white else letter
-                pos_to_piece[pos] = letter_to_add
+                tile_to_piece[tile] = letter_to_add
 
         fen_rows = []
         for row_idx in range(7, -1, -1):
             fen_row = ""
             tile_skips = 0
             for col_idx in range(8):
-                pos = Tile(col_idx, row_idx)
-                if pos not in pos_to_piece.keys():
+                tile = Tile(col_idx, row_idx)
+                if tile not in tile_to_piece.keys():
                     tile_skips += 1
                 else:
                     if tile_skips > 0:
                         fen_row += str(tile_skips)
                         tile_skips = 0
-                    fen_row += pos_to_piece[pos]
+                    fen_row += tile_to_piece[tile]
             if tile_skips > 0:
                 fen_row += str(tile_skips)
             fen_rows.append(fen_row)

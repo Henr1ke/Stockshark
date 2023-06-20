@@ -72,8 +72,8 @@ class Game:
                 setattr(game, key, copy(value))
         return game
 
-    def get_available_pieces_pos(self) -> Dict[Piece, Tile]:
-        return {piece: pos for piece, pos in self.__board.pieces_pos.items()
+    def get_available_pieces_tiles(self) -> Dict[Piece, Tile]:
+        return {piece: tile for piece, tile in self.__board.pieces_tiles.items()
                 if piece.is_white is self.__is_white_turn and len(self.get_legal_piece_moves(piece)) > 0}
 
     def get_legal_piece_moves(self, piece: Piece) -> List[Move]:
@@ -101,7 +101,7 @@ class Game:
 
     def evaluate_game(self) -> float:
         value = 0
-        for piece in self.__board.pieces_pos.keys():
+        for piece in self.__board.pieces_tiles.keys():
             value += piece.value if piece.is_white else -piece.value
         return value
 
@@ -112,8 +112,8 @@ class Game:
     def __pawn_actions(self, move: Move) -> Optional[Tile]:
         piece = self.__board[move.end_tile]
         if move.end_tile == self.__en_passant_target:
-            capt_piece_pos = move.end_tile + ((0, -1) if piece.is_white else (0, 1))
-            self.__board.clear_pos(capt_piece_pos)
+            capt_piece_tile = move.end_tile + ((0, -1) if piece.is_white else (0, 1))
+            self.__board.clear_tile(capt_piece_tile)
         elif move.end_tile.row == (7 if piece.is_white else 0):
             self.__board.add_piece(Queen(piece.is_white), move.end_tile)  # TODO its always promoting to queen
 
@@ -133,13 +133,13 @@ class Game:
                 self.__castlings = self.__castlings.replace("K" if row_idx == 0 else "k", "")
 
                 if move.end_tile.col == 2:
-                    start_pos = Tile(0, row_idx)
-                    end_pos = move.end_tile + (1, 0)
-                    self.__board.make_move(Move(start_pos, end_pos))
+                    start_tile = Tile(0, row_idx)
+                    end_tile = move.end_tile + (1, 0)
+                    self.__board.make_move(Move(start_tile, end_tile))
                 elif move.end_tile.col == 6:
-                    start_pos = Tile(7, row_idx)
-                    end_pos = move.end_tile + (-1, 0)
-                    self.__board.make_move(Move(start_pos, end_pos))
+                    start_tile = Tile(7, row_idx)
+                    end_tile = move.end_tile + (-1, 0)
+                    self.__board.make_move(Move(start_tile, end_tile))
 
                 return
 
@@ -154,7 +154,7 @@ class Game:
 
     def __get_new_state(self) -> State:
         can_make_move = False
-        for p in self.__board.pieces_pos.keys():
+        for p in self.__board.pieces_tiles.keys():
             if p.is_white is self.__is_white_turn and len(self.get_legal_piece_moves(p)) > 0:
                 can_make_move = True
                 break
@@ -206,10 +206,10 @@ class Game:
             # Update self.__state
             self.__state = self.__get_new_state()
 
-        # Update self.__moves_played
+        # Update self.__played_moves
         self.__played_moves.append(move)
 
-        # Reset self.__possible_poss
+        # Reset self.__legal_piece_moves
         self.__legal_piece_moves.clear()
 
         return True

@@ -22,7 +22,7 @@ class Board:
     def __init__(self, fen_str: str = "8/8/8/8/8/8/8/8") -> None:
 
         self.__tiles: List[List[Optional[Piece]]] = [[None] * 8 for _ in range(8)]
-        self.__pieces_pos: Dict[Piece, Tile] = dict()
+        self.__pieces_tiles: Dict[Piece, Tile] = dict()
         self.__kings: Dict[bool, King] = dict()
 
         for row, fen_substr in enumerate(fen_str.split("/")[::-1]):
@@ -39,11 +39,11 @@ class Board:
                     self.add_piece(piece, col, row)
                     col += 1
 
-    def __getitem__(self, *pos_args) -> Optional[Piece]:
-        if isinstance(pos_args[0], tuple):
-            pos_args = pos_args[0]
-        pos = Tile(*pos_args)
-        return self.__tiles[7 - pos.row][pos.col]
+    def __getitem__(self, *tile_args) -> Optional[Piece]:
+        if isinstance(tile_args[0], tuple):
+            tile_args = tile_args[0]
+        tile = Tile(*tile_args)
+        return self.__tiles[7 - tile.row][tile.col]
 
     def __copy__(self) -> Board:
         cls = self.__class__
@@ -59,47 +59,47 @@ class Board:
     def make_move(self, move: Move) -> None:
         piece = self[move.start_tile]
         if piece is None:
-            raise ChessException("There is no piece at the move start position")
+            raise ChessException("There is no piece at the move starting tile")
 
         if self[move.end_tile] is not None:
-            self.clear_pos(move.end_tile)
+            self.clear_tile(move.end_tile)
 
         self.__tiles[8 - 1 - move.start_tile.row][move.start_tile.col] = None
         self.__tiles[8 - 1 - move.end_tile.row][move.end_tile.col] = piece
 
-        self.__pieces_pos[piece] = move.end_tile
+        self.__pieces_tiles[piece] = move.end_tile
 
-    def add_piece(self, piece: Piece, *pos_args) -> None:
+    def add_piece(self, piece: Piece, *tile_args) -> None:
         if not isinstance(piece, Piece):
             raise ChessException(f"Must add a Piece object to the board, got {piece} of type {type(piece)}")
         if isinstance(piece, King) and piece.is_white in self.__kings.keys():
             raise ChessException(f"The board already contains a king of that color, it is not allowed to add another")
 
-        pos = Tile(*pos_args)
-        if self[pos] is not None:
-            self.clear_pos(pos)
+        tile = Tile(*tile_args)
+        if self[tile] is not None:
+            self.clear_tile(tile)
 
         if isinstance(piece, King):
             self.__kings[piece.is_white] = piece
-        self.__pieces_pos[piece] = pos
+        self.__pieces_tiles[piece] = tile
 
-        self.__tiles[8 - 1 - pos.row][pos.col] = piece
+        self.__tiles[8 - 1 - tile.row][tile.col] = piece
 
-    def clear_pos(self, *pos_args) -> Optional[Piece]:
-        pos = Tile(*pos_args)
-        piece = self.__tiles[8 - 1 - pos.row][pos.col]
+    def clear_tile(self, *tile_args) -> Optional[Piece]:
+        tile = Tile(*tile_args)
+        piece = self.__tiles[8 - 1 - tile.row][tile.col]
 
         if piece is not None:
-            self.__pieces_pos.pop(piece, None)
+            self.__pieces_tiles.pop(piece, None)
             if isinstance(piece, King):
                 self.__kings.pop(piece.is_white, None)
-            self.__tiles[8 - 1 - pos.row][pos.col] = None
+            self.__tiles[8 - 1 - tile.row][tile.col] = None
 
         return piece
 
     @property
-    def pieces_pos(self) -> Dict[Piece, Tile]:
-        return copy(self.__pieces_pos)
+    def pieces_tiles(self) -> Dict[Piece, Tile]:
+        return copy(self.__pieces_tiles)
 
     @property
     def kings(self) -> Dict[bool, King]:

@@ -25,8 +25,8 @@ class MobilePlayer:
         return self.__on_white_side
 
     def play(self, move: Move) -> None:
-        for pos in (move.start_tile, move.end_tile):
-            x, y = self.__detector.pos_to_loc(pos)
+        for tile in (move.start_tile, move.end_tile):
+            x, y = self.__detector.tile_to_coord(tile)
             self.__dao_adb.tap_screen(self.__board_tl_corner[0] + x, self.__board_tl_corner[1] + y)
             time.sleep(MobilePlayer.WAIT_TIME)
 

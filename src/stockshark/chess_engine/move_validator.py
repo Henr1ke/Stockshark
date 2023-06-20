@@ -18,7 +18,7 @@ class MoveValidator:
             return False
 
         king = board.kings[is_white]
-        atk_pieces = [piece for piece in board.pieces_pos.keys() if piece.is_white is not is_white]
+        atk_pieces = [piece for piece in board.pieces_tiles.keys() if piece.is_white is not is_white]
 
         for atk_piece in atk_pieces:
             moves = atk_piece.gen_moves(game)

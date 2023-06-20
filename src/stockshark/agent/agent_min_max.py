@@ -16,8 +16,8 @@ class AgentMinMax(Agent):
 
     def minmax(self, curr_depth: int, max_depth: int, game: Game) -> Tuple[float, Move]:
         moves = []
-        pieces_pos = game.get_available_pieces_pos()
-        for piece in pieces_pos.keys():
+        pieces_tiles = game.get_available_pieces_tiles()
+        for piece in pieces_tiles.keys():
             moves += game.get_legal_piece_moves(piece)
 
         best_val, best_move = -math.inf if game.is_white_turn else math.inf, None
@@ -45,8 +45,8 @@ class AgentMinMax(Agent):
                   beta: float = math.inf) -> Tuple[float, Move]:
         # moves = game.legal_moves
         moves = []
-        pieces_pos = game.get_available_pieces_pos()
-        for piece in pieces_pos.keys():
+        pieces_tiles = game.get_available_pieces_tiles()
+        for piece in pieces_tiles.keys():
             moves += game.get_legal_piece_moves(piece)
 
         best_val, best_move = -math.inf if game.is_white_turn else math.inf, None
@@ -79,8 +79,8 @@ class AgentMinMax(Agent):
                          beta: float = math.inf) -> Tuple[float, Move]:
         # moves = game.legal_moves
         moves = []
-        pieces_pos = game.get_available_pieces_pos()
-        for piece in pieces_pos.keys():
+        pieces_tiles = game.get_available_pieces_tiles()
+        for piece in pieces_tiles.keys():
             moves += game.get_legal_piece_moves(piece)
 
         moves.sort(reverse=not game.is_white_turn, key=game.evaluate_move)

@@ -86,18 +86,18 @@ class ImageProcessing:
 
         similarities = ImageProcessing.get_px_similarities(img, template)
         half_shape = np.array(template.shape) / 2
-        positions = []
+        coordinates = []
         for i in range(64):  # Uppper limit of loops to prevent infinite loop
             center = np.unravel_index(np.argmax(similarities), similarities.shape)
             if similarities[center] < threshold:
                 break
 
-            positions.append((center[1], center[0]))
+            coordinates.append((center[1], center[0]))
             start_point = np.array(center - half_shape, dtype=int)[::-1]
             end_point = np.array(center + half_shape, dtype=int)[::-1]
             cv2.rectangle(similarities, start_point, end_point, 0, -1)
 
-        return positions
+        return coordinates
 
     @staticmethod
     def get_value_count(img: ndarray, value: int) -> int:
