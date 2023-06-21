@@ -79,6 +79,7 @@ def identify_pieces():
             end_point = np.array(pos + half_shape, dtype=int)
             cv2.rectangle(b_copy, start_point, end_point, 128, 4)
         ImageProcessing.show(b_copy, piece_name)
+        ImageProcessing.write_img(f"debug/select_pieces/{piece_name}.png", b_copy)
 
 
 if __name__ == '__main__':

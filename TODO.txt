@@ -1,15 +1,45 @@
 Prioridades: 1 -> pouca .... 5 -> muita
 
-------------------------------------------------------------- MUDAR NOMES -------------------------------------------------------------
-                        (Tanto no codigo como no relatorio)
-Position para Tile
-ChessRules para MoveValidator
 
 -------------------------------------- RELATORIO --------------------------------------------------------------
-não sabemos como referenciar as imagens q fomo buscar (Ex fig 3.7 da wikipedia)
+não sabemos como referenciar de onde fomos buscar as imagens q usamos (Ex fig 3.7 da wikipedia)
 onde eq se fala do main.py
 
+Open-CV package
+https://docs.opencv.org/3.4/d6/d00/tutorial_py_root.html
 
+Open-CV Image Processing
+https://docs.opencv.org/3.4/d2/d96/tutorial_py_table_of_contents_imgproc.html
+
+PPADB package
+https://pypi.org/project/pure-python-adb/
+
+ADB commands
+https://gist.github.com/Pulimet/5013acf2cd5b28e55036c82c91bd56d8
+
+chess rules
+https://en.wikipedia.org/wiki/Rules_of_chess
+
+chess programming
+https://www.chessprogramming.org
+
+fen string
+https://www.chess.com/terms/fen-chess
+
+chess.com
+https://www.chess.com
+
+minmax
+https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-1-introduction/
+
+minmax alpha beta
+https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-4-alpha-beta-pruning/
+
+stockfish
+https://stockfishchess.org/
+
+stockfish commands
+https://www.maketecheasier.com/use-stockfish-cli-master-chess/
 
 --------------------------------------- CODIGO ---------------------------------------------------------------------
 

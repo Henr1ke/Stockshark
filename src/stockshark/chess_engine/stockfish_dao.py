@@ -110,7 +110,7 @@ class StockFishDao:
         idx = response.find(search_word)
         return response[:idx].strip("\n")
 
-    def make_moves(self, fen_string: str, moves: List[Move]):
+    def make_moves(self, fen_string: Optional[str], moves: List[Move]):
         pass
 
     def __del__(self) -> None:
