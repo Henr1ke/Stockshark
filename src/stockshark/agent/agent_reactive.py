@@ -1,10 +1,10 @@
 from typing import List, Optional
 
-from stockshark.chess_engine.game_engine import GameEngine
+from stockshark.agent.agent import Agent
 from stockshark.agent.behaviour.behaviour import Behaviour
 from stockshark.agent.behaviour.eat_behaviour import EatBehaviour
 from stockshark.agent.behaviour.random_behaviour import RandomBehaviour
-from stockshark.agent.agent import Agent
+from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.util.move import Move
 
 

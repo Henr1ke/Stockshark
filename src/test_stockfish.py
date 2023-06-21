@@ -1,4 +1,5 @@
 from stockfish import Stockfish
+
 from stockshark.util.move import Move
 from stockshark.util.tile import Tile
 

@@ -1,10 +1,9 @@
-import time
+import pathlib
 from typing import Optional
 
 from numpy import ndarray
 from ppadb.client import Client
 from ppadb.device import Device
-import pathlib
 
 from stockshark.art_vis.image_processing import ImageProcessing
 

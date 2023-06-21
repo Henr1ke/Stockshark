@@ -2,10 +2,11 @@ from typing import Optional
 
 from stockshark.adb.dao_adb import DaoADB
 from stockshark.adb.mobile_player import MobilePlayer
-from stockshark.art_vis.detector import Detector
-from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.agent.agent import Agent
 from stockshark.agent.agent_random import AgentRandom
+from stockshark.art_vis.detector import Detector
+from stockshark.chess_engine.game_engine import GameEngine
+from stockshark.chess_engine.stockshark_engine import StockSharkEngine
 from stockshark.sim.simulator import Simulator
 from stockshark.sim.visualizer import Visualizer
 
@@ -47,7 +48,7 @@ if __name__ == '__main__':
 
     m = MobilePlayer(d, board, center)
 
-    g = GameEngine()
+    g = StockSharkEngine()
 
     v = Visualizer(Visualizer.CHARSET_LETTER)
 

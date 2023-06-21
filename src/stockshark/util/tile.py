@@ -1,8 +1,9 @@
 from __future__ import annotations
+
 from typing import Tuple
-from stockshark.util.constants import FILE_LETTERS
 
 from stockshark.util.chess_exception import ChessException
+from stockshark.util.constants import FILE_LETTERS
 
 
 class Tile:

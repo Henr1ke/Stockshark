@@ -34,6 +34,12 @@ class Move:
     def __eq__(self, other: Move) -> bool:
         return isinstance(other, Move) and self.start_tile == other.start_tile and self.end_tile == other.end_tile
 
+    def __gt__(self, other: Move) -> bool:
+        return False
+
+    def __lt__(self, other: Move) -> bool:
+        return False
+
     def __repr__(self) -> str:
         promote_piece_str = "" if self.__promote_type is None else self.__promote_type
         return f"{self.__start_tile}{self.__end_tile}{promote_piece_str}"

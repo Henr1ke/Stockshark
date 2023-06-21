@@ -1,5 +1,3 @@
-from copy import copy
-
 from stockshark.agent.agent import Agent
 from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.util.move import Move

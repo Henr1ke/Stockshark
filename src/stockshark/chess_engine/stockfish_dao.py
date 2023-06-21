@@ -1,7 +1,6 @@
-import time
-from threading import Thread
-from subprocess import Popen, PIPE, STDOUT
 from queue import Queue, Empty
+from subprocess import Popen, PIPE, STDOUT
+from threading import Thread
 from typing import Optional, List
 
 from stockshark.util.move import Move

@@ -4,10 +4,10 @@ from copy import copy
 from typing import Dict, Optional, List, Type
 
 from stockshark.piece.bishop import Bishop
+from stockshark.piece.king import King
 from stockshark.piece.knight import Knight
 from stockshark.piece.pawn import Pawn
 from stockshark.piece.piece import Piece
-from stockshark.piece.king import King
 from stockshark.piece.queen import Queen
 from stockshark.piece.rook import Rook
 from stockshark.util.chess_exception import ChessException

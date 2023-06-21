@@ -3,7 +3,6 @@ from typing import List, Tuple
 
 from stockshark.util.chess_exception import ChessException
 from stockshark.util.move import Move
-from stockshark.util.tile import Tile
 
 
 class Piece(ABC):

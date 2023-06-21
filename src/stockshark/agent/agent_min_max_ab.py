@@ -9,16 +9,20 @@ from stockshark.sim.visualizer import Visualizer
 from stockshark.util.move import Move
 
 
-class AgentMinMax(Agent):
+class AgentMinMaxAB(Agent):
     def gen_move(self, game: GameEngine) -> Move:
-        _, move = self.minmax(2, game)
+        _, move = self.minmax_ab(3, game)
         return move
 
-    def minmax(self, max_depth: int, game: GameEngine, curr_depth: int = 0) -> Tuple[float, Move]:
+    def minmax_ab(self, max_depth: int, game: GameEngine, curr_depth: int = 0, alpha: float = -math.inf,
+                  beta: float = math.inf) -> Tuple[float, Move]:
+        # moves = game.legal_moves
         moves = []
         pieces_tiles = game.get_available_pieces_tiles()
         for piece in pieces_tiles.keys():
             moves += game.get_legal_piece_moves(piece)
+
+        moves.sort(reverse=not game.is_white_turn, key=game.evaluate_move)
 
         best_val, best_move = -math.inf if game.is_white_turn else math.inf, None
         for move in moves:
@@ -28,16 +32,21 @@ class AgentMinMax(Agent):
             if curr_depth + 1 == max_depth:
                 value = game_copy.evaluate_game()
             else:
-                value, _ = self.minmax(max_depth, game_copy, curr_depth + 1)
+                value, _ = self.minmax_ab(max_depth, game_copy, curr_depth + 1, alpha, beta)
 
             if game.is_white_turn:
                 if value > best_val:
                     best_val = value
                     best_move = move
+                    alpha = max(alpha, best_val)
             else:
                 if value < best_val:
                     best_val = value
                     best_move = move
+                    beta = min(beta, best_val)
+
+            if beta <= alpha:
+                break
 
         return best_val, best_move
 
@@ -48,6 +57,6 @@ if __name__ == '__main__':
     vis = Visualizer(Visualizer.CHARSET_LETTER)
     vis.show(game)
 
-    p_mm = AgentMinMax()
+    p_mm = AgentMinMaxAB()
     move = p_mm.gen_move(game)
     print(move)

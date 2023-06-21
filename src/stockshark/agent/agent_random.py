@@ -1,6 +1,5 @@
-from stockshark.agent.behaviour.random_behaviour import RandomBehaviour
-
 from stockshark.agent.agent import Agent
+from stockshark.agent.behaviour.random_behaviour import RandomBehaviour
 from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.util.move import Move
 

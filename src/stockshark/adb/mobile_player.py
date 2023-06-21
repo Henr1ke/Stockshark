@@ -4,9 +4,9 @@ from typing import Tuple, Optional
 from numpy import ndarray
 
 from stockshark.adb.dao_adb import DaoADB
+from stockshark.art_vis.detector import Detector
 from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.util.move import Move
-from stockshark.art_vis.detector import Detector
 
 
 class MobilePlayer:
