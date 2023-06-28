@@ -5,12 +5,16 @@ from stockshark.util.move import Move
 
 
 class MoveValidator:
-
     @staticmethod
     def is_legal(game, move: Move) -> bool:
-        king_is_under_atk = MoveValidator.king_is_under_atk(game, game.is_white_turn)
-        return not MoveValidator.leaves_king_under_atk(game, move) and \
-            (not king_is_under_atk or king_is_under_atk and not MoveValidator.is_castle(game, move))
+        piece = game.board[move.start_tile]
+        return move not in game.get_legal_piece_moves(piece)
+
+    # @staticmethod
+    # def is_legal(game, move: Move) -> bool:
+    #     king_is_under_atk = MoveValidator.king_is_under_atk(game, game.is_white_turn)
+    #     return not MoveValidator.leaves_king_under_atk(game, move) and \
+    #         (not king_is_under_atk or king_is_under_atk and not MoveValidator.is_castle(game, move))
 
     @staticmethod
     def king_is_under_atk(game, is_white: bool) -> bool:

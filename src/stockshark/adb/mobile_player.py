@@ -38,6 +38,7 @@ class MobilePlayer:
                 return None
             board, _ = board_info
             selected_move = self.__detector.get_selected_move(board)
+            print(f"{selected_move}, {game.board[selected_move.start_tile]}, {game.board[selected_move.end_tile]}")
             if selected_move is not None:
                 played_moves = game.played_moves
                 if len(played_moves) == 0 or selected_move != played_moves[-1]:
