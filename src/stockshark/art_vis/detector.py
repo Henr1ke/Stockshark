@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import os
 import pathlib
-from typing import Optional, Tuple, List, Type
+from typing import Optional, Tuple, List
 
 import cv2
 import numpy as np
 from numpy import ndarray
 
 from stockshark.art_vis.image_processing import ImageProcessing
-from stockshark.piece.piece import Piece
 from stockshark.util.move import Move
 from stockshark.util.tile import Tile
 
@@ -52,8 +51,8 @@ class Detector:
         return self.__board_w
 
     @staticmethod
-    def find_board(screenshot: ndarray, detector: Optional[Detector] = None) -> Optional[
-        Tuple[ndarray], Tuple[int, int]]:
+    def find_board(screenshot: ndarray, detector: Optional[Detector] = None) -> \
+            Optional[Tuple[ndarray], Tuple[int, int]]:
         scn_gray = ImageProcessing.grayscale(screenshot)
         scn_w = screenshot.shape[1]
 
@@ -142,8 +141,9 @@ class Detector:
 
         return Move(start_tile, end_tile)
 
-    def get_piece_type(self, board: ndarray, tile: Tile) -> Optional[Type[Piece]]:
-        piece_types = (Detector.KNIGHT, Detector.BISHOP, Detector.ROOK, Detector.QUEEN)
+    def get_piece_type(self, board: ndarray, tile: Tile) -> Optional[str]:
+        piece_names = (Detector.KNIGHT, Detector.BISHOP, Detector.ROOK, Detector.QUEEN)
+        piece_types = (Move.PROMOTE_N, Move.PROMOTE_B, Move.PROMOTE_R, Move.PROMOTE_Q)
 
         coord = self.tile_to_coord(tile)
         tile_img = Detector.get_tile_img(board, coord)
@@ -155,7 +155,7 @@ class Detector:
         tile_grad = ImageProcessing.morph_grad(tile_grayscale)
 
         diffs = []
-        for piece_name in piece_types:
+        for piece_name in piece_names:
             piece_grad = ImageProcessing.read_img(f"chess_components/g_{piece_name}.png", is_grayscale=True)
             piece_resized = ImageProcessing.resize(piece_grad, tile_grad.shape)
             diff = np.sum(tile_grad != piece_resized)

@@ -41,7 +41,7 @@ def get_piece_in_tile():
     board, _ = board_info
     detector = Detector(board)
 
-    piece_types = (Detector.KNIGHT, Detector.BISHOP, Detector.ROOK, Detector.QUEEN)
+    piece_names = (Detector.KNIGHT, Detector.BISHOP, Detector.ROOK, Detector.QUEEN)
 
     tiles = [
         Tile("f8"),
@@ -64,14 +64,14 @@ def get_piece_in_tile():
         ImageProcessing.show(tile_grad)
 
         diffs = []
-        for piece_name in piece_types:
+        for piece_name in piece_names:
             piece_grad = ImageProcessing.read_img(f"chess_components/g_{piece_name}.png", is_grayscale=True)
             piece_resized = ImageProcessing.resize(piece_grad, tile_grad.shape)
             diff = np.sum(tile_grad != piece_resized)
             diffs.append(diff)
 
         print(diffs)
-        print(piece_types[np.argmin(diffs)])
+        print(piece_names[np.argmin(diffs)])
         print()
 
 

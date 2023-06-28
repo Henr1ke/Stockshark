@@ -42,7 +42,8 @@ class MobilePlayer:
 
             if self.__is_promotion_move(game, sel_move):
                 piece_type = self.__detector.get_piece_type(board, sel_move.end_tile)
-                sel_move = Move(sel_move.start_tile, sel_move.end_tile, piece_type)
+                if piece_type is not None:
+                    sel_move = Move(sel_move.start_tile, sel_move.end_tile, piece_type)
 
             if sel_move is not None:
                 played_moves = game.played_moves
