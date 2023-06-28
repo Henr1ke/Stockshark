@@ -2,6 +2,13 @@ Prioridades: 1 -> pouca .... 5 -> muita
 
 
 -------------------------------------- RELATORIO --------------------------------------------------------------
+A navegação dos menus só é possivel nos modelos de telemovel q disponibilizámos os clicks hardcoded.
+Será q ensinamos no readme a instalar um emulador do modelo em especifico que é compativel com o nosso programa ou
+Fazer um runnable que salta a navegação nos menus e assume que já se encontra no ecra de jogo
+para dessa forma ser compativel com qualquer modelo
+
+
+
 não sabemos como referenciar de onde fomos buscar as imagens q usamos (Ex fig 3.7 da wikipedia)
 onde eq se fala do main.py
 
@@ -43,13 +50,16 @@ https://stockfishchess.org/
 stockfish commands
 https://www.maketecheasier.com/use-stockfish-cli-master-chess/
 
+GitHub
+https://github.com/
+
+
 --------------------------------------- CODIGO ---------------------------------------------------------------------
 
-chessGame:
-    -- 1 promotion tá hardcoded para Queen
+stockfishDao:
+    -- get all moves: go perft 1
 
 player:
-    -- 5 Criar classes player para cada variação de minmax
     -- 5 MinMax
         -- Tornar o game engine mais eficiente
         -- Tornar o algoritmo mais eficiente (outras heuristicas)
@@ -67,9 +77,6 @@ art_vis:
 
 adb:
     -- 2 Arranjar uma solução para não usar as classes Coordinates (seria o menu detector)
-
-stockfish_dao:
-    -- 5 arranjar maneira de saber se ja buscou todas as linhas
 
 
 ------------------------------------ VERIFICAR TODOS OS TODOS -------------------------------------

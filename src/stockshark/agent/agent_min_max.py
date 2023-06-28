@@ -1,4 +1,5 @@
 import math
+import time
 from copy import copy
 from typing import Tuple
 
@@ -10,8 +11,17 @@ from stockshark.util.move import Move
 
 
 class AgentMinMax(Agent):
+    TIMES = []
+    def __init__(self, depth: int = 2):
+        if depth <= 0:
+            raise ValueError("Depth can not be less or equal to zero")
+
+        self.__depth = depth
+
     def gen_move(self, game: GameEngine) -> Move:
-        _, move = self.minmax(2, game)
+        ti = time.time_ns()
+        _, move = self.minmax(self.__depth, game)
+        AgentMinMax.TIMES.append(time.time_ns() - ti)
         return move
 
     def minmax(self, max_depth: int, game: GameEngine, curr_depth: int = 0) -> Tuple[float, Move]:

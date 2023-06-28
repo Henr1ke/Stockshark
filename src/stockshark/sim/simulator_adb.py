@@ -1,5 +1,7 @@
 from typing import Optional
 
+import numpy as np
+
 from stockshark.adb.dao_adb import DaoADB
 from stockshark.adb.mobile_player import MobilePlayer
 from stockshark.agent.agent import Agent
@@ -52,5 +54,9 @@ if __name__ == '__main__':
 
     v = Visualizer(Visualizer.CHARSET_LETTER)
 
-    simulator = SimulatorADB(AgentRandom(), m, g, v)
+    agent = AgentRandom()
+
+    simulator = SimulatorADB(agent, m, g, v)
     simulator.execute()
+
+    print(f"{np.average(agent.TIMES):.4}")

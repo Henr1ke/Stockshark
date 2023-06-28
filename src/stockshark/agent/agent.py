@@ -5,7 +5,6 @@ from stockshark.util.move import Move
 
 
 class Agent(ABC):
-
     @abstractmethod
     def gen_move(self, game: GameEngine) -> Move:
         pass
