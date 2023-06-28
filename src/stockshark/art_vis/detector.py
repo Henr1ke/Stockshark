@@ -69,7 +69,7 @@ class Detector:
             if detector is not None:
                 detector.save_fen_str(board)
             return board, center
-        return None, None
+        return None
 
     @staticmethod
     def get_piece_coords(board: ndarray, piece_name: str) -> List[Tuple[int, int]]:

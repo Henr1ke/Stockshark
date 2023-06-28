@@ -59,4 +59,5 @@ if __name__ == '__main__':
     simulator = SimulatorADB(agent, m, g, v)
     simulator.execute()
 
+    print(f"{len(agent.TIMES)}")
     print(f"{np.average(agent.TIMES):.4}")
