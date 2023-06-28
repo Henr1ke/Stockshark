@@ -81,7 +81,8 @@ class StockSharkEngine(GameEngine):
         if piece not in self.__legal_piece_moves:
             moves = piece.gen_moves(self)
 
-            legal_moves = [move for move in moves if MoveValidator.is_legal(self, move)]
+            # legal_moves = [move for move in moves if MoveValidator.is_legal(self, move)]
+            legal_moves = [move for move in moves if not MoveValidator.leaves_king_under_atk(self, move)]
 
             # Updates the dictionary
             self.__legal_piece_moves[piece] = legal_moves

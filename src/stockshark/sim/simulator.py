@@ -16,8 +16,8 @@ class Simulator(ABC):
             if self._vis is not None:
                 self._vis.show(self._game)
 
-            sucess = self._update_game()
-            if not sucess:
+            success = self._update_game()
+            if not success:
                 break
 
         if self._vis is not None:
