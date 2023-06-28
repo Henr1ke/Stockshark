@@ -6,6 +6,7 @@ import numpy as np
 
 from stockshark.art_vis.detector import Detector
 from stockshark.art_vis.image_processing import ImageProcessing
+from stockshark.util.tile import Tile
 
 
 def gen_mean_pieces():
@@ -22,6 +23,56 @@ def gen_mean_pieces():
         combined = ImageProcessing.combine_imgs(w_p_r, b_p_r)
 
         ImageProcessing.show(combined, f"m_{piece_name}")
+
+
+def gen_grad_pieces():
+    for piece_name in ("pawn", "knight", "bishop", "rook", "queen", "king"):
+        p = ImageProcessing.read_img(f"chess_components/m_{piece_name}.png")
+        p_bw = ImageProcessing.grayscale(p)
+        p_grad = ImageProcessing.morph_grad(p_bw)
+        ImageProcessing.show(p_grad, f"g_{piece_name}")
+
+
+def get_piece_in_tile():
+    screenshot = ImageProcessing.read_img(f"screenshots/screenshot.png")
+    board_info = Detector.find_board(screenshot)
+    if board_info is None:
+        return
+    board, _ = board_info
+    detector = Detector(board)
+
+    piece_types = (Detector.KNIGHT, Detector.BISHOP, Detector.ROOK, Detector.QUEEN)
+
+    tiles = [
+        Tile("f8"),
+        Tile("c8"),
+        Tile("b8"),
+        Tile("d7"),
+        Tile("d8")
+    ]
+
+    for tile in tiles:
+        coord = detector.tile_to_coord(tile)
+        tile_img = Detector.get_tile_img(board, coord)
+        print(tile)
+
+        if detector.is_tile_empty(tile_img):
+            print("Empty")
+
+        tile_grayscale = ImageProcessing.grayscale(tile_img)
+        tile_grad = ImageProcessing.morph_grad(tile_grayscale)
+        ImageProcessing.show(tile_grad)
+
+        diffs = []
+        for piece_name in piece_types:
+            piece_grad = ImageProcessing.read_img(f"chess_components/g_{piece_name}.png", is_grayscale=True)
+            piece_resized = ImageProcessing.resize(piece_grad, tile_grad.shape)
+            diff = np.sum(tile_grad != piece_resized)
+            diffs.append(diff)
+
+        print(diffs)
+        print(piece_types[np.argmin(diffs)])
+        print()
 
 
 def identify_board():
@@ -83,5 +134,5 @@ def identify_pieces():
 
 
 if __name__ == '__main__':
-    identify_pieces()
+    get_piece_in_tile()
     pass

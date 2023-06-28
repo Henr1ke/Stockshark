@@ -6,6 +6,7 @@ from numpy import ndarray
 from stockshark.adb.dao_adb import DaoADB
 from stockshark.art_vis.detector import Detector
 from stockshark.chess_engine.game_engine import GameEngine
+from stockshark.piece.pawn import Pawn
 from stockshark.util.move import Move
 
 
@@ -37,10 +38,23 @@ class MobilePlayer:
             if board_info is None:
                 return None
             board, _ = board_info
-            selected_move = self.__detector.get_selected_move(board)
-            if selected_move is not None:
+            sel_move = self.__detector.get_selected_move(board)
+
+            if self.__is_promotion_move(game, sel_move):
+                piece_type = self.__detector.get_piece_type(board, sel_move.end_tile)
+                sel_move = Move(sel_move.start_tile, sel_move.end_tile, piece_type)
+
+            if sel_move is not None:
                 played_moves = game.played_moves
-                if len(played_moves) == 0 or selected_move != played_moves[-1]:
-                    return selected_move
+                if len(played_moves) == 0 or sel_move != played_moves[-1]:
+                    return sel_move
 
             time.sleep(0.5)
+
+    def __is_promotion_move(self, game: GameEngine, move: Move) -> bool:
+        piece = game.board[move.start_tile]
+        return isinstance(piece, Pawn) and \
+            move.start_tile.row == (6 if piece.is_white else 1) and \
+            move.end_tile.row == (7 if piece.is_white else 0)
+
+

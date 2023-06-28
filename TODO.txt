@@ -55,6 +55,11 @@ https://github.com/
 
 
 --------------------------------------- CODIGO ---------------------------------------------------------------------
+- CONTINUAR A PARTIR DO TESTE_FUNCS
+BUGS:
+    Move validator validate devia tar como dantes e o check dos castles dentro do King
+    Verificar o get sel move do Detector pq trocou a ordem do start e end tile
+    Meter para começar um jogo a meio utilizando o gen_fen_string da board_img
 
 stockfishDao:
     -- get all moves: go perft 1
@@ -88,7 +93,7 @@ adb:
 ------------------------------------ TESTES: -------------------------------------
 
 Random:
-    250:
+    250: 9.7e7
     700:
     1200:
     1800:

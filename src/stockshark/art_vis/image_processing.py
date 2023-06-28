@@ -8,9 +8,11 @@ from numpy import ndarray
 
 class ImageProcessing:
     @staticmethod
-    def read_img(filename: str) -> ndarray:
+    def read_img(filename: str, is_grayscale:bool = False) -> ndarray:
         current_path = pathlib.Path(__file__).parent.resolve()
-        return cv2.imread(f"{current_path}/../../images/{filename}")
+        path = f"{current_path}/../../images/{filename}"
+        return cv2.imread(path) if not is_grayscale else cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+
 
     @staticmethod
     def write_img(filename: str, img: ndarray) -> None:

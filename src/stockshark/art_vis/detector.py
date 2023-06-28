@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import os
 import pathlib
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, Type
 
 import cv2
 import numpy as np
 from numpy import ndarray
 
 from stockshark.art_vis.image_processing import ImageProcessing
+from stockshark.piece.piece import Piece
 from stockshark.util.move import Move
 from stockshark.util.tile import Tile
 
@@ -110,25 +111,25 @@ class Detector:
         return ImageProcessing.get_square(board, center, tile_w)
 
     @staticmethod
-    def is_tile_empty(tile: ndarray) -> bool:
-        gs = ImageProcessing.grayscale(tile)
+    def is_tile_empty(tile_img: ndarray) -> bool:
+        gs = ImageProcessing.grayscale(tile_img)
         std = np.std(gs)
         return std < Detector.TILE_EMPTY_THRESH
 
     @staticmethod
-    def is_piece_white(tile: ndarray) -> Optional[bool]:
-        if Detector.is_tile_empty(tile):
+    def is_piece_white(tile_img: ndarray) -> Optional[bool]:
+        if Detector.is_tile_empty(tile_img):
             return None
 
-        w_pixel_count = ImageProcessing.get_value_count(tile, Detector.W_PIECE_COLOR)
-        b_pixel_count = ImageProcessing.get_value_count(tile, Detector.B_PIECE_COLOR)
+        w_pixel_count = ImageProcessing.get_value_count(tile_img, Detector.W_PIECE_COLOR)
+        b_pixel_count = ImageProcessing.get_value_count(tile_img, Detector.B_PIECE_COLOR)
         return w_pixel_count >= b_pixel_count
 
     @staticmethod
-    def is_tile_selected(tile: ndarray) -> bool:
-        thresh_val = tile.shape[0] * tile.shape[1] * 0.02  # 2% of all tile pixels
-        w_sel_count = ImageProcessing.get_value_count(tile[:, :, 0], Detector.W_TILE_SELECTED_COLOR)
-        b_sel_count = ImageProcessing.get_value_count(tile[:, :, 2], Detector.B_TILE_SELECTED_COLOR)
+    def is_tile_selected(tile_img: ndarray) -> bool:
+        thresh_val = tile_img.shape[0] * tile_img.shape[1] * 0.02  # 2% of all tile pixels
+        w_sel_count = ImageProcessing.get_value_count(tile_img[:, :, 0], Detector.W_TILE_SELECTED_COLOR)
+        b_sel_count = ImageProcessing.get_value_count(tile_img[:, :, 2], Detector.B_TILE_SELECTED_COLOR)
         return w_sel_count > thresh_val or b_sel_count > thresh_val
 
     @staticmethod
@@ -140,6 +141,28 @@ class Detector:
         end_tile = Tile(2 if other_tile.col == 0 else 6, start_tile.row)
 
         return Move(start_tile, end_tile)
+
+    def get_piece_type(self, board: ndarray, tile: Tile) -> Optional[Type[Piece]]:
+        piece_types = (Detector.KNIGHT, Detector.BISHOP, Detector.ROOK, Detector.QUEEN)
+
+        coord = self.tile_to_coord(tile)
+        tile_img = Detector.get_tile_img(board, coord)
+
+        if Detector.is_tile_empty(tile_img):
+            return None
+
+        tile_grayscale = ImageProcessing.grayscale(tile_img)
+        tile_grad = ImageProcessing.morph_grad(tile_grayscale)
+
+        diffs = []
+        for piece_name in piece_types:
+            piece_grad = ImageProcessing.read_img(f"chess_components/g_{piece_name}.png", is_grayscale=True)
+            piece_resized = ImageProcessing.resize(piece_grad, tile_grad.shape)
+            diff = np.sum(tile_grad != piece_resized)
+            diffs.append(diff)
+
+        idx = np.argmin(diffs)
+        return piece_types[idx]
 
     def tile_to_coord(self, tile: Tile) -> Tuple[int, int]:
         tile_w = self.__board_w / 8
