@@ -32,6 +32,4 @@ if __name__ == '__main__':
     # game = StockfishEngine()
     game = StocksharkEngine()
 
-    print(game.castling_rights)
-
     run_random(game)

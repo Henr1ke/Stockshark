@@ -42,7 +42,7 @@ class Pawn(Piece):
                     # Corresponding eating a piece in the diagonal
                     moves += self.__get_moves(start_tile, end_tile)
 
-                elif end_tile == game.en_passant_target:
+                elif end_tile == game.ep_target:
                     # Corresponding to En Passant
                     move = Move(start_tile, end_tile)
                     moves.append(move)

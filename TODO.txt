@@ -55,7 +55,7 @@ https://github.com/
 
 
 --------------------------------------- CODIGO ---------------------------------------------------------------------
-- CONTINUAR A PARTIR DO TESTE_FUNCS
+    ################## TESTAR SE O STOCKSHARK FUNCIONA BEM COM COPIES ##################
 BUGS:
     O StockShark contém uma lista de posições atacas pelo adversario
     Move validator validate devia tar como dantes e o check dos castles dentro do King

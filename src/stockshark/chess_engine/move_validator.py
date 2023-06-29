@@ -35,7 +35,7 @@ class MoveValidator:
     @staticmethod
     def leaves_king_under_atk(game, move: Move) -> bool:
         game_copy = copy(game)
-        game_copy._make_move(move)
+        game_copy.make_move(move)
         return MoveValidator.king_is_under_atk(game_copy, not game_copy.is_white_turn)
 
     @staticmethod

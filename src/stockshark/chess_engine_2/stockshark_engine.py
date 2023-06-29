@@ -31,11 +31,7 @@ class StocksharkEngine(ChessEngine):
         cls = self.__class__
         game = cls.__new__(cls)
         for key, value in self.__dict__.items():
-            if key == "_Game__legal_piece_moves":
-                legal_piece_moves = {piece: copy(moves) for piece, moves in self.__legal_piece_moves.items()}
-                setattr(game, key, legal_piece_moves)
-            else:
-                setattr(game, key, copy(value))
+            setattr(game, key, copy(value))
         return game
 
     @property
@@ -68,7 +64,7 @@ class StocksharkEngine(ChessEngine):
         if abs(move.start_tile.row - move.end_tile.row) == 2:
             return move.end_tile + ((0, -1) if piece.is_white else (0, 1))
 
-        if move.end_tile == self.__en_passant_target:
+        if move.end_tile == self.__ep_target:
             capt_piece_tile = move.end_tile + ((0, -1) if piece.is_white else (0, 1))
             self.__board.clear_tile(capt_piece_tile)
         elif move.promote_type is not None:
@@ -94,8 +90,8 @@ class StocksharkEngine(ChessEngine):
 
         for row_idx in (0, 7):
             if isinstance(piece, King) and move.start_tile == Tile(king_col_idx, row_idx):
-                self.__castlings = self.__castlings.replace("Q" if row_idx == 0 else "q", "")
-                self.__castlings = self.__castlings.replace("K" if row_idx == 0 else "k", "")
+                self.__castling_rights = self.__castling_rights.replace("Q" if row_idx == 0 else "q", "")
+                self.__castling_rights = self.__castling_rights.replace("K" if row_idx == 0 else "k", "")
 
                 if move.end_tile.col == 2:
                     start_tile = Tile(0, row_idx)
@@ -110,20 +106,18 @@ class StocksharkEngine(ChessEngine):
 
             elif move.start_tile == Tile(q_side_col_idx, row_idx) \
                     or move.end_tile == Tile(q_side_col_idx, row_idx):
-                self.__castlings = self.__castlings.replace("Q" if row_idx == 0 else "q", "")
+                self.__castling_rights = self.__castling_rights.replace("Q" if row_idx == 0 else "q", "")
                 return
             elif move.start_tile == Tile(k_side_col_idx, row_idx) \
                     or move.end_tile == Tile(k_side_col_idx, row_idx):
-                self.__castlings = self.__castlings.replace("K" if row_idx == 0 else "k", "")
+                self.__castling_rights = self.__castling_rights.replace("K" if row_idx == 0 else "k", "")
                 return
 
     def _make_move(self, move: str) -> None:
-        move = Move(move)
+        move = Move.from_uci(move)
         return self.make_move(move)
 
     def make_move(self, move: Move) -> None:
-        move = Move(move)
-
         piece = self.__board[move.start_tile]
 
         eaten_piece = self.__board[move.end_tile]
@@ -154,6 +148,7 @@ class StocksharkEngine(ChessEngine):
 
     def _gen_available_moves(self) -> List[str]:
         return [move.to_uci() for move in self.gen_available_moves()]
+        # return ["a2a4"]
 
     def gen_available_moves(self) -> List[Move]:
         moves = []
@@ -163,7 +158,7 @@ class StocksharkEngine(ChessEngine):
             if piece.is_white != self.__is_white_turn:
                 continue
 
-            pseudo_moves = piece.gen_moves(self.__board)
+            pseudo_moves = piece.gen_moves(self)
 
             moves += [move for move in pseudo_moves if not MoveValidator.leaves_king_under_atk(self, move)]
 
@@ -183,5 +178,11 @@ class StocksharkEngine(ChessEngine):
 
 
 if __name__ == '__main__':
-    game = StocksharkEngine()
-    print(game.ep_target)
+    engine = StocksharkEngine()
+
+    print(engine.fen)
+
+    engine_copy = copy(engine)
+    engine_copy.play("a2a4")
+    print(engine_copy.fen)
+    print(engine.fen)

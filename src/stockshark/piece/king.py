@@ -15,7 +15,7 @@ class King(Piece):
         increments = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
         moves = self._gen_inc_moves(board, increments)
 
-        can_castle_q = ("Q" if self.is_white else "q") in game.castlings
+        can_castle_q = ("Q" if self.is_white else "q") in game.castling_rights
         # if can_castle_q and board[1, start_tile.row] is None and board[2, start_tile.row] is None \
         #         and board[3, start_tile.row] is None:
         if can_castle_q and self._path_unblocked(board, start_tile.row, 1, 4):
@@ -23,7 +23,7 @@ class King(Piece):
             move = Move(start_tile, end_tile)
             moves.append(move)
 
-        can_castle_k = ("K" if self.is_white else "k") in game.castlings
+        can_castle_k = ("K" if self.is_white else "k") in game.castling_rights
         # if can_castle_k and board[5, start_tile.row] is None and board[6, start_tile.row] is None:
         if can_castle_k and self._path_unblocked(board, start_tile.row, 6, 4):
             end_tile = start_tile + (2, 0)
