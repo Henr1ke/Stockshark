@@ -6,7 +6,7 @@ from typing import Optional, List
 from stockshark.util.move import Move
 
 
-class StockFishDao:
+class StockfishDao:
     def __init__(self, path: str = "../../stockfish/stockfish-windows-2022-x86-64-modern.exe") -> None:
 
         self._path = path
@@ -29,8 +29,6 @@ class StockFishDao:
                 line = sf_process.stdout.readline().strip("\n")
                 sf_output.put(line)
 
-
-
         self._line_reader = Thread(target=thread_read_contents,
                                    args=(self._stockfish, self._sf_output,),
                                    daemon=True)
@@ -39,6 +37,7 @@ class StockFishDao:
 
         self._is_closing = False
 
+        self._is_ready()
         self._send_command("uci")
         response = self._read_response(5, "uciok")
         if "uciok" not in response:
@@ -60,12 +59,13 @@ class StockFishDao:
         except Empty:
             return None
 
-    def _read_response(self, timeout: float = 0.1, end_str: Optional[str] = None) -> Optional[str]:
+    def _get_response_lines(self, timeout: float = 0.1, end_str: Optional[str] = None) -> List[str]:
+        lines = []
+
         line = self._read_line(timeout)
         if line is None:
-            return None
+            return lines
 
-        lines = []
         while line is not None:
             lines.append(line)
 
@@ -74,6 +74,10 @@ class StockFishDao:
 
             line = self._read_line(timeout)
 
+        return lines
+
+    def _read_response(self, timeout: float = 0.1, end_str: Optional[str] = None) -> Optional[str]:
+        lines = self._get_response_lines(timeout, end_str)
         return "\n".join(lines)
 
     def _is_ready(self) -> bool:
@@ -81,8 +85,11 @@ class StockFishDao:
         response = self._read_response(5, "readyok")
         return response is not None and "readyok" in response
 
-    def new_game(self) -> bool:
-        self._send_command("ucinewgame")
+    def new_game(self, fen: Optional[str] = None) -> bool:
+        if fen is not None:
+            self._send_command(f"position fen {fen}")
+        else:
+            self._send_command("ucinewgame")
         return self._is_ready()
 
     def close(self) -> None:
@@ -91,7 +98,7 @@ class StockFishDao:
     def is_process_running(self) -> bool:
         return self._stockfish.poll() is None
 
-    def get_fen_string(self) -> Optional[str]:
+    def get_fen(self) -> Optional[str]:
         self._send_command("d")
         response = self._read_response()
         if response is None:
@@ -110,8 +117,25 @@ class StockFishDao:
         idx = response.find(search_word)
         return response[:idx].strip("\n")
 
-    def make_moves(self, fen_string: Optional[str], moves: List[Move]):
-        pass
+    def make_moves(self, fen_string: str, moves: List[Move]):
+        self._send_command(f"position fen {fen_string} moves {' '.join([move.to_uci() for move in moves])}")
+
+    def make_move(self, fen_string: str, move: Move):
+        self.make_moves(fen_string, [move])
+
+    def get_available_moves(self) -> List[Move]:
+        self._send_command("go perft 1")
+        response_lines = self._get_response_lines(end_str="Nodes searched: ")
+        if len(response_lines) == 0:
+            return []
+
+        moves = []
+        for i in range(len(response_lines) - 2):
+            line = response_lines[i]
+            colon_idx = line.find(":")
+            moves.append(Move.from_uci(line[:colon_idx].strip()))
+
+        return moves
 
     def __del__(self) -> None:
         if self._stockfish.poll() is None and not self._is_closing:
@@ -121,11 +145,13 @@ class StockFishDao:
 
 
 if __name__ == '__main__':
-
-    sf_dao = StockFishDao()
+    sf_dao = StockfishDao()
     success = sf_dao.new_game()
-    fen = sf_dao.get_fen_string()
+    f = sf_dao.get_fen()
     board_repr = sf_dao.get_board_repr()
-    print(fen)
+    print(f)
     print(board_repr)
 
+    available_moves = sf_dao.get_available_moves()
+    for move in available_moves:
+        print(move)

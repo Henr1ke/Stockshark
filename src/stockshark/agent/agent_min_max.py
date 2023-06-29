@@ -5,7 +5,7 @@ from typing import Tuple
 
 from stockshark.agent.agent import Agent
 from stockshark.chess_engine.game_engine import GameEngine
-from stockshark.chess_engine.stockshark_engine import StockSharkEngine
+from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.sim.visualizer import Visualizer
 from stockshark.util.move import Move
 
@@ -53,7 +53,7 @@ class AgentMinMax(Agent):
 
 
 if __name__ == '__main__':
-    game = StockSharkEngine("1r2r1k1/5ppp/8/q1b3n1/3P3P/2P2BP1/PPN2P2/3KQ2R w - - 0 1")
+    game = StocksharkEngine("1r2r1k1/5ppp/8/q1b3n1/3P3P/2P2BP1/PPN2P2/3KQ2R w - - 0 1")
 
     vis = Visualizer(Visualizer.CHARSET_LETTER)
     vis.show(game)

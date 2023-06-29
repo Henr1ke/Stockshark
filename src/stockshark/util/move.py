@@ -41,8 +41,18 @@ class Move:
         return False
 
     def __repr__(self) -> str:
-        promote_piece_str = "" if self.__promote_type is None else self.__promote_type
-        return f"{self.__start_tile}{self.__end_tile}{promote_piece_str}"
+        return self.to_uci()
+
+    @staticmethod
+    def from_uci(uci_str: str) -> Move:
+        if len(uci_str) < 4 or len(uci_str) > 5:
+            raise ChessException("UCI string must be 4 or 5 characters long")
+
+        start_tile = Tile(uci_str[:2])
+        end_tile = Tile(uci_str[2:4])
+        promote_type = None if len(uci_str) == 4 else uci_str[4]
+
+        return Move(start_tile, end_tile, promote_type)
 
     @staticmethod
     def __is_promotion_move_valid(start_tile: Tile, end_tile: Tile) -> bool:
@@ -59,3 +69,7 @@ class Move:
     @property
     def promote_type(self) -> Optional[str]:
         return self.__promote_type
+
+    def to_uci(self):
+        promote_piece_str = "" if self.__promote_type is None else self.__promote_type
+        return f"{self.__start_tile}{self.__end_tile}{promote_piece_str}"
