@@ -243,7 +243,7 @@ if __name__ == '__main__':
         num_pos = 0
         for move in moves:
             game_copy = copy(game)
-            game_copy.make_move(move)
+            game_copy._make_move(move)
             num_moves = move_gen(depth - 1, game_copy)
             num_pos += num_moves
         return num_pos
