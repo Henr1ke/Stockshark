@@ -2,15 +2,13 @@ from abc import ABC, abstractmethod
 from copy import copy
 from typing import List
 
-from stockshark.util.move import Move
-
 
 class ChessEngine(ABC):
 
     @abstractmethod
     def __init__(self, fen: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"):
         self.__update_fen_fields()
-        self.__played_moves: List[Move] = []
+        self.__played_moves: List[str] = []
 
     def __update_fen_fields(self):
         self.__fen = self._gen_fen()
@@ -24,13 +22,13 @@ class ChessEngine(ABC):
         self.__fullclock: int = int(fen_fields[5])
 
     @abstractmethod
-    def make_move(self, move: Move) -> bool:
+    def make_move(self, move: str) -> bool:
         self.__played_moves.append(move)
         self.__update_fen_fields()
         return True
 
     @abstractmethod
-    def get_available_moves(self) -> List[Move]:
+    def get_available_moves(self) -> List[str]:
         pass
 
     @abstractmethod
@@ -66,5 +64,5 @@ class ChessEngine(ABC):
         return self.__fullclock
 
     @property
-    def played_moves(self) -> List[Move]:
+    def played_moves(self) -> List[str]:
         return copy(self.__played_moves)

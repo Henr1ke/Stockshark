@@ -25,8 +25,9 @@ def run_random(game: ChessEngine):
     print("Game over!")
     print(game.fen)
 
+
 if __name__ == '__main__':
-    game = ChessPackageEngine()
-    # game = StockfishEngine()
+    # game = ChessPackageEngine()
+    game = StockfishEngine()
 
     run_random(game)

@@ -117,13 +117,13 @@ class StockfishDao:
         idx = response.find(search_word)
         return response[:idx].strip("\n")
 
-    def make_moves(self, fen_string: str, moves: List[Move]):
-        self._send_command(f"position fen {fen_string} moves {' '.join([move.to_uci() for move in moves])}")
+    def make_moves(self, fen_string: str, moves: List[str]):
+        self._send_command(f"position fen {fen_string} moves {' '.join(moves)}")
 
-    def make_move(self, fen_string: str, move: Move):
+    def make_move(self, fen_string: str, move: str):
         self.make_moves(fen_string, [move])
 
-    def get_available_moves(self) -> List[Move]:
+    def get_available_moves(self) -> List[str]:
         self._send_command("go perft 1")
         response_lines = self._get_response_lines(end_str="Nodes searched: ")
         if len(response_lines) == 0:
@@ -133,7 +133,7 @@ class StockfishDao:
         for i in range(len(response_lines) - 2):
             line = response_lines[i]
             colon_idx = line.find(":")
-            moves.append(Move.from_uci(line[:colon_idx].strip()))
+            moves.append(line[:colon_idx].strip())
 
         return moves
 

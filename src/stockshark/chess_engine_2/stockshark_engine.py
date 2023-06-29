@@ -17,10 +17,10 @@ class StocksharkEngine(ChessEngine):
         self.__halfclock: int = int(fen_fields[4])
         self.__fullclock: int = int(fen_fields[5])
 
-    def make_move(self, move: Move) -> bool:
+    def make_move(self, move: str) -> bool:
         pass
 
-    def get_available_moves(self) -> List[Move]:
+    def get_available_moves(self) -> List[str]:
         pass
 
     def _gen_fen(self) -> str:
