@@ -36,6 +36,10 @@ class ChessEngine(ABC):
     def _gen_fen(self) -> str:
         pass
 
+    @abstractmethod
+    def _get_piece_at(self, tile: str) -> str:
+        pass
+
     def play(self, move: str) -> bool:
         if move not in self.__available_moves:
             return False

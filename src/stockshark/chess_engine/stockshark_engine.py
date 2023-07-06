@@ -17,6 +17,8 @@ from stockshark.util.tile import Tile
 
 class StocksharkEngine(ChessEngine):
 
+
+
     def _new_game(self, fen: str):
         fen_fields = fen.split(" ")
         self.__board: Board = Board(fen_fields[0])
@@ -112,11 +114,12 @@ class StocksharkEngine(ChessEngine):
                 self.__castling_rights = self.__castling_rights.replace("K" if row_idx == 0 else "k", "")
                 return
 
+    def _get_piece_at(self, tile: str) -> str:
+        return str(self.__board[Tile(tile[0], tile[1])])
+
     def _make_move(self, move: str) -> None:
         move = Move.from_uci(move)
-        return self.make_move(move)
 
-    def make_move(self, move: Move) -> None:
         piece = self.__board[move.start_tile]
 
         eaten_piece = self.__board[move.end_tile]
@@ -144,6 +147,7 @@ class StocksharkEngine(ChessEngine):
         # Update self.__fullclock
         if self.__is_white_turn:
             self.__fullclock += 1
+
 
     def _gen_available_moves(self) -> List[str]:
         return [move.to_uci() for move in self.gen_available_moves()]

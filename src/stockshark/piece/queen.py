@@ -7,7 +7,7 @@ from stockshark.util.move import Move
 class Queen(Piece):
 
     def __init__(self, is_white: bool):
-        super().__init__(is_white, 900, "Q", "q")
+        super().__init__(is_white, Piece.QUEEN_VALUE, Piece.QUEEN_W, Piece.QUEEN_B)
 
     def gen_moves(self, game) -> List[Move]:
         board = game.board

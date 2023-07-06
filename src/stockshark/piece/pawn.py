@@ -9,7 +9,7 @@ from stockshark.util.tile import Tile
 class Pawn(Piece):
 
     def __init__(self, is_white: bool):
-        super().__init__(is_white, 100, "P", "p")
+        super().__init__(is_white, Piece.PAWN_VALUE, Piece.PAWN_W, Piece.PAWN_B)
 
     def gen_moves(self, game) -> List[Move]:
         board = game.board

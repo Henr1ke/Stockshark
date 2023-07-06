@@ -6,7 +6,25 @@ from stockshark.util.move import Move
 
 
 class Piece(ABC):
+    PAWN_W = "P"
+    PAWN_B = "p"
+    KNIGHT_W = "N"
+    KNIGHT_B = "n"
+    BISHOP_W = "B"
+    BISHOP_B = "b"
+    ROOK_W = "R"
+    ROOK_B = "r"
+    QUEEN_W = "Q"
+    QUEEN_B = "q"
+    KING_W = "K"
+    KING_B = "k"
 
+    PAWN_VALUE = 100
+    KNIGHT_VALUE = 300
+    BISHOP_VALUE = 300
+    ROOK_VALUE = 500
+    QUEEN_VALUE = 900
+    KING_VALUE = 10000
     def __init__(self, is_white: bool, value: float, symbol_w: str, symbol_b: str) -> None:
         self.__is_white: bool = is_white
         self.__value: float = value

@@ -52,7 +52,33 @@ class AgentMinMax(Agent):
 
     @staticmethod
     def evaluate_game(fen):
-        pass
+        value = 0
+        for char in fen.split(" ")[0]:
+            if char == "P":
+                value += 1
+            elif char == "N":
+                value += 3
+            elif char == "B":
+                value += 3
+            elif char == "R":
+                value += 5
+            elif char == "Q":
+                value += 9
+            elif char == "p":
+                value -= 1
+            elif char == "n":
+                value -= 3
+            elif char == "b":
+                value -= 3
+            elif char == "r":
+                value -= 5
+            elif char == "q":
+                value -= 9
+        return value
+
+    def evaluate_move(self, move: Move) -> float:
+        eaten_piece = self.__board[move.end_pos]
+        return 0 if eaten_piece is None else eaten_piece.value
 
 
 if __name__ == '__main__':
