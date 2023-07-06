@@ -1,6 +1,7 @@
 from typing import Dict, Type
 
 from stockshark.chess_engine.state import State
+
 from stockshark.piece.bishop import Bishop
 from stockshark.piece.king import King
 from stockshark.piece.knight import Knight

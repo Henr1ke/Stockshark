@@ -1,12 +1,10 @@
 from abc import ABC
 from typing import Optional
 
-from stockshark.agent.agent import Agent
-from stockshark.agent.agent_min_max import AgentMinMax
-from stockshark.agent.agent_min_max_ab import AgentMinMaxAB
-from stockshark.agent.agent_random import AgentRandom
-from stockshark.agent.agent_reactive import AgentReactive
 from stockshark.chess_engine.game_engine import GameEngine
+
+from stockshark.agent.agent import Agent
+from stockshark.agent.agent_random import AgentRandom
 from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.sim.simulator import Simulator
 from stockshark.sim.visualizer import Visualizer

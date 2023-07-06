@@ -32,7 +32,8 @@ class King(Piece):
 
         return moves
 
-    def _path_unblocked(self, board, row: int, start_col: int, end_col: int) -> bool:
+    @staticmethod
+    def _path_unblocked(board, row: int, start_col: int, end_col: int) -> bool:
         for i in range(start_col, end_col, 1 if start_col < end_col else -1):
             if board[i, row] is not None:
                 return False

@@ -1,8 +1,9 @@
 import random
 from typing import Optional
 
-from stockshark.agent.behaviour.behaviour import Behaviour
 from stockshark.chess_engine.game_engine import GameEngine
+
+from stockshark.agent.behaviour.behaviour import Behaviour
 from stockshark.util.move import Move
 
 

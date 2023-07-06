@@ -1,34 +1,38 @@
+from __future__ import annotations
+
 from copy import copy
-from typing import Optional, List, Dict
+from typing import List, Optional
 
 from stockshark.chess_engine.board import Board
-from stockshark.chess_engine.game_engine import GameEngine
+from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.move_validator import MoveValidator
-from stockshark.chess_engine.state import State
 from stockshark.piece.bishop import Bishop
 from stockshark.piece.king import King
 from stockshark.piece.knight import Knight
 from stockshark.piece.pawn import Pawn
-from stockshark.piece.piece import Piece
 from stockshark.piece.queen import Queen
 from stockshark.piece.rook import Rook
 from stockshark.util.move import Move
 from stockshark.util.tile import Tile
 
 
-class StocksharkEngine(GameEngine):
-    def __init__(self, fen_str: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") -> None:
-        fen_str_fields = fen_str.split()
+class StocksharkEngine(ChessEngine):
 
-        self.__board: Board = Board(fen_str_fields[0])
-        self.__is_white_turn: bool = True if fen_str_fields[1] == "w" else False
-        self.__castlings: str = fen_str_fields[2]
-        self.__en_passant_target: Optional[Tile] = None if fen_str_fields[3] == "-" else Tile(fen_str_fields[3])
-        self.__halfclock: int = int(fen_str_fields[4])
-        self.__fullclock: int = int(fen_str_fields[5])
-        self.__played_moves: List[Move] = []
-        self.__legal_piece_moves: Dict[Piece, List[Move]] = dict()
-        self.__state: State = State.IN_PROGRESS
+    def _new_game(self, fen: str):
+        fen_fields = fen.split(" ")
+        self.__board: Board = Board(fen_fields[0])
+        self.__is_white_turn: bool = True if fen_fields[1] == "w" else False
+        self.__castling_rights: str = fen_fields[2]
+        self.__ep_target: Optional[Tile] = None if fen_fields[3] == "-" else Tile(fen_fields[3])
+        self.__halfclock: int = int(fen_fields[4])
+        self.__fullclock: int = int(fen_fields[5])
+
+    def __copy__(self) -> StocksharkEngine:
+        cls = self.__class__
+        game = cls.__new__(cls)
+        for key, value in self.__dict__.items():
+            setattr(game, key, copy(value))
+        return game
 
     @property
     def board(self) -> Board:
@@ -39,12 +43,12 @@ class StocksharkEngine(GameEngine):
         return self.__is_white_turn
 
     @property
-    def castlings(self) -> str:
-        return self.__castlings
+    def castling_rights(self) -> str:
+        return self.__castling_rights
 
     @property
-    def en_passant_target(self) -> Optional[Tile]:
-        return self.__en_passant_target
+    def ep_target(self) -> Optional[Tile]:
+        return self.__ep_target
 
     @property
     def halfclock(self) -> int:
@@ -54,70 +58,13 @@ class StocksharkEngine(GameEngine):
     def fullclock(self) -> int:
         return self.__fullclock
 
-    @property
-    def played_moves(self) -> List[Move]:
-        return copy(self.__played_moves)
-
-    @property
-    def state(self) -> State:
-        return self.__state
-
-    def __copy__(self) -> GameEngine:
-        cls = self.__class__
-        game = cls.__new__(cls)
-        for key, value in self.__dict__.items():
-            if key == "_Game__legal_piece_moves":
-                legal_piece_moves = {piece: copy(moves) for piece, moves in self.__legal_piece_moves.items()}
-                setattr(game, key, legal_piece_moves)
-            else:
-                setattr(game, key, copy(value))
-        return game
-
-    def get_available_pieces_tiles(self) -> Dict[Piece, Tile]:
-        return {piece: tile for piece, tile in self.__board.pieces_tiles.items()
-                if piece.is_white is self.__is_white_turn and len(self.get_legal_piece_moves(piece)) > 0}
-
-    def get_legal_piece_moves(self, piece: Piece) -> List[Move]:
-        if piece not in self.__legal_piece_moves:
-            moves = piece.gen_moves(self)
-
-            # legal_moves = [move for move in moves if MoveValidator.is_legal(self, move)]
-            legal_moves = [move for move in moves if not MoveValidator.leaves_king_under_atk(self, move)]
-
-            # Updates the dictionary
-            self.__legal_piece_moves[piece] = legal_moves
-
-        return self.__legal_piece_moves[piece]
-
-    def gen_fen_str(self) -> str:
-        fen_str_fields = [
-            self.__board.gen_fen_str(),
-            "w" if self.__is_white_turn else "b",
-            "-" if len(self.__castlings) == 0 else self.__castlings,
-            "-" if self.__en_passant_target is None else str(self.__en_passant_target),
-            str(self.__halfclock),
-            str(self.__fullclock)
-        ]
-
-        return " ".join(fen_str_fields)
-
-    def evaluate_game(self) -> float:
-        value = 0
-        for piece in self.__board.pieces_tiles.keys():
-            value += piece.value if piece.is_white else -piece.value
-        return value
-
-    def evaluate_move(self, move: Move) -> float:
-        eaten_piece = self.__board[move.end_tile]
-        return 0 if eaten_piece is None else eaten_piece.value
-
     def __pawn_actions(self, move: Move) -> Optional[Tile]:
         piece = self.__board[move.end_tile]
 
         if abs(move.start_tile.row - move.end_tile.row) == 2:
             return move.end_tile + ((0, -1) if piece.is_white else (0, 1))
 
-        if move.end_tile == self.__en_passant_target:
+        if move.end_tile == self.__ep_target:
             capt_piece_tile = move.end_tile + ((0, -1) if piece.is_white else (0, 1))
             self.__board.clear_tile(capt_piece_tile)
         elif move.promote_type is not None:
@@ -143,8 +90,8 @@ class StocksharkEngine(GameEngine):
 
         for row_idx in (0, 7):
             if isinstance(piece, King) and move.start_tile == Tile(king_col_idx, row_idx):
-                self.__castlings = self.__castlings.replace("Q" if row_idx == 0 else "q", "")
-                self.__castlings = self.__castlings.replace("K" if row_idx == 0 else "k", "")
+                self.__castling_rights = self.__castling_rights.replace("Q" if row_idx == 0 else "q", "")
+                self.__castling_rights = self.__castling_rights.replace("K" if row_idx == 0 else "k", "")
 
                 if move.end_tile.col == 2:
                     start_tile = Tile(0, row_idx)
@@ -159,35 +106,19 @@ class StocksharkEngine(GameEngine):
 
             elif move.start_tile == Tile(q_side_col_idx, row_idx) \
                     or move.end_tile == Tile(q_side_col_idx, row_idx):
-                self.__castlings = self.__castlings.replace("Q" if row_idx == 0 else "q", "")
+                self.__castling_rights = self.__castling_rights.replace("Q" if row_idx == 0 else "q", "")
                 return
             elif move.start_tile == Tile(k_side_col_idx, row_idx) \
                     or move.end_tile == Tile(k_side_col_idx, row_idx):
-                self.__castlings = self.__castlings.replace("K" if row_idx == 0 else "k", "")
+                self.__castling_rights = self.__castling_rights.replace("K" if row_idx == 0 else "k", "")
                 return
 
-    def __get_new_state(self) -> State:
-        can_make_move = False
-        for p in self.__board.pieces_tiles.keys():
-            if p.is_white is self.__is_white_turn and len(self.get_legal_piece_moves(p)) > 0:
-                can_make_move = True
-                break
+    def _make_move(self, move: str) -> None:
+        move = Move.from_uci(move)
+        return self.make_move(move)
 
-        if not can_make_move:
-            if MoveValidator.king_is_under_atk(self, self.__is_white_turn):
-                return State.WIN_B if self.__is_white_turn else State.WIN_W
-            else:
-                return State.DRAW
-
-        elif self.__halfclock >= 100:
-            return State.DRAW
-
-        return State.IN_PROGRESS
-
-    def make_move(self, move: Move, is_test=False) -> bool:
+    def make_move(self, move: Move) -> None:
         piece = self.__board[move.start_tile]
-        if not is_test and move not in self.get_legal_piece_moves(piece):
-            return False
 
         eaten_piece = self.__board[move.end_tile]
 
@@ -215,47 +146,61 @@ class StocksharkEngine(GameEngine):
         if self.__is_white_turn:
             self.__fullclock += 1
 
-        if not is_test:
-            # Update self.__state
-            self.__state = self.__get_new_state()
+    def _gen_available_moves(self) -> List[str]:
+        return [move.to_uci() for move in self.gen_available_moves()]
+        # return ["a2a4"]
 
-        # Update self.__played_moves
-        self.__played_moves.append(move)
+    def gen_available_moves(self) -> List[Move]:
+        moves = []
 
-        # Reset self.__legal_piece_moves
-        self.__legal_piece_moves.clear()
+        pieces = self.__board.pieces_tiles.keys()
+        for piece in pieces:
+            if piece.is_white != self.__is_white_turn:
+                continue
 
-        return True
+            pseudo_moves = piece.gen_moves(self)
+
+            moves += [move for move in pseudo_moves if not self.__leaves_king_under_atk(move)]
+
+        return moves
+
+    def _gen_fen(self) -> str:
+        fen_str_fields = [
+            self.__board.gen_fen_str(),
+            "w" if self.__is_white_turn else "b",
+            "-" if len(self.__castling_rights) == 0 else self.__castling_rights,
+            "-" if self.__ep_target is None else str(self.__ep_target),
+            str(self.__halfclock),
+            str(self.__fullclock)
+        ]
+
+        return " ".join(fen_str_fields)
+
+    def __king_is_under_atk(self, is_white: bool) -> bool:
+        if is_white not in self.__board.kings.keys():
+            return False
+
+        king = self.__board.kings[is_white]
+        atk_pieces = [piece for piece in self.__board.pieces_tiles.keys() if piece.is_white is not is_white]
+
+        for atk_piece in atk_pieces:
+            moves = atk_piece.gen_moves(self)
+            if king in [self.__board[move.end_tile] for move in moves]:
+                return True
+        return False
+
+    def __leaves_king_under_atk(self, move: Move) -> bool:
+        game_copy = copy(self)
+        game_copy.make_move(move)
+        return game_copy.__king_is_under_atk(not game_copy.is_white_turn)
 
 
 if __name__ == '__main__':
-    game = StocksharkEngine("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8")
+    engine = StocksharkEngine()
 
+    print(engine.fen)
 
-    def move_gen(depth, game):
-        if depth == 0:
-            return 1
-
-        moves = []
-        for piece in game.get_available_pieces_tiles().keys():
-            moves += game.get_legal_piece_moves(piece)
-
-        num_pos = 0
-        for move in moves:
-            game_copy = copy(game)
-            game_copy._make_move(move)
-            num_moves = move_gen(depth - 1, game_copy)
-            num_pos += num_moves
-        return num_pos
-
-
-    game.make_move(Move("c1", "d2"))
-    print(game.gen_fen_str())
-    for piece in game.get_available_pieces_tiles().keys():
-        for move in game.get_legal_piece_moves(piece):
-            game_copy = copy(game)
-            game_copy.make_move(move)
-            count = move_gen(1, game_copy)
-            print(f"{move}: {count}")
-
-    # print(move_gen(3, game))
+    engine_copy = copy(engine)
+    engine_copy.play("a2a4")
+    print(engine_copy.fen)
+    print(engine.fen)

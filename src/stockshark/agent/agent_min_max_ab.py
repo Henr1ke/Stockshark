@@ -3,8 +3,9 @@ import time
 from copy import copy
 from typing import Tuple
 
-from stockshark.agent.agent import Agent
 from stockshark.chess_engine.game_engine import GameEngine
+
+from stockshark.agent.agent import Agent
 from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.sim.visualizer import Visualizer
 from stockshark.util.move import Move
@@ -12,6 +13,7 @@ from stockshark.util.move import Move
 
 class AgentMinMaxAB(Agent):
     TIMES = []
+
     def __init__(self, depth: int = 2):
         if depth <= 0:
             raise ValueError("Depth can not be less or equal to zero")

@@ -1,7 +1,7 @@
 from typing import List
 
-from stockshark.chess_engine_2.chess_engine import ChessEngine
-from stockshark.chess_engine_2.stockfish_dao import StockfishDao
+from stockshark.chess_engine.chess_engine import ChessEngine
+from stockshark.chess_engine.stockfish_dao import StockfishDao
 
 
 class StockfishEngine(ChessEngine):

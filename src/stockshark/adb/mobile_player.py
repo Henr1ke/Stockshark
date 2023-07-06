@@ -2,10 +2,10 @@ import time
 from typing import Tuple, Optional
 
 from numpy import ndarray
+from stockshark.chess_engine.game_engine import GameEngine
 
 from stockshark.adb.dao_adb import DaoADB
 from stockshark.art_vis.detector import Detector
-from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.piece.pawn import Pawn
 from stockshark.util.move import Move
 
@@ -52,7 +52,8 @@ class MobilePlayer:
 
             time.sleep(0.5)
 
-    def __is_promotion_move(self, game: GameEngine, move: Move) -> bool:
+    @staticmethod
+    def __is_promotion_move(game: GameEngine, move: Move) -> bool:
         piece = game.board[move.start_tile]
         return isinstance(piece, Pawn) and \
             move.start_tile.row == (6 if piece.is_white else 1) and \

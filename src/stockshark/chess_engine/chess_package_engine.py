@@ -1,9 +1,10 @@
 from __future__ import annotations
+
 from typing import List
 
-from stockshark.chess_engine_2.chess_engine import ChessEngine
-
 from chess import Move as ChessMove, Board as ChessBoard
+
+from stockshark.chess_engine.chess_engine import ChessEngine
 
 
 class PythonChessEngine(ChessEngine):

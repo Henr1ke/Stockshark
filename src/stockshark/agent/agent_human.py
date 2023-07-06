@@ -1,5 +1,6 @@
-from stockshark.agent.agent import Agent
 from stockshark.chess_engine.game_engine import GameEngine
+
+from stockshark.agent.agent import Agent
 from stockshark.util.move import Move
 
 
@@ -50,7 +51,6 @@ class AgentHuman(Agent):
         str_moves = [str(move) for move in moves]
         sorted_str = sorted(str_moves)
         while True:
-            sorted_str
             print(f"Select a move to make. Available moves: {sorted_str}")
             name = input("Move: ")
             if name in str_moves:

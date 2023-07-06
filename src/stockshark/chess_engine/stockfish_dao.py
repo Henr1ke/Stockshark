@@ -3,8 +3,6 @@ from subprocess import Popen, PIPE, STDOUT
 from threading import Thread
 from typing import Optional, List
 
-from stockshark.util.move import Move
-
 
 class StockfishDao:
     def __init__(self, path: str = "../../stockfish/stockfish-windows-2022-x86-64-modern.exe") -> None:

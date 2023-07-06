@@ -77,8 +77,8 @@ def get_piece_in_tile():
 
 def identify_board():
     current_path = pathlib.Path(__file__).parent.resolve()
-    dir = f"{current_path}/../../images/screenshots"
-    for img_name in (os.listdir(dir)):
+    folder = f"{current_path}/../../images/screenshots"
+    for img_name in (os.listdir(folder)):
         screenshot = ImageProcessing.read_img(f"screenshots/{img_name}")
 
         scn_gray = ImageProcessing.grayscale(screenshot)

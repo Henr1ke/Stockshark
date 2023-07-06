@@ -3,6 +3,7 @@ from typing import Optional
 
 from stockshark.chess_engine.game_engine import GameEngine
 from stockshark.chess_engine.state import State
+
 from stockshark.sim.visualizer import Visualizer
 
 

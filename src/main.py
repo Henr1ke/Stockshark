@@ -41,14 +41,17 @@ def get_agent(agent: str) -> Optional[Agent]:
 def get_paw_response(play_as_whites: str) -> Optional[bool]:
     if play_as_whites is None:
         return None
-    return play_as_whites.casefold() == "y".casefold() or play_as_whites.casefold() == "yes".casefold() or play_as_whites.casefold() == "s".casefold() or play_as_whites.casefold() == "sim".casefold() or play_as_whites.casefold() == "true".casefold()
+    return play_as_whites.casefold() == "y".casefold() or play_as_whites.casefold() == "yes".casefold() or \
+        play_as_whites.casefold() == "s".casefold() or play_as_whites.casefold() == "sim".casefold() or \
+        play_as_whites.casefold() == "true".casefold()
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--agent', type=str, required=True, help="Which agent model to run on the simulation")
 parser.add_argument('--model', type=str, required=True, help='Which smartphone model the ADB connects to')
-subparser = parser.add_subparsers(dest='opponent_type', required=True,
-                                  help="Insert 'friend' to play against another friend or 'computer' to play against a computer")
+subparser = parser.add_subparsers(
+    dest='opponent_type', required=True,
+    help="Insert 'friend' to play against another friend or 'computer' to play against a computer")
 
 friend = subparser.add_parser('friend')
 friend.add_argument("--username", type=str, required=True)

@@ -3,14 +3,14 @@ import time
 from copy import copy
 from typing import Type
 
-from stockshark.chess_engine_2.chess_engine import ChessEngine
-from stockshark.chess_engine_2.chess_package_engine import PythonChessEngine
-from stockshark.chess_engine_2.stockfish_engine import StockfishEngine
-from stockshark.chess_engine_2.stockshark_engine import StocksharkEngine
+from stockshark.chess_engine.chess_engine import ChessEngine
+from stockshark.chess_engine.chess_package_engine import PythonChessEngine
+from stockshark.chess_engine.stockfish_engine import StockfishEngine
+from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 
 
 def run_random(engine: ChessEngine):
-    for i in range(100):
+    for i in range(1000):
         print(engine.fen)
 
         avail_moves = engine.available_moves
@@ -81,30 +81,30 @@ def get_run_moves_avg_time(engineType: Type[ChessEngine], moves: list, num_runs:
 
 
 if __name__ == '__main__':
-    # engine = PythonChessEngine()
+    engine = PythonChessEngine()
     # engine = StockfishEngine()
     # engine = StocksharkEngine()
 
-    # run_random(engine)
+    run_random(engine)
 
     # fen = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8"
     # perft(fen, PythonChessEngine, StocksharkEngine)
 
-    moves = ['d2d3', 'b8a6', 'e1d2', 'b7b6', 'c2c3', 'g7g5', 'h2h3', 'd7d6', 'd2c2', 'f7f6', 'c3c4', 'b6b5', 'c2b3',
-             'a6b8', 'c1e3', 'a7a6', 'c4b5', 'a6a5', 'e3a7', 'e7e6', 'b1d2', 'c8d7', 'a7e3', 'a8a7', 'e3g5', 'c7c6',
-             'd3d4', 'c6c5', 'a1c1', 'f8e7', 'f2f4', 'd7c6', 'c1b1', 'f6f5', 'e2e3', 'c6e4', 'b3a3', 'a7c7', 'd1c2',
-             'c7b7', 'd4c5', 'b8c6', 'g5h6', 'e7g5', 'a3a4', 'b7b8', 'c2b3', 'd8f6', 'g2g3', 'd6c5', 'b3d3', 'g5h6',
-             'd3e4', 'g8e7', 'e4d3', 'f6c3', 'd3d4', 'b8c8', 'd4b4', 'c3d3', 'b4c5', 'c6d8', 'b1a1', 'c8c5', 'e3e4',
-             'd8f7', 'h3h4', 'c5c3', 'a1c1', 'h6f8', 'c1e1', 'c3b3', 'f1h3', 'e7g6', 'g1e2', 'b3c3', 'e1b1', 'e6e5',
-             'e2d4', 'd3c2', 'd4b3', 'f5e4', 'b1c1', 'g6h4', 'b5b6', 'c3c5', 'd2b1', 'c2g2', 'g3h4', 'h7h6', 'h4h5',
-             'g2h2', 'h3f1', 'h8g8', 'f1a6', 'g8g7', 'c1f1', 'c5c4', 'a4a5', 'h2e2']
-
-    # engineType = PythonChessEngine
-    engineType = StockfishEngine
-    # engineType = StocksharkEngine
-    avg = get_run_moves_avg_time(engineType, moves, 30)
-    print()
-    print(f"avg time: {avg}")
+    # moves = ['d2d3', 'b8a6', 'e1d2', 'b7b6', 'c2c3', 'g7g5', 'h2h3', 'd7d6', 'd2c2', 'f7f6', 'c3c4', 'b6b5', 'c2b3',
+    #          'a6b8', 'c1e3', 'a7a6', 'c4b5', 'a6a5', 'e3a7', 'e7e6', 'b1d2', 'c8d7', 'a7e3', 'a8a7', 'e3g5', 'c7c6',
+    #          'd3d4', 'c6c5', 'a1c1', 'f8e7', 'f2f4', 'd7c6', 'c1b1', 'f6f5', 'e2e3', 'c6e4', 'b3a3', 'a7c7', 'd1c2',
+    #          'c7b7', 'd4c5', 'b8c6', 'g5h6', 'e7g5', 'a3a4', 'b7b8', 'c2b3', 'd8f6', 'g2g3', 'd6c5', 'b3d3', 'g5h6',
+    #          'd3e4', 'g8e7', 'e4d3', 'f6c3', 'd3d4', 'b8c8', 'd4b4', 'c3d3', 'b4c5', 'c6d8', 'b1a1', 'c8c5', 'e3e4',
+    #          'd8f7', 'h3h4', 'c5c3', 'a1c1', 'h6f8', 'c1e1', 'c3b3', 'f1h3', 'e7g6', 'g1e2', 'b3c3', 'e1b1', 'e6e5',
+    #          'e2d4', 'd3c2', 'd4b3', 'f5e4', 'b1c1', 'g6h4', 'b5b6', 'c3c5', 'd2b1', 'c2g2', 'g3h4', 'h7h6', 'h4h5',
+    #          'g2h2', 'h3f1', 'h8g8', 'f1a6', 'g8g7', 'c1f1', 'c5c4', 'a4a5', 'h2e2']
+    #
+    # # engineType = PythonChessEngine
+    # engineType = StockfishEngine
+    # # engineType = StocksharkEngine
+    # avg = get_run_moves_avg_time(engineType, moves, 30)
+    # print()
+    # print(f"avg time: {avg}")
 
 #   num_runs = 30
 #   PythonChessEngine = 0.015363949537277221

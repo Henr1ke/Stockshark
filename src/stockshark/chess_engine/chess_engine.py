@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from copy import copy
 from typing import List
@@ -57,4 +58,7 @@ class ChessEngine(ABC):
 
     @property
     def available_moves(self) -> List[str]:
+        halfmove = int(self.__fen.split(" ")[-2])
+        if halfmove >= 100:
+            return []
         return copy(self.__available_moves)
