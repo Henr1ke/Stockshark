@@ -2,6 +2,7 @@ from typing import List
 
 from stockshark.piece.piece import Piece
 from stockshark.util.move import Move
+from stockshark.util.tile import Tile
 
 
 class Rook(Piece):
@@ -11,3 +12,6 @@ class Rook(Piece):
 
     def gen_moves(self, game) -> List[Move]:
         return self._gen_slider_moves(game.board, is_diag=False)
+
+    def gen_attacked_tiles(self, game) -> List[Tile]:
+        return self._gen_slider_attacked_tiles(game.board, is_diag=False)

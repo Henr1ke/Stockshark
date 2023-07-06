@@ -2,6 +2,7 @@ from typing import List
 
 from stockshark.piece.piece import Piece
 from stockshark.util.move import Move
+from stockshark.util.tile import Tile
 
 
 class King(Piece):
@@ -32,6 +33,10 @@ class King(Piece):
 
         return moves
 
+    def gen_attacked_tiles(self, game) -> List[Tile]:
+        increments = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
+        return self._gen_inc_attacked_tiles(game.board, increments)
+
     @staticmethod
     def _path_unblocked(board, row: int, start_col: int, end_col: int) -> bool:
         for i in range(start_col, end_col, 1 if start_col < end_col else -1):
@@ -40,9 +45,4 @@ class King(Piece):
         return True
         # return board[1, row] is None and board[2, row] is None and board[3, row] is None
 
-    # def _path_not_attacked(self, game, row: int, start_col: int, end_col: int) -> bool:
-    #     for i in range(start_col, end_col, 1 if start_col < end_col else -1):
-    #         if game.is_tile_attacked(Tile(i, row), not self.is_white):
-    #             return False
-    #     return True
-    #     # return board[1, row] is None and board[2, row] is None and board[3, row] is None
+

@@ -3,6 +3,7 @@ from typing import List, Tuple
 
 from stockshark.util.chess_exception import ChessException
 from stockshark.util.move import Move
+from stockshark.util.tile import Tile
 
 
 class Piece(ABC):
@@ -25,6 +26,7 @@ class Piece(ABC):
     ROOK_VALUE = 500
     QUEEN_VALUE = 900
     KING_VALUE = 10000
+
     def __init__(self, is_white: bool, value: float, symbol_w: str, symbol_b: str) -> None:
         self.__is_white: bool = is_white
         self.__value: float = value
@@ -48,6 +50,47 @@ class Piece(ABC):
     @abstractmethod
     def gen_moves(self, game) -> List[Move]:
         pass
+
+    @abstractmethod
+    def gen_attacked_tiles(self, game) -> List[Tile]:
+        pass
+
+    def _gen_slider_attacked_tiles(self, board, is_diag: bool) -> List[Tile]:
+        start_tile = board.pieces_tiles[self]
+        attacked_tiles = []
+
+        directions = ((1, 1), (1, -1), (-1, -1), (-1, 1)) if is_diag else ((0, 1), (1, 0), (0, -1), (-1, 0))
+        for direction in directions:
+            try:
+                end_tile = start_tile + direction
+                while board[end_tile] is None:
+                    attacked_tiles.append(end_tile)
+                    end_tile += direction
+
+                piece = board[end_tile]
+                if piece.is_white is not self.is_white:
+                    attacked_tiles.append(end_tile)
+            except ChessException:
+                pass
+
+        return attacked_tiles
+
+    def _gen_inc_attacked_tiles(self, board, incs: List[Tuple[int, int]]) -> List[Tile]:
+        start_tile = board.pieces_tiles[self]
+        attacked_tiles = []
+
+        for inc in incs:
+            try:
+                end_tile = start_tile + inc
+                piece = board[end_tile]
+                if piece is None:
+                    attacked_tiles.append(end_tile)
+                elif piece.is_white is not self.is_white:
+                    attacked_tiles.append(end_tile)
+            except ChessException:
+                pass
+
+        return attacked_tiles
 
     def _gen_slider_moves(self, board, is_diag: bool) -> List[Move]:
         start_tile = board.pieces_tiles[self]

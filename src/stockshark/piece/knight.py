@@ -2,6 +2,7 @@ from typing import List
 
 from stockshark.piece.piece import Piece
 from stockshark.util.move import Move
+from stockshark.util.tile import Tile
 
 
 class Knight(Piece):
@@ -12,3 +13,7 @@ class Knight(Piece):
     def gen_moves(self, game) -> List[Move]:
         increments = [(1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2)]
         return self._gen_inc_moves(game.board, increments)
+
+    def gen_attacked_tiles(self, game) -> List[Tile]:
+        increments = [(1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2)]
+        return self._gen_inc_attacked_tiles(game.board, increments)

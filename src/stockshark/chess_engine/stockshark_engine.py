@@ -17,7 +17,6 @@ from stockshark.util.tile import Tile
 
 class StocksharkEngine(ChessEngine):
 
-
     def _new_game(self, fen: str):
         fen_fields = fen.split(" ")
         self.__board: Board = Board(fen_fields[0])
@@ -152,6 +151,18 @@ class StocksharkEngine(ChessEngine):
         if self.__is_white_turn:
             self.__fullclock += 1
 
+    def _gen_attacked_tiles(self) -> List[str]:
+        attacked_tiles = []
+
+        pieces = self.__board.pieces_tiles.keys()
+        for piece in pieces:
+            if piece.is_white == self.__is_white_turn:
+                continue
+
+            attacked_tiles += piece.gen_attacked_tiles(self)
+
+        return [tile.name for tile in attacked_tiles]
+
     def _gen_available_moves(self) -> List[str]:
         moves = []
 
@@ -177,16 +188,6 @@ class StocksharkEngine(ChessEngine):
         ]
 
         return " ".join(fen_fields)
-
-    def is_tile_attacked(self, tile: str, is_white_attacking: bool) -> bool:
-        tile = Tile(tile[0], tile[1])
-        atk_pieces = [piece for piece in self.__board.pieces_tiles.keys() if piece.is_white is is_white_attacking]
-        for atk_piece in atk_pieces:
-            moves = atk_piece.gen_moves(self)
-            if tile in [move.end_tile for move in moves]:
-                return True
-        pass
-
 
     def __king_is_under_atk(self, is_white: bool) -> bool:
         if is_white not in self.__board.kings.keys():
