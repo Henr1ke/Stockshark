@@ -11,15 +11,15 @@ from stockshark.sim.visualizer import Visualizer
 
 
 class SimulatorPVP(Simulator, ABC):
-    def __init__(self, agent_w: Agent, agent_b: Agent, game: GameEngine, vis: Optional[Visualizer]) -> None:
-        super().__init__(game, vis)
+    def __init__(self, agent_w: Agent, agent_b: Agent, engine: GameEngine, vis: Optional[Visualizer]) -> None:
+        super().__init__(engine, vis)
         self._agent_w: Agent = agent_w
         self._agent_b: Agent = agent_b
 
     def _update_game(self) -> bool:
-        agent = self._agent_w if self._game.is_white_turn else self._agent_b
-        move = agent.gen_move(self._game)
-        self._game.make_move(move)
+        agent = self._agent_w if self._engine.is_white_turn else self._agent_b
+        move = agent.gen_move(self._engine)
+        self._engine.make_move(move)
         return True
 
 

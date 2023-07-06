@@ -8,9 +8,12 @@ from typing import List, Optional, Set
 class ChessEngine(ABC):
 
     def __init__(self, fen: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"):
-        self._new_game(fen)
-        self.__fen = self._gen_fen()
+        self.__fen = fen
         self.__played_moves: List[str] = []
+        self.__atacked_tiles: List[str] = []
+        self.__available_moves: List[str] = []
+
+        self._new_game(fen)
         self.__atacked_tiles: List[str] = sorted(self._gen_attacked_tiles())
         self.__available_moves: List[str] = sorted(self._gen_available_moves())
 
@@ -57,6 +60,10 @@ class ChessEngine(ABC):
         self.__available_moves = sorted(self._gen_available_moves())
 
         return True
+
+    def has_ended(self) -> bool:
+        return len(self.__available_moves) == 0
+
 
     @property
     def fen(self) -> str:

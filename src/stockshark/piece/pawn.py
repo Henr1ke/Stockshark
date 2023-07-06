@@ -11,9 +11,9 @@ class Pawn(Piece):
     def __init__(self, is_white: bool):
         super().__init__(is_white, Piece.PAWN_VALUE, Piece.PAWN_W, Piece.PAWN_B)
 
-    def gen_attacked_tiles(self, game) -> Set[Tile]:
+    def gen_attacked_tiles(self, engine) -> Set[Tile]:
         attacked_tiles = set()
-        board = game.board
+        board = engine.board
         start_tile = board.pieces_tiles[self]
         increments = ((-1, 1), (1, 1)) if self.is_white else ((-1, -1), (1, -1))
         for inc in increments:
@@ -24,8 +24,8 @@ class Pawn(Piece):
                 pass
         return attacked_tiles
 
-    def gen_moves(self, game) -> Set[Move]:
-        board = game.board
+    def gen_moves(self, engine) -> Set[Move]:
+        board = engine.board
         start_tile = board.pieces_tiles[self]
         moves = set()
 
@@ -50,7 +50,7 @@ class Pawn(Piece):
             try:
                 end_tile = start_tile + inc
 
-                if end_tile == game.ep_target:
+                if end_tile == engine.ep_target:
                     # Corresponding to En Passant
                     move = Move(start_tile, end_tile)
                     moves.add(move)
@@ -60,11 +60,6 @@ class Pawn(Piece):
                 if piece is not None and piece.is_white is not self.is_white:
                     # Corresponding eating a piece in the diagonal
                     moves = moves.union(self.__get_moves(start_tile, end_tile))
-
-                # if end_tile == game.ep_target:
-                #     # Corresponding to En Passant
-                #     move = Move(start_tile, end_tile)
-                #     moves.add(move)
 
             except ChessException:
                 pass

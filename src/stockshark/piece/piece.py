@@ -48,11 +48,11 @@ class Piece(ABC):
         return self.__symbol
 
     @abstractmethod
-    def gen_moves(self, game) -> Set[Move]:
+    def gen_moves(self, engine) -> Set[Move]:
         pass
 
     @abstractmethod
-    def gen_attacked_tiles(self, game) -> Set[Tile]:
+    def gen_attacked_tiles(self, engine) -> Set[Tile]:
         pass
 
     def _gen_slider_attacked_tiles(self, board, is_diag: bool) -> Set[Tile]:

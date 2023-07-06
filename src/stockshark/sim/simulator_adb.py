@@ -14,25 +14,25 @@ from stockshark.sim.visualizer import Visualizer
 
 
 class SimulatorADB(Simulator):
-    def __init__(self, agent: Agent, mobile: MobilePlayer, game: GameEngine, vis: Optional[Visualizer]) -> None:
-        super().__init__(game, vis)
+    def __init__(self, agent: Agent, mobile: MobilePlayer, engine: GameEngine, vis: Optional[Visualizer]) -> None:
+        super().__init__(engine, vis)
         self._agent: Agent = agent
         self._mobile: MobilePlayer = mobile
         self._on_white_side: bool = mobile.on_white_side
 
     def _update_game(self) -> bool:
-        if self._game.is_white_turn == self._on_white_side:
-            move = self._agent.gen_move(self._game)
-            success = self._game.make_move(move)
+        if self._engine.is_white_turn == self._on_white_side:
+            move = self._agent.gen_move(self._engine)
+            success = self._engine.make_move(move)
             if success:
                 self._mobile.play(move)
 
         else:
-            move = self._mobile.get_adv_move(self._game)
+            move = self._mobile.get_adv_move(self._engine)
             if move is None:
                 return False
 
-            self._game.make_move(move)
+            self._engine.make_move(move)
 
         return True
 

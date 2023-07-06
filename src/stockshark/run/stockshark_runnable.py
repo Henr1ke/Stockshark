@@ -48,10 +48,10 @@ class StockSharkRunnable:
 
         mobile_chess = MobilePlayer(self.__dao_adb, board, center)
 
-        game = StocksharkEngine()
+        engine = StocksharkEngine()
         vis = None if not show_simulation else Visualizer(Visualizer.CHARSET_LETTER)
 
-        simulator = SimulatorADB(agent, mobile_chess, game, vis)
+        simulator = SimulatorADB(agent, mobile_chess, engine, vis)
         simulator.execute()
 
         return True
