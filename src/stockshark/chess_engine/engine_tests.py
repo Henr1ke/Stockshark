@@ -120,10 +120,10 @@ if __name__ == '__main__':
     #
     # run_random(engine)
 
-    # fen = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8"
-    # perft(fen, PythonChessEngine, StocksharkEngine)
+    fen = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8"
+    perft(fen, PythonChessEngine, StocksharkEngine)
 
-    compare_runs(PythonChessEngine, StocksharkEngine)
+    # compare_runs(PythonChessEngine, StocksharkEngine)
 
     # moves = ['d2d3', 'b8a6', 'e1d2', 'b7b6', 'c2c3', 'g7g5', 'h2h3', 'd7d6', 'd2c2', 'f7f6', 'c3c4', 'b6b5', 'c2b3',
     #          'a6b8', 'c1e3', 'a7a6', 'c4b5', 'a6a5', 'e3a7', 'e7e6', 'b1d2', 'c8d7', 'a7e3', 'a8a7', 'e3g5', 'c7c6',

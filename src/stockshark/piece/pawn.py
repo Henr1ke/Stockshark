@@ -50,15 +50,21 @@ class Pawn(Piece):
             try:
                 end_tile = start_tile + inc
 
+                if end_tile == game.ep_target:
+                    # Corresponding to En Passant
+                    move = Move(start_tile, end_tile)
+                    moves.add(move)
+                    continue
+
                 piece = board[end_tile]
                 if piece is not None and piece.is_white is not self.is_white:
                     # Corresponding eating a piece in the diagonal
                     moves = moves.union(self.__get_moves(start_tile, end_tile))
 
-                if end_tile == game.ep_target:
-                    # Corresponding to En Passant
-                    move = Move(start_tile, end_tile)
-                    moves.add(move)
+                # if end_tile == game.ep_target:
+                #     # Corresponding to En Passant
+                #     move = Move(start_tile, end_tile)
+                #     moves.add(move)
 
             except ChessException:
                 pass

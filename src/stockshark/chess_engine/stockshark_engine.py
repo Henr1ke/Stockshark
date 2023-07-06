@@ -141,7 +141,7 @@ class StocksharkEngine(ChessEngine):
         if isinstance(piece, Pawn):
             should_reset_halfclock = True
             e_p_target = self.__pawn_actions(move)
-        self.__en_passant_target = e_p_target
+        self.__ep_target = e_p_target
 
         # Update self.__is_white_turn
         self.__is_white_turn = not self.__is_white_turn
@@ -209,12 +209,3 @@ class StocksharkEngine(ChessEngine):
         game_copy.make_move(move)
         return game_copy.__king_is_under_atk(not game_copy.is_white_turn)
 
-if __name__ == '__main__':
-    engine = StocksharkEngine("r1b1k2r/p1pp2bp/2n2n2/1pP1ppN1/1P3P1p/3P1q2/P2QP1PR/RNB1KB2 w Qkq b6 0 14")
-
-    print(engine.fen)
-
-    engine_copy = copy(engine)
-    engine_copy.play("a2a4")
-    print(engine_copy.fen)
-    print(engine.fen)
