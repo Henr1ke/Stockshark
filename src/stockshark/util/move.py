@@ -31,6 +31,9 @@ class Move:
         self.__end_tile: Tile = end_tile
         self.__promote_type = promote_type
 
+    def __hash__(self) -> int:
+        return hash((self.__start_tile, self.__end_tile, self.__promote_type))
+
     def __eq__(self, other: Move) -> bool:
         return isinstance(other, Move) and self.start_tile == other.start_tile and self.end_tile == other.end_tile
 

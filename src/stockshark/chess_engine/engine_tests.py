@@ -5,7 +5,6 @@ from typing import Type
 
 from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.python_chess_engine import PythonChessEngine
-from stockshark.chess_engine.stockfish_engine import StockfishEngine
 from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 
 
@@ -13,8 +12,10 @@ def run_random(engine: ChessEngine):
     for i in range(1000):
         print(engine.fen)
 
+        print(f"{engine.attacked_tiles = }")
+
         avail_moves = engine.available_moves
-        print(avail_moves)
+        print(f"{avail_moves = }")
 
         if len(avail_moves) == 0:
             break
@@ -28,6 +29,38 @@ def run_random(engine: ChessEngine):
     print()
     print("engine over!")
     print(engine.fen)
+
+
+def compare_runs(engineType1: Type[ChessEngine], engineType2: Type[ChessEngine]):
+    engine1 = engineType1()
+    engine2 = engineType2()
+
+    for i in range(1000):
+        print(engine1.fen)
+
+        same_attacked_tiles = sorted(engine1.attacked_tiles) == sorted(engine2.attacked_tiles)
+        print(f"{same_attacked_tiles = }")
+        if not same_attacked_tiles:
+            print(f"{engine1.attacked_tiles = }")
+            print(f"{engine2.attacked_tiles = }")
+            break
+
+        same_avail_moves = sorted(engine1.available_moves) == sorted(engine2.available_moves)
+        print(f"{same_avail_moves = }")
+        if not same_avail_moves or len(engine1.available_moves) == 0:
+            print(f"{engine1.available_moves = }")
+            print(f"{engine2.available_moves = }")
+            break
+
+        m = random.choice(engine1.available_moves)
+        print(m)
+        engine1.play(m)
+        engine2.play(m)
+        print()
+
+    print()
+    print("engine over!")
+    print(engine1.fen)
 
 
 def perft(fen: str, engineType1: Type[ChessEngine], engineType2: Type[ChessEngine]):
@@ -81,14 +114,16 @@ def get_run_moves_avg_time(engineType: Type[ChessEngine], moves: list, num_runs:
 
 
 if __name__ == '__main__':
-    engine = PythonChessEngine()
+    # engine = PythonChessEngine()
     # engine = StockfishEngine()
     # engine = StocksharkEngine()
-
-    run_random(engine)
+    #
+    # run_random(engine)
 
     # fen = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8"
     # perft(fen, PythonChessEngine, StocksharkEngine)
+
+    compare_runs(PythonChessEngine, StocksharkEngine)
 
     # moves = ['d2d3', 'b8a6', 'e1d2', 'b7b6', 'c2c3', 'g7g5', 'h2h3', 'd7d6', 'd2c2', 'f7f6', 'c3c4', 'b6b5', 'c2b3',
     #          'a6b8', 'c1e3', 'a7a6', 'c4b5', 'a6a5', 'e3a7', 'e7e6', 'b1d2', 'c8d7', 'a7e3', 'a8a7', 'e3g5', 'c7c6',

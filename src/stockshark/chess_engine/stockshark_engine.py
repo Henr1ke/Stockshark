@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from copy import copy
-from typing import List, Optional
+from typing import Optional, Set
 
 from stockshark.chess_engine.board import Board
 from stockshark.chess_engine.chess_engine import ChessEngine
@@ -122,7 +122,9 @@ class StocksharkEngine(ChessEngine):
 
     def _make_move(self, move: str) -> None:
         move = Move.from_uci(move)
+        self.make_move(move)
 
+    def make_move(self, move: Move) -> None:
         piece = self.__board[move.start_tile]
 
         eaten_piece = self.__board[move.end_tile]
@@ -151,20 +153,20 @@ class StocksharkEngine(ChessEngine):
         if self.__is_white_turn:
             self.__fullclock += 1
 
-    def _gen_attacked_tiles(self) -> List[str]:
-        attacked_tiles = []
+    def _gen_attacked_tiles(self) -> Set[str]:
+        attacked_tiles = set()
 
         pieces = self.__board.pieces_tiles.keys()
         for piece in pieces:
             if piece.is_white == self.__is_white_turn:
                 continue
 
-            attacked_tiles += piece.gen_attacked_tiles(self)
+            attacked_tiles = attacked_tiles.union(piece.gen_attacked_tiles(self))
 
-        return [tile.name for tile in attacked_tiles]
+        return {tile.name for tile in attacked_tiles}
 
-    def _gen_available_moves(self) -> List[str]:
-        moves = []
+    def _gen_available_moves(self) -> Set[str]:
+        moves = set()
 
         pieces = self.__board.pieces_tiles.keys()
         for piece in pieces:
@@ -173,7 +175,7 @@ class StocksharkEngine(ChessEngine):
 
             pseudo_moves = piece.gen_moves(self)
 
-            moves += [move.to_uci() for move in pseudo_moves if not self.__leaves_king_under_atk(move)]
+            moves = moves.union({move.to_uci() for move in pseudo_moves if not self.__leaves_king_under_atk(move)})
 
         return moves
 
@@ -207,12 +209,12 @@ class StocksharkEngine(ChessEngine):
         game_copy.make_move(move)
         return game_copy.__king_is_under_atk(not game_copy.is_white_turn)
 
-# if __name__ == '__main__':
-#     engine = StocksharkEngine()
-#
-#     print(engine.fen)
-#
-#     engine_copy = copy(engine)
-#     engine_copy.play("a2a4")
-#     print(engine_copy.fen)
-#     print(engine.fen)
+if __name__ == '__main__':
+    engine = StocksharkEngine("r1b1k2r/p1pp2bp/2n2n2/1pP1ppN1/1P3P1p/3P1q2/P2QP1PR/RNB1KB2 w Qkq b6 0 14")
+
+    print(engine.fen)
+
+    engine_copy = copy(engine)
+    engine_copy.play("a2a4")
+    print(engine_copy.fen)
+    print(engine.fen)

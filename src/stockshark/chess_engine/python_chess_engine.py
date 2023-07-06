@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Optional, Set
 
 import chess
 from chess import Move as ChessMove, Board as ChessBoard
@@ -17,8 +17,8 @@ class PythonChessEngine(ChessEngine):
         chess_move = ChessMove.from_uci(move)
         self._board.push(chess_move)
 
-    def _gen_available_moves(self) -> List[str]:
-        return [move.uci() for move in self._board.legal_moves]
+    def _gen_available_moves(self) -> Set[str]:
+        return {move.uci() for move in self._board.legal_moves}
 
     def _gen_fen(self) -> str:
         return self._board.fen()
@@ -26,12 +26,12 @@ class PythonChessEngine(ChessEngine):
     def get_piece_at(self, tile: str) -> Optional[str]:
         return self._board.piece_at(chess.parse_square(tile))
 
-    def _gen_attacked_tiles(self) -> List[str]:
-        attacking_color = self._board.turn
-        attacked_tiles = []
+    def _gen_attacked_tiles(self) -> Set[str]:
+        attacking_color = not self._board.turn
+        attacked_tiles = set()
         for square in chess.SQUARES:
             if self._board.is_attacked_by(attacking_color, square):
-                attacked_tiles.append(chess.square_name(square))
+                attacked_tiles.add(chess.square_name(square))
         return attacked_tiles
 
     def is_tile_attacked(self, tile, is_white_attacking):

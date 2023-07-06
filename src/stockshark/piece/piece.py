@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List, Tuple, Set
 
 from stockshark.util.chess_exception import ChessException
 from stockshark.util.move import Move
@@ -48,53 +48,46 @@ class Piece(ABC):
         return self.__symbol
 
     @abstractmethod
-    def gen_moves(self, game) -> List[Move]:
+    def gen_moves(self, game) -> Set[Move]:
         pass
 
     @abstractmethod
-    def gen_attacked_tiles(self, game) -> List[Tile]:
+    def gen_attacked_tiles(self, game) -> Set[Tile]:
         pass
 
-    def _gen_slider_attacked_tiles(self, board, is_diag: bool) -> List[Tile]:
+    def _gen_slider_attacked_tiles(self, board, is_diag: bool) -> Set[Tile]:
         start_tile = board.pieces_tiles[self]
-        attacked_tiles = []
+        attacked_tiles = set()
 
         directions = ((1, 1), (1, -1), (-1, -1), (-1, 1)) if is_diag else ((0, 1), (1, 0), (0, -1), (-1, 0))
         for direction in directions:
             try:
                 end_tile = start_tile + direction
                 while board[end_tile] is None:
-                    attacked_tiles.append(end_tile)
+                    attacked_tiles.add(end_tile)
                     end_tile += direction
-
-                piece = board[end_tile]
-                if piece.is_white is not self.is_white:
-                    attacked_tiles.append(end_tile)
+                attacked_tiles.add(end_tile)
             except ChessException:
                 pass
 
         return attacked_tiles
 
-    def _gen_inc_attacked_tiles(self, board, incs: List[Tuple[int, int]]) -> List[Tile]:
+    def _gen_inc_attacked_tiles(self, board, incs: List[Tuple[int, int]]) -> Set[Tile]:
         start_tile = board.pieces_tiles[self]
-        attacked_tiles = []
+        attacked_tiles = set()
 
         for inc in incs:
             try:
                 end_tile = start_tile + inc
-                piece = board[end_tile]
-                if piece is None:
-                    attacked_tiles.append(end_tile)
-                elif piece.is_white is not self.is_white:
-                    attacked_tiles.append(end_tile)
+                attacked_tiles.add(end_tile)
             except ChessException:
                 pass
 
         return attacked_tiles
 
-    def _gen_slider_moves(self, board, is_diag: bool) -> List[Move]:
+    def _gen_slider_moves(self, board, is_diag: bool) -> Set[Move]:
         start_tile = board.pieces_tiles[self]
-        moves = []
+        moves = set()
 
         directions = ((1, 1), (1, -1), (-1, -1), (-1, 1)) if is_diag else ((0, 1), (1, 0), (0, -1), (-1, 0))
         for direction in directions:
@@ -102,21 +95,21 @@ class Piece(ABC):
                 end_tile = start_tile + direction
                 while board[end_tile] is None:
                     move = Move(start_tile, end_tile)
-                    moves.append(move)
+                    moves.add(move)
                     end_tile += direction
 
                 piece = board[end_tile]
                 if piece.is_white is not self.is_white:
                     move = Move(start_tile, end_tile)
-                    moves.append(move)
+                    moves.add(move)
             except ChessException:
                 pass
 
         return moves
 
-    def _gen_inc_moves(self, board, incs: List[Tuple[int, int]]) -> List[Move]:
+    def _gen_inc_moves(self, board, incs: List[Tuple[int, int]]) -> Set[Move]:
         start_tile = board.pieces_tiles[self]
-        moves = []
+        moves = set()
 
         for inc in incs:
             try:
@@ -124,10 +117,10 @@ class Piece(ABC):
                 piece = board[end_tile]
                 if piece is None:
                     move = Move(start_tile, end_tile)
-                    moves.append(move)
+                    moves.add(move)
                 elif piece.is_white is not self.is_white:
                     move = Move(start_tile, end_tile)
-                    moves.append(move)
+                    moves.add(move)
             except ChessException:
                 pass
 
