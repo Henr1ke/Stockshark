@@ -1,6 +1,7 @@
-from stockshark.chess_engine.game_engine import GameEngine
+
 
 from stockshark.agent.agent import Agent
+from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.util.move import Move
 
 
@@ -44,10 +45,8 @@ class AgentHuman(Agent):
     #             print(e)
     #             print("Try again!")
 
-    def gen_move(self, engine: GameEngine) -> Move:
-        moves = []
-        for piece in engine.get_available_pieces_tiles().keys():
-            moves += engine.get_legal_piece_moves(piece)
+    def gen_move(self, engine: ChessEngine) -> Move:
+        moves = engine.available_moves
         str_moves = [str(move) for move in moves]
         sorted_str = sorted(str_moves)
         while True:

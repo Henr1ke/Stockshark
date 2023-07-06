@@ -120,11 +120,7 @@ class StocksharkEngine(ChessEngine):
         except ValueError:
             return None
 
-    def _make_move(self, move: str) -> None:
-        move = Move.from_uci(move)
-        self.make_move(move)
-
-    def make_move(self, move: Move) -> None:
+    def _make_move(self, move: Move) -> None:
         piece = self.__board[move.start_tile]
 
         eaten_piece = self.__board[move.end_tile]
@@ -153,7 +149,7 @@ class StocksharkEngine(ChessEngine):
         if self.__is_white_turn:
             self.__fullclock += 1
 
-    def _gen_attacked_tiles(self) -> Set[str]:
+    def _gen_attacked_tiles(self) -> Set[Tile]:
         attacked_tiles = set()
 
         pieces = self.__board.pieces_tiles.keys()
@@ -163,9 +159,9 @@ class StocksharkEngine(ChessEngine):
 
             attacked_tiles = attacked_tiles.union(piece.gen_attacked_tiles(self))
 
-        return {tile.name for tile in attacked_tiles}
+        return attacked_tiles
 
-    def _gen_available_moves(self) -> Set[str]:
+    def _gen_available_moves(self) -> Set[Move]:
         moves = set()
 
         pieces = self.__board.pieces_tiles.keys()
@@ -175,7 +171,7 @@ class StocksharkEngine(ChessEngine):
 
             pseudo_moves = piece.gen_moves(self)
 
-            moves = moves.union({move.to_uci() for move in pseudo_moves if not self.__leaves_king_under_atk(move)})
+            moves = moves.union({move for move in pseudo_moves if not self.__leaves_king_under_atk(move)})
 
         return moves
 
@@ -191,13 +187,12 @@ class StocksharkEngine(ChessEngine):
 
         return " ".join(fen_fields)
 
-    def __king_is_under_atk(self) -> bool:
-        is_king_white = not self.__is_white_turn
-        if is_king_white not in self.__board.kings.keys():
+    def is_in_check(self, is_white_side: bool) -> bool:
+        if is_white_side not in self.__board.kings.keys():
             return False
 
-        king = self.__board.kings[is_king_white]
-        atk_pieces = [piece for piece in self.__board.pieces_tiles.keys() if piece.is_white is not is_king_white]
+        king = self.__board.kings[is_white_side]
+        atk_pieces = [piece for piece in self.__board.pieces_tiles.keys() if piece.is_white is not is_white_side]
 
         for atk_piece in atk_pieces:
             moves = atk_piece.gen_moves(self)
@@ -207,5 +202,5 @@ class StocksharkEngine(ChessEngine):
 
     def __leaves_king_under_atk(self, move: Move) -> bool:
         engine_copy = copy(self)
-        engine_copy.make_move(move)
-        return engine_copy.__king_is_under_atk()
+        engine_copy._make_move(move)
+        return engine_copy.is_in_check(not engine_copy.__is_white_turn)

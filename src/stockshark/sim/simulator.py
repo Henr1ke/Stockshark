@@ -11,7 +11,7 @@ class Simulator(ABC):
         self._vis = vis
 
     def execute(self) -> None:
-        while self._engine.state == State.IN_PROGRESS:
+        while not self._engine.game_finished():
             if self._vis is not None:
                 self._vis.show(self._engine)
 

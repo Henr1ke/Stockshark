@@ -17,6 +17,7 @@ class SimulatorPVP(Simulator, ABC):
         self._agent_b: Agent = agent_b
 
     def _update_game(self) -> bool:
+        is_white_turn = self._engine.fen.split()[1] == 'w'
         agent = self._agent_w if self._engine.is_white_turn else self._agent_b
         move = agent.gen_move(self._engine)
         self._engine.make_move(move)
