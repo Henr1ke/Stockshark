@@ -126,7 +126,7 @@ class StockfishDao:
     def get_available_moves(self) -> List[str]:
         self._send_command("go perft 1")
         response_lines = self._get_response_lines(end_str="Nodes searched: ")
-        if len(response_lines) == 0:
+        if len(response_lines) <= 2:
             return []
 
         moves = []
@@ -146,12 +146,12 @@ class StockfishDao:
 
 if __name__ == '__main__':
     sf_dao = StockfishDao()
-    success = sf_dao.new_game()
+    # success = sf_dao.new_game("R6k/1R6/8/8/8/8/8/7K b - - 0 1")
+    success = sf_dao.new_game("2bqkbnr/rpp1ppp1/n2p3p/p7/6P1/1PPP4/P2KPP1P/RNBQ1BNR w k - 0 6")
     f = sf_dao.get_fen()
     board_repr = sf_dao.get_board_repr()
     print(f)
     print(board_repr)
 
     available_moves = sf_dao.get_available_moves()
-    for move in available_moves:
-        print(move)
+    print(available_moves)

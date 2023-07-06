@@ -7,63 +7,23 @@ Será q ensinamos no readme a instalar um emulador do modelo em especifico que �
 Fazer um runnable que salta a navegação nos menus e assume que já se encontra no ecra de jogo
 para dessa forma ser compativel com qualquer modelo
 
+Na conclusão, trabalhos futuros, se for preciso falar de mais cenas, falar sobre melhorar o runnable,
+tanto a iniciar a app como a meter funcionalidades de navegação
 
 
-não sabemos como referenciar de onde fomos buscar as imagens q usamos (Ex fig 3.7 da wikipedia)
-onde eq se fala do main.py
+Perguntas ao stor:
+    - Onde dizer que o nosso programa apenas funciona com modelos de telemovel especificos?
+    - O que são os requisitos não funcuinais
 
-Como eq se centra algumas imagens
 
-Open-CV package
-https://docs.opencv.org/3.4/d6/d00/tutorial_py_root.html
-
-Open-CV Image Processing
-https://docs.opencv.org/3.4/d2/d96/tutorial_py_table_of_contents_imgproc.html
-
-PPADB package
-https://pypi.org/project/pure-python-adb/
-
-ADB commands
-https://gist.github.com/Pulimet/5013acf2cd5b28e55036c82c91bd56d8
-
-chess rules
-https://en.wikipedia.org/wiki/Rules_of_chess
-
-chess programming
-https://www.chessprogramming.org
-
-fen string
-https://www.chess.com/terms/fen-chess
-
-chess.com
-https://www.chess.com
-
-minmax
-https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-1-introduction/
-
-minmax alpha beta
-https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-4-alpha-beta-pruning/
-
-stockfish
-https://stockfishchess.org/
-
-stockfish commands
-https://www.maketecheasier.com/use-stockfish-cli-master-chess/
-
-GitHub
-https://github.com/
 
 
 --------------------------------------- CODIGO ---------------------------------------------------------------------
-    ################## TESTAR SE O STOCKSHARK FUNCIONA BEM COM COPIES ##################
+    ################# Guardar lista com casas atacadas no stocksharkEngine
 BUGS:
+    Meter o castle bem, a verificar se as casas por onde o rei passa nao estao a ser atacadas
     O StockShark contém uma lista de posições atacas pelo adversario
-    Move validator validate devia tar como dantes e o check dos castles dentro do King
     Verificar o get sel move do Detector pq trocou a ordem do start e end tile
-    Meter para começar um jogo a meio utilizando o gen_fen_string da board_img
-
-stockfishDao:
-    -- get all moves: go perft 1
 
 player:
     -- 5 MinMax

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from copy import copy
 from typing import List
@@ -10,6 +11,13 @@ class ChessEngine(ABC):
         self.__fen = self._gen_fen()
         self.__played_moves: List[str] = []
         self.__available_moves: List[str] = self._gen_available_moves()
+
+    def __copy__(self) -> ChessEngine:
+        cls = self.__class__
+        engine = cls.__new__(cls)
+        for key, value in self.__dict__.items():
+            setattr(engine, key, copy(value))
+        return engine
 
     @abstractmethod
     def _new_game(self, fen: str) -> None:

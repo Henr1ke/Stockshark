@@ -1,4 +1,4 @@
-import copy
+from __future__ import annotations
 from typing import List
 
 from stockshark.chess_engine_2.chess_engine import ChessEngine
@@ -6,8 +6,7 @@ from stockshark.chess_engine_2.chess_engine import ChessEngine
 from chess import Move as ChessMove, Board as ChessBoard
 
 
-class ChessPackageEngine(ChessEngine):
-
+class PythonChessEngine(ChessEngine):
     def _new_game(self, fen: str):
         self._board = ChessBoard(fen)
 
@@ -21,13 +20,3 @@ class ChessPackageEngine(ChessEngine):
     def _gen_fen(self) -> str:
         return self._board.fen()
 
-
-if __name__ == '__main__':
-    game = ChessPackageEngine()
-
-    print(game.fen)
-
-    game_c = copy.copy(game)
-    game_c.play("e2e4")
-    print(game_c.fen)
-    print(game.fen)
