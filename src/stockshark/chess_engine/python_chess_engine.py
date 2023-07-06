@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import List
+from typing import List, Optional
 
-from chess import Move as ChessMove, Board as ChessBoard
+from chess import Move as ChessMove, Board as ChessBoard, parse_square
 
 from stockshark.chess_engine.chess_engine import ChessEngine
 
@@ -21,3 +21,5 @@ class PythonChessEngine(ChessEngine):
     def _gen_fen(self) -> str:
         return self._board.fen()
 
+    def _get_piece_at(self, tile: str) -> Optional[str]:
+        return self._board.piece_at(parse_square(tile))

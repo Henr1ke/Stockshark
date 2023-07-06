@@ -112,8 +112,11 @@ class StocksharkEngine(ChessEngine):
                 self.__castling_rights = self.__castling_rights.replace("K" if row_idx == 0 else "k", "")
                 return
 
-    def _get_piece_at(self, tile: str) -> str:
-        return str(self.__board[Tile(tile[0], tile[1])])
+    def _get_piece_at(self, tile: str) -> Optional[str]:
+        try:
+            return str(self.__board[Tile(tile[0], tile[1])])
+        except ValueError:
+            return None
 
     def _make_move(self, move: str) -> None:
         move = Move.from_uci(move)

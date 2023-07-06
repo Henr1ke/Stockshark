@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from copy import copy
-from typing import List
+from typing import List, Optional
 
 
 class ChessEngine(ABC):
@@ -37,7 +37,7 @@ class ChessEngine(ABC):
         pass
 
     @abstractmethod
-    def _get_piece_at(self, tile: str) -> str:
+    def _get_piece_at(self, tile: str) -> Optional[str]:
         pass
 
     def play(self, move: str) -> bool:
