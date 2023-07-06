@@ -17,8 +17,6 @@ from stockshark.util.tile import Tile
 
 class StocksharkEngine(ChessEngine):
 
-
-
     def _new_game(self, fen: str):
         fen_fields = fen.split(" ")
         self.__board: Board = Board(fen_fields[0])
@@ -148,7 +146,6 @@ class StocksharkEngine(ChessEngine):
         if self.__is_white_turn:
             self.__fullclock += 1
 
-
     def _gen_available_moves(self) -> List[str]:
         return [move.to_uci() for move in self.gen_available_moves()]
         # return ["a2a4"]
@@ -196,7 +193,6 @@ class StocksharkEngine(ChessEngine):
         game_copy = copy(self)
         game_copy.make_move(move)
         return game_copy.__king_is_under_atk(not game_copy.is_white_turn)
-
 
 # if __name__ == '__main__':
 #     engine = StocksharkEngine()
