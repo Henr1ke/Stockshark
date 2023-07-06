@@ -44,10 +44,10 @@ class AgentHuman(Agent):
     #             print(e)
     #             print("Try again!")
 
-    def gen_move(self, game: GameEngine) -> Move:
+    def gen_move(self, engine: GameEngine) -> Move:
         moves = []
-        for piece in game.get_available_pieces_tiles().keys():
-            moves += game.get_legal_piece_moves(piece)
+        for piece in engine.get_available_pieces_tiles().keys():
+            moves += engine.get_legal_piece_moves(piece)
         str_moves = [str(move) for move in moves]
         sorted_str = sorted(str_moves)
         while True:

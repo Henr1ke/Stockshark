@@ -6,6 +6,7 @@ from typing import Tuple
 from stockshark.agent.agent import Agent
 from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.stockshark_engine import StocksharkEngine
+from stockshark.piece.piece import Piece
 from stockshark.sim.visualizer import Visualizer
 from stockshark.util.move import Move
 
@@ -21,11 +22,11 @@ class AgentMinMax(Agent):
 
     def gen_move(self, engine: ChessEngine) -> Move:
         ti = time.time_ns()
-        _, move = self.minmax(self.__depth, engine)
+        _, move_str = self.minmax(self.__depth, engine)
         AgentMinMax.TIMES.append(time.time_ns() - ti)
-        return move
+        return Move.from_uci(move_str)
 
-    def minmax(self, max_depth: int, engine: ChessEngine, curr_depth: int = 0) -> Tuple[float, Move]:
+    def minmax(self, max_depth: int, engine: ChessEngine, curr_depth: int = 0) -> Tuple[float, str]:
         moves = engine.available_moves
 
         is_white_turn = engine.fen.split(" ")[1] == "w"
@@ -35,11 +36,11 @@ class AgentMinMax(Agent):
             game_copy.play(move)
 
             if curr_depth + 1 == max_depth:
-                value = game_copy.evaluate_game()
+                value = AgentMinMax.evaluate_game()
             else:
                 value, _ = self.minmax(max_depth, game_copy, curr_depth + 1)
 
-            if engine.is_white_turn:
+            if is_white_turn:
                 if value > best_val:
                     best_val = value
                     best_move = move
@@ -51,34 +52,59 @@ class AgentMinMax(Agent):
         return best_val, best_move
 
     @staticmethod
-    def evaluate_game(fen):
+    def evaluate_game(engine: ChessEngine) -> float:
         value = 0
-        for char in fen.split(" ")[0]:
-            if char == "P":
-                value += 1
-            elif char == "N":
-                value += 3
-            elif char == "B":
-                value += 3
-            elif char == "R":
-                value += 5
-            elif char == "Q":
-                value += 9
-            elif char == "p":
-                value -= 1
-            elif char == "n":
-                value -= 3
-            elif char == "b":
-                value -= 3
-            elif char == "r":
-                value -= 5
-            elif char == "q":
-                value -= 9
+        for char in engine.fen.split(" ")[0]:
+            if char == Piece.PAWN_W:
+                value += Piece.PAWN_VALUE
+            elif char == Piece.PAWN_B:
+                value -= Piece.PAWN_VALUE
+            elif char == Piece.KNIGHT_W:
+                value += Piece.KNIGHT_VALUE
+            elif char == Piece.KNIGHT_B:
+                value -= Piece.KNIGHT_VALUE
+            elif char == Piece.BISHOP_W:
+                value += Piece.BISHOP_VALUE
+            elif char == Piece.BISHOP_B:
+                value -= Piece.BISHOP_VALUE
+            elif char == Piece.ROOK_W:
+                value += Piece.ROOK_VALUE
+            elif char == Piece.ROOK_B:
+                value -= Piece.ROOK_VALUE
+            elif char == Piece.QUEEN_W:
+                value += Piece.QUEEN_VALUE
+            elif char == Piece.QUEEN_B:
+                value -= Piece.QUEEN_VALUE
         return value
 
-    def evaluate_move(self, move: Move) -> float:
-        eaten_piece = self.__board[move.end_pos]
-        return 0 if eaten_piece is None else eaten_piece.value
+    @staticmethod
+    def evaluate_move(engine: ChessEngine, move: str) -> float:
+        end_tile = move[2:4]
+        eaten_piece = engine.get_piece_at(end_tile)
+
+        if eaten_piece is None:
+            return 0
+        elif eaten_piece == Piece.PAWN_W:
+            return Piece.PAWN_VALUE
+        elif eaten_piece == Piece.PAWN_B:
+            return -Piece.PAWN_VALUE
+        elif eaten_piece == Piece.KNIGHT_W:
+            return Piece.KNIGHT_VALUE
+        elif eaten_piece == Piece.KNIGHT_B:
+            return -Piece.KNIGHT_VALUE
+        elif eaten_piece == Piece.BISHOP_W:
+            return Piece.BISHOP_VALUE
+        elif eaten_piece == Piece.BISHOP_B:
+            return -Piece.BISHOP_VALUE
+        elif eaten_piece == Piece.ROOK_W:
+            return Piece.ROOK_VALUE
+        elif eaten_piece == Piece.ROOK_B:
+            return -Piece.ROOK_VALUE
+        elif eaten_piece == Piece.QUEEN_W:
+            return Piece.QUEEN_VALUE
+        elif eaten_piece == Piece.QUEEN_B:
+            return -Piece.QUEEN_VALUE
+        return 0
 
 
 if __name__ == '__main__':

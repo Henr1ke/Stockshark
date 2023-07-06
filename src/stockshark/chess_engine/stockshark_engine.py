@@ -17,6 +17,7 @@ from stockshark.util.tile import Tile
 
 class StocksharkEngine(ChessEngine):
 
+
     def _new_game(self, fen: str):
         fen_fields = fen.split(" ")
         self.__board: Board = Board(fen_fields[0])
@@ -112,9 +113,11 @@ class StocksharkEngine(ChessEngine):
                 self.__castling_rights = self.__castling_rights.replace("K" if row_idx == 0 else "k", "")
                 return
 
-    def _get_piece_at(self, tile: str) -> Optional[str]:
+    def get_piece_at(self, tile: str) -> Optional[str]:
         try:
-            return str(self.__board[Tile(tile[0], tile[1])])
+            tile = Tile(tile[0], tile[1])
+            piece = self.__board[tile]
+            return str(piece) if piece is not None else None
         except ValueError:
             return None
 
@@ -150,10 +153,6 @@ class StocksharkEngine(ChessEngine):
             self.__fullclock += 1
 
     def _gen_available_moves(self) -> List[str]:
-        return [move.to_uci() for move in self.gen_available_moves()]
-        # return ["a2a4"]
-
-    def gen_available_moves(self) -> List[Move]:
         moves = []
 
         pieces = self.__board.pieces_tiles.keys()
@@ -163,7 +162,7 @@ class StocksharkEngine(ChessEngine):
 
             pseudo_moves = piece.gen_moves(self)
 
-            moves += [move for move in pseudo_moves if not self.__leaves_king_under_atk(move)]
+            moves += [move.to_uci() for move in pseudo_moves if not self.__leaves_king_under_atk(move)]
 
         return moves
 
@@ -178,6 +177,16 @@ class StocksharkEngine(ChessEngine):
         ]
 
         return " ".join(fen_fields)
+
+    def is_tile_attacked(self, tile: str, is_white_attacking: bool) -> bool:
+        tile = Tile(tile[0], tile[1])
+        atk_pieces = [piece for piece in self.__board.pieces_tiles.keys() if piece.is_white is is_white_attacking]
+        for atk_piece in atk_pieces:
+            moves = atk_piece.gen_moves(self)
+            if tile in [move.end_tile for move in moves]:
+                return True
+        pass
+
 
     def __king_is_under_atk(self, is_white: bool) -> bool:
         if is_white not in self.__board.kings.keys():

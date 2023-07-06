@@ -12,6 +12,7 @@ class ChessEngine(ABC):
         self.__fen = self._gen_fen()
         self.__played_moves: List[str] = []
         self.__available_moves: List[str] = self._gen_available_moves()
+        self.__atacked_tiles: List[str] = []
 
     def __copy__(self) -> ChessEngine:
         cls = self.__class__
@@ -29,6 +30,10 @@ class ChessEngine(ABC):
         pass
 
     @abstractmethod
+    def _gen_attacked_tiles(self) -> List[str]:
+        pass
+
+    @abstractmethod
     def _gen_available_moves(self) -> List[str]:
         pass
 
@@ -37,7 +42,7 @@ class ChessEngine(ABC):
         pass
 
     @abstractmethod
-    def _get_piece_at(self, tile: str) -> Optional[str]:
+    def get_piece_at(self, tile: str) -> Optional[str]:
         pass
 
     def play(self, move: str) -> bool:
@@ -48,7 +53,8 @@ class ChessEngine(ABC):
 
         self.__fen = self._gen_fen()
         self.__played_moves.append(move)
-        self.__available_moves: List[str] = self._gen_available_moves()
+        self.__atacked_tiles = self._gen_attacked_tiles()
+        self.__available_moves = self._gen_available_moves()
 
         return True
 

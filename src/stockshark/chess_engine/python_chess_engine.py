@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from chess import Move as ChessMove, Board as ChessBoard, parse_square
+import chess
+from chess import Move as ChessMove, Board as ChessBoard
 
 from stockshark.chess_engine.chess_engine import ChessEngine
 
 
 class PythonChessEngine(ChessEngine):
+
     def _new_game(self, fen: str):
         self._board = ChessBoard(fen)
 
@@ -21,5 +23,18 @@ class PythonChessEngine(ChessEngine):
     def _gen_fen(self) -> str:
         return self._board.fen()
 
-    def _get_piece_at(self, tile: str) -> Optional[str]:
-        return self._board.piece_at(parse_square(tile))
+    def get_piece_at(self, tile: str) -> Optional[str]:
+        return self._board.piece_at(chess.parse_square(tile))
+
+    def _gen_attacked_tiles(self) -> List[str]:
+        attacking_color = self._board.turn
+        attacked_tiles = []
+        for square in chess.SQUARES:
+            if self._board.is_attacked_by(attacking_color, square):
+                attacked_tiles.append(chess.square_name(square))
+        return attacked_tiles
+
+    def is_tile_attacked(self, tile, is_white_attacking):
+        attacking_color = chess.WHITE if is_white_attacking else chess.BLACK
+        square = chess.parse_square(tile)
+        return self._board.is_attacked_by(attacking_color, square)

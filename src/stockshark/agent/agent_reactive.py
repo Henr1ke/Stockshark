@@ -18,10 +18,10 @@ class AgentReactive(Agent):
         self.__behaviours = behaviours
         self.__random_behaviour = RandomBehaviour()
 
-    def gen_move(self, game: GameEngine) -> Move:
+    def gen_move(self, engine: GameEngine) -> Move:
         for behaviour in self.__behaviours:
-            move = behaviour.gen_move(game)
+            move = behaviour.gen_move(engine)
             if move is not None:
                 return move
 
-        return self.__random_behaviour.gen_move(game)
+        return self.__random_behaviour.gen_move(engine)

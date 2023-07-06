@@ -2,6 +2,7 @@ from typing import Dict, Type
 
 from stockshark.chess_engine.state import State
 
+from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.piece.bishop import Bishop
 from stockshark.piece.king import King
 from stockshark.piece.knight import Knight
@@ -60,22 +61,25 @@ class Visualizer:
         else:
             raise ValueError("The charset is not valid")
 
-    def show(self, game) -> None:
+    def show(self, engine: ChessEngine) -> None:
         print()
 
-        played_moves = game.played_moves
+        is_white_turn = engine.fen.split()[1] == "w"
+        halfclock = engine.fen.split()[4]
+        fullclock = engine.fen.split()[5]
+        played_moves = engine.played_moves
         if len(played_moves) > 0:
-            print(f"{'Black' if game.is_white_turn else 'White'} player made the move {played_moves[-1]}")
+            print(f"{'Black' if is_white_turn else 'White'} player made the move {played_moves[-1]}")
 
-        if game.state == State.IN_PROGRESS:
-            print(f"{'White' if game.is_white_turn else 'Black'} turn to play")
-        elif game.state == State.DRAW:
+        if len(engine.available_moves) > 0:
+            print(f"{'White' if is_white_turn else 'Black'} turn to play")
+        elif engine.state == State.DRAW:
             print(f"Game ended in a draw")
         else:
-            winner, loser = ("white", "black") if game.state == State.WIN_W else ("black", "white")
+            winner, loser = ("white", "black") if engine.state == State.WIN_W else ("black", "white")
             print(f"Game ended with {winner} player check-mating {loser} player")
-        print(f"halfclock: {game.halfclock}, fullclock: {game.fullclock}")
-        self.print_board(game.board)
+        print(f"halfclock: {halfclock}, fullclock: {fullclock}")
+        self.print_board(engine.board)
 
     def print_board(self, board) -> None:
         print("═══╦══" + "═╤══" * (8 - 1) + "═╗")

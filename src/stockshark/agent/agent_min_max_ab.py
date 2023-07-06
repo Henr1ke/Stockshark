@@ -20,9 +20,9 @@ class AgentMinMaxAB(Agent):
 
         self.__depth = depth
 
-    def gen_move(self, game: GameEngine) -> Move:
+    def gen_move(self, engine: GameEngine) -> Move:
         ti = time.time_ns()
-        _, move = self.minmax_ab(self.__depth, game)
+        _, move = self.minmax_ab(self.__depth, engine)
         AgentMinMaxAB.TIMES.append(time.time_ns() - ti)
         return move
 
