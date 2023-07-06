@@ -115,11 +115,11 @@ class StockfishDao:
         idx = response.find(search_word)
         return response[:idx].strip("\n")
 
-    def make_moves(self, fen_string: str, moves: List[str]):
-        self._send_command(f"position fen {fen_string} moves {' '.join(moves)}")
+    def make_moves(self, fening: str, moves: List[str]):
+        self._send_command(f"position fen {fening} moves {' '.join(moves)}")
 
-    def make_move(self, fen_string: str, move: str):
-        self.make_moves(fen_string, [move])
+    def make_move(self, fening: str, move: str):
+        self.make_moves(fening, [move])
 
     def get_available_moves(self) -> List[str]:
         self._send_command("go perft 1")

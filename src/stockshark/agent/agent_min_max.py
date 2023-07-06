@@ -3,9 +3,8 @@ import time
 from copy import copy
 from typing import Tuple
 
-from stockshark.chess_engine.game_engine import GameEngine
-
 from stockshark.agent.agent import Agent
+from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.sim.visualizer import Visualizer
 from stockshark.util.move import Move
@@ -20,29 +19,27 @@ class AgentMinMax(Agent):
 
         self.__depth = depth
 
-    def gen_move(self, game: GameEngine) -> Move:
+    def gen_move(self, engine: ChessEngine) -> Move:
         ti = time.time_ns()
-        _, move = self.minmax(self.__depth, game)
+        _, move = self.minmax(self.__depth, engine)
         AgentMinMax.TIMES.append(time.time_ns() - ti)
         return move
 
-    def minmax(self, max_depth: int, game: GameEngine, curr_depth: int = 0) -> Tuple[float, Move]:
-        moves = []
-        pieces_tiles = game.get_available_pieces_tiles()
-        for piece in pieces_tiles.keys():
-            moves += game.get_legal_piece_moves(piece)
+    def minmax(self, max_depth: int, engine: ChessEngine, curr_depth: int = 0) -> Tuple[float, Move]:
+        moves = engine.available_moves
 
-        best_val, best_move = -math.inf if game.is_white_turn else math.inf, None
+        is_white_turn = engine.fen.split(" ")[1] == "w"
+        best_val, best_move = -math.inf if is_white_turn else math.inf, None
         for move in moves:
-            game_copy = copy(game)
-            game_copy.make_move(move)
+            game_copy = copy(engine)
+            game_copy.play(move)
 
             if curr_depth + 1 == max_depth:
                 value = game_copy.evaluate_game()
             else:
                 value, _ = self.minmax(max_depth, game_copy, curr_depth + 1)
 
-            if game.is_white_turn:
+            if engine.is_white_turn:
                 if value > best_val:
                     best_val = value
                     best_move = move
@@ -52,6 +49,10 @@ class AgentMinMax(Agent):
                     best_move = move
 
         return best_val, best_move
+
+    @staticmethod
+    def evaluate_game(fen):
+        pass
 
 
 if __name__ == '__main__':

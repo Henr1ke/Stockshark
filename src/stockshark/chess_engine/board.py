@@ -19,13 +19,13 @@ class Board:
     CHAR_TO_PIECE_CLASS: Dict[str, Type[Piece]] = {"p": Pawn, "n": Knight, "b": Bishop, "r": Rook, "q": Queen,
                                                    "k": King}
 
-    def __init__(self, fen_str: str = "8/8/8/8/8/8/8/8") -> None:
+    def __init__(self, fen: str = "8/8/8/8/8/8/8/8") -> None:
 
         self.__tiles: List[List[Optional[Piece]]] = [[None] * 8 for _ in range(8)]
         self.__pieces_tiles: Dict[Piece, Tile] = dict()
         self.__kings: Dict[bool, King] = dict()
 
-        for row, fen_substr in enumerate(fen_str.split("/")[::-1]):
+        for row, fen_substr in enumerate(fen.split("/")[::-1]):
             col = 0
             for char in fen_substr:
                 if char.isdigit():
@@ -105,7 +105,7 @@ class Board:
     def kings(self) -> Dict[bool, King]:
         return copy(self.__kings)
 
-    def gen_fen_str(self) -> str:
+    def gen_fen(self) -> str:
         piece_class_to_char = {piece_class: char for char, piece_class in Board.CHAR_TO_PIECE_CLASS.items()}
 
         fen_substrs = []

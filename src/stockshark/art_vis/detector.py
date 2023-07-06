@@ -67,7 +67,7 @@ class Detector:
             center = coordinates[0]
             board = ImageProcessing.get_square(screenshot, center, scn_w)
             if detector is not None:
-                detector.save_fen_str(board)
+                detector.save_fen(board)
             return board, center
         return None
 
@@ -219,11 +219,11 @@ class Detector:
 
         return Move(start_tile, end_tile)
 
-    def save_fen_str(self, board: ndarray) -> None:
-        fen_str = self.gen_fen_str(board)
-        fen_str = fen_str.replace("/", ";")
+    def save_fen(self, board: ndarray) -> None:
+        fen = self.gen_fen(board)
+        fen = fen.replace("/", ";")
         current_path = pathlib.Path(__file__).parent.resolve()
-        filename = f"fen_strings/{fen_str}.png"
+        filename = f"fenings/{fen}.png"
 
         # os.path.exists(filename)
 
@@ -231,7 +231,7 @@ class Detector:
         if not os.path.exists(f"{current_path}/../../images/{filename}"):
             ImageProcessing.write_img(filename, board)
 
-    def gen_fen_str(self, board: ndarray) -> str:
+    def gen_fen(self, board: ndarray) -> str:
         tile_to_piece = {}
 
         for piece_name in Detector.PIECE_NAME_TO_LETTER.keys():

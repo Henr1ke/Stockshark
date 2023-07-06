@@ -5,7 +5,6 @@ from typing import List, Optional
 
 from stockshark.chess_engine.board import Board
 from stockshark.chess_engine.chess_engine import ChessEngine
-from stockshark.chess_engine.move_validator import MoveValidator
 from stockshark.piece.bishop import Bishop
 from stockshark.piece.king import King
 from stockshark.piece.knight import Knight
@@ -29,10 +28,10 @@ class StocksharkEngine(ChessEngine):
 
     def __copy__(self) -> StocksharkEngine:
         cls = self.__class__
-        game = cls.__new__(cls)
+        engine = cls.__new__(cls)
         for key, value in self.__dict__.items():
-            setattr(game, key, copy(value))
-        return game
+            setattr(engine, key, copy(value))
+        return engine
 
     @property
     def board(self) -> Board:
@@ -165,8 +164,8 @@ class StocksharkEngine(ChessEngine):
         return moves
 
     def _gen_fen(self) -> str:
-        fen_str_fields = [
-            self.__board.gen_fen_str(),
+        fen_fields = [
+            self.__board.gen_fen(),
             "w" if self.__is_white_turn else "b",
             "-" if len(self.__castling_rights) == 0 else self.__castling_rights,
             "-" if self.__ep_target is None else str(self.__ep_target),
@@ -174,7 +173,7 @@ class StocksharkEngine(ChessEngine):
             str(self.__fullclock)
         ]
 
-        return " ".join(fen_str_fields)
+        return " ".join(fen_fields)
 
     def __king_is_under_atk(self, is_white: bool) -> bool:
         if is_white not in self.__board.kings.keys():
@@ -195,12 +194,12 @@ class StocksharkEngine(ChessEngine):
         return game_copy.__king_is_under_atk(not game_copy.is_white_turn)
 
 
-if __name__ == '__main__':
-    engine = StocksharkEngine()
-
-    print(engine.fen)
-
-    engine_copy = copy(engine)
-    engine_copy.play("a2a4")
-    print(engine_copy.fen)
-    print(engine.fen)
+# if __name__ == '__main__':
+#     engine = StocksharkEngine()
+#
+#     print(engine.fen)
+#
+#     engine_copy = copy(engine)
+#     engine_copy.play("a2a4")
+#     print(engine_copy.fen)
+#     print(engine.fen)
