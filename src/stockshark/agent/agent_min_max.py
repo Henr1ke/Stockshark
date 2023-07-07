@@ -31,13 +31,13 @@ class AgentMinMax(Agent):
         is_white_turn = engine.fen.split(" ")[1] == "w"
         best_val, best_move = -math.inf if is_white_turn else math.inf, None
         for move in moves:
-            game_copy = copy(engine)
-            game_copy.play(move)
+            engine_copy = copy(engine)
+            engine_copy.play(move)
 
             if curr_depth + 1 == max_depth:
                 value = AgentMinMax.evaluate_game(engine)
             else:
-                value, _ = self.minmax(max_depth, game_copy, curr_depth + 1)
+                value, _ = self.minmax(max_depth, engine_copy, curr_depth + 1)
 
             if is_white_turn:
                 if value > best_val:
@@ -63,11 +63,11 @@ class AgentMinMax(Agent):
 
 
 if __name__ == '__main__':
-    game = StocksharkEngine("1r2r1k1/5ppp/8/q1b3n1/3P3P/2P2BP1/PPN2P2/3KQ2R w - - 0 1")
+    engine = StocksharkEngine("1r2r1k1/5ppp/8/q1b3n1/3P3P/2P2BP1/PPN2P2/3KQ2R w - - 0 1")
 
     vis = Visualizer(Visualizer.CHARSET_LETTER)
-    vis.show(game)
+    vis.show(engine)
 
     p_mm = AgentMinMax()
-    move = p_mm.gen_move(game)
+    move = p_mm.gen_move(engine)
     print(move)
