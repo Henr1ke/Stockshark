@@ -9,6 +9,8 @@ import numpy as np
 from numpy import ndarray
 
 from stockshark.art_vis.image_processing import ImageProcessing
+from stockshark.util.move import Move
+from stockshark.util.tile import Tile
 
 
 class Detector:
@@ -131,15 +133,17 @@ class Detector:
 
     @staticmethod
     def get_castle_move(tile1: str, tile2: str) -> Optional[str]:
-        if tile1[1] != tile2[1] or tile1[1] != '1' and tile1[1] != '8':
+        tile1 = Tile(tile1)
+        tile2 = Tile(tile2)
+        if tile1.row != tile2.row or tile1.row != 0 and tile1.row != 7:
             return None
 
-        start_tile, other_tile = (tile1, tile2) if tile1[0] == 'e' else (tile2, tile1)
-        end_tile = ("c" if other_tile[0] == "a" else "h") + start_tile[1]
+        start_tile, other_tile = (tile1, tile2) if tile1.col == 4 else (tile2, tile1)
+        end_tile = Tile(2 if other_tile.col == 0 else 6, start_tile.row)
 
-        return start_tile + end_tile
+        return Move(start_tile, end_tile).to_uci()
 
-    def get_piece_type(self, board: ndarray, tile: Tile) -> Optional[str]:
+    def get_piece_type(self, board: ndarray, tile: str) -> Optional[str]:
         piece_names = (Detector.KNIGHT, Detector.BISHOP, Detector.ROOK, Detector.QUEEN)
         piece_types = (Move.PROMOTE_N, Move.PROMOTE_B, Move.PROMOTE_R, Move.PROMOTE_Q)
 
@@ -162,7 +166,8 @@ class Detector:
         idx = np.argmin(diffs)
         return piece_types[idx]
 
-    def tile_to_coord(self, tile: Tile) -> Tuple[int, int]:
+    def tile_to_coord(self, tile: str) -> Tuple[int, int]:
+        tile = Tile(tile)
         tile_w = self.__board_w / 8
         if not self.__on_white_side:
             tile = -tile
@@ -171,16 +176,16 @@ class Detector:
         y = int(tile_w / 2 + tile_w * (7 - tile.row))
         return x, y
 
-    def coord_to_tile(self, coord: Tuple[int, int]) -> Tile:
+    def coord_to_tile(self, coord: Tuple[int, int]) -> str:
         col = int(8 * coord[0] / self.__board_w)
         row = 7 - int(8 * coord[1] / self.__board_w)
         tile = Tile(col, row)
 
         if not self.__on_white_side:
             tile = -tile
-        return tile
+        return tile.name
 
-    def get_piece_tiles(self, board: ndarray, piece_name: str) -> List[Tile]:
+    def get_piece_tiles(self, board: ndarray, piece_name: str) -> List[str]:
         if piece_name not in Detector.PIECE_NAME_TO_LETTER.keys():
             raise ValueError("Piece name is not valid")
 
@@ -188,12 +193,12 @@ class Detector:
         tiles = [self.coord_to_tile(coord) for coord in coords]
         return tiles
 
-    def get_selected_move(self, board: ndarray) -> Optional[Move]:
+    def get_selected_move(self, board: ndarray) -> Optional[str]:
         start_tile = None
         end_tile = None
         for row_idx in range(8):
             for col_idx in range(8):
-                tile = Tile(col_idx, row_idx)
+                tile = Tile(col_idx, row_idx).name
                 coord = self.tile_to_coord(tile)
                 tile_img = Detector.get_tile_img(board, coord)
 
@@ -215,7 +220,7 @@ class Detector:
         if start_tile is None or end_tile is None:
             return None
 
-        return Move(start_tile, end_tile)
+        return Move(start_tile, end_tile).to_uci()
 
     def save_fen(self, board: ndarray) -> None:
         fen = self.gen_fen(board)
@@ -248,7 +253,7 @@ class Detector:
             fen_row = ""
             tile_skips = 0
             for col_idx in range(8):
-                tile = Tile(col_idx, row_idx)
+                tile = Tile(col_idx, row_idx).name
                 if tile not in tile_to_piece.keys():
                     tile_skips += 1
                 else:

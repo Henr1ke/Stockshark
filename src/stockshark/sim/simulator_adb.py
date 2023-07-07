@@ -5,9 +5,11 @@ import numpy as np
 from stockshark.adb.dao_adb import DaoADB
 from stockshark.adb.mobile_player import MobilePlayer
 from stockshark.agent.agent import Agent
+from stockshark.agent.agent_min_max_ab import AgentMinMaxAB
 from stockshark.agent.agent_random import AgentRandom
 from stockshark.art_vis.detector import Detector
 from stockshark.chess_engine.chess_engine import ChessEngine
+from stockshark.chess_engine.python_chess_engine import PythonChessEngine
 from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.sim.simulator import Simulator
 from stockshark.sim.visualizer import Visualizer
@@ -51,11 +53,11 @@ if __name__ == '__main__':
 
     m = MobilePlayer(d, board, center)
 
-    g = StocksharkEngine()
+    g = PythonChessEngine()
 
     v = Visualizer(Visualizer.CHARSET_LETTER)
 
-    agent = AgentRandom()
+    agent = AgentMinMaxAB(3)
 
     simulator = SimulatorADB(agent, m, g, v)
     simulator.execute()

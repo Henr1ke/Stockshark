@@ -44,9 +44,11 @@ class MobilePlayer:
 
             if sel_move is not None:
                 if self.__is_promotion_move(engine, sel_move):
-                    piece_type = self.__detector.get_piece_type(board, sel_move.end_tile)
+                    start_tile = sel_move[:2]
+                    end_tile = sel_move[2:4]
+                    piece_type = self.__detector.get_piece_type(board, end_tile)
                     if piece_type is not None:
-                        sel_move = Move(sel_move.start_tile, sel_move.end_tile, piece_type)
+                        sel_move = Move(start_tile, end_tile, piece_type)
 
                 played_moves = engine.played_moves
                 if len(played_moves) == 0 or sel_move != played_moves[-1]:
