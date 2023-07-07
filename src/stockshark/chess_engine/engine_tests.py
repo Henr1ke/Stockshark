@@ -175,8 +175,6 @@ if __name__ == '__main__':
              "c5d5", "b8d6", "d5d6", "a1a2", "d6c5", "a2a3", "c5c6", "a3b3", "c6d7", "b3a3", "d7e8", "a3b2", "e8f8",
              "b2a1", "f8g7", "a1b1", "g7f8", "b1a2", "f8e8", "a2b2", "e8d8", "b2c2", "d8c8", "c2b3", "c8d8", "b3a3",
              "d8e7", "a3b4", "e7f7", "b4a3", "f7e8", "a3b3"]
-
-    #
     engineType = PythonChessEngine
     # engineType = StocksharkEngine
     # engineType = StocksharkEngine
@@ -184,13 +182,14 @@ if __name__ == '__main__':
     print()
     print(f"avg time: {avg}")
 
-    #   num_runs = 30
-    #   PythonChessEngine = 0.015363949537277221
-    #   StockfishEngine = 11.047215700149536
-    #   StocksharkEngine = 1.595009740193685
-
-    # stockshark perft results test position 5:
-    # 1 : 44
-    # 2 : 1486
-    # 3 : 62379
     pass
+
+#   num_runs = 30
+#   PythonChessEngine = 0.015363949537277221    0.11227319240570069
+#   StockfishEngine = 11.047215700149536
+#   StocksharkEngine = 1.595009740193685    3.408102591832479
+
+# stockshark perft results test position 5:
+# 1 : 44
+# 2 : 1486
+# 3 : 62379

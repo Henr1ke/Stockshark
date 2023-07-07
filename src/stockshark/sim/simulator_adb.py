@@ -21,9 +21,10 @@ class SimulatorADB(Simulator):
         self._on_white_side: bool = mobile.on_white_side
 
     def _update_game(self) -> bool:
-        if self._engine.is_white_turn == self._on_white_side:
+        is_white_turn = self._engine.fen.split()[1] == 'w'
+        if is_white_turn == self._on_white_side:
             move = self._agent.gen_move(self._engine)
-            success = self._engine.make_move(move)
+            success = self._engine.play(move)
             if success:
                 self._mobile.play(move)
 
@@ -32,7 +33,7 @@ class SimulatorADB(Simulator):
             if move is None:
                 return False
 
-            self._engine.make_move(move)
+            self._engine.play(move)
 
         return True
 

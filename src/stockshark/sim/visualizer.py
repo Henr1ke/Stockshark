@@ -1,6 +1,6 @@
 from typing import Dict, Type
 
-from stockshark.chess_engine.state import State
+import chess
 
 from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.piece.bishop import Bishop
@@ -71,27 +71,41 @@ class Visualizer:
         if len(played_moves) > 0:
             print(f"{'Black' if is_white_turn else 'White'} player made the move {played_moves[-1]}")
 
-        if len(engine.available_moves) > 0:
+        if not engine.game_finished():
             print(f"{'White' if is_white_turn else 'Black'} turn to play")
-        elif engine.state == State.DRAW:
-            print(f"Game ended in a draw")
+
+        elif engine.is_in_check(False):
+            self._print_winner_result(True)
+        elif engine.is_in_check(True):
+            self._print_winner_result(False)
         else:
-            winner, loser = ("white", "black") if engine.state == State.WIN_W else ("black", "white")
-            print(f"Game ended with {winner} player check-mating {loser} player")
+            print(f"Game ended in a draw")
+
         print(f"halfclock: {halfclock}, fullclock: {fullclock}")
-        self.print_board(engine.board)
+        self.print_board(engine.fen)
 
-    def print_board(self, board) -> None:
-        print("═══╦══" + "═╤══" * (8 - 1) + "═╗")
+    @staticmethod
+    def _print_winner_result(is_white_winner: bool) -> None:
+        winner, loser = ("white", "black") if is_white_winner else ("black", "white")
+        print(f"Game ended with {winner} player check-mating {loser} player")
 
-        for row in range(8 - 1, -1, -1):
-            print(f" {row + 1} ║ " + " │ ".join(
-                ("·" if (row + col) % 2 == 0 else " ") if board[col, row] is None else self.get_char(board[col, row])
-                for col in range(8)
-            ) + " ║")
+    # def print_board(self, fen_board) -> None:
+    #     print("═══╦══" + "═╤══" * (8 - 1) + "═╗")
+    #
+    #     for row in range(8 - 1, -1, -1):
+    #         print(f" {row + 1} ║ " + " │ ".join(
+    #             ("·" if (row + col) % 2 == 0 else " ") if fen_board[col, row] is None
+    #             else self.get_char(fen_board[col, row])
+    #             for col in range(8)
+    #         ) + " ║")
+    #
+    #     print(f"═══╬══{'═╪══' * (8 - 1)}═╣")
+    #     print(f"   ║ {' │ '.join(FILE_LETTERS)} ║")
 
-        print(f"═══╬══{'═╪══' * (8 - 1)}═╣")
-        print(f"   ║ {' │ '.join(FILE_LETTERS)} ║")
+    @staticmethod
+    def print_board(fen) -> None:
+        board = chess.Board(fen)
+        print(board)
 
     def get_char(self, piece) -> str:
         piece_charset = self.__w_piece_charset if piece.is_white else self.__b_piece_charset

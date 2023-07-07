@@ -125,3 +125,21 @@ class Piece(ABC):
                 pass
 
         return moves
+
+    @staticmethod
+    def get_piece_value(piece: str) -> float:
+        piece = piece.lower()
+        if piece == Piece.PAWN_B:
+            return Piece.PAWN_VALUE
+        if piece == Piece.KNIGHT_B:
+            return Piece.KNIGHT_VALUE
+        if piece == Piece.BISHOP_B:
+            return Piece.BISHOP_VALUE
+        if piece == Piece.ROOK_B:
+            return Piece.ROOK_VALUE
+        if piece == Piece.QUEEN_B:
+            return Piece.QUEEN_VALUE
+        if piece == Piece.KING_B:
+            return Piece.KING_VALUE
+
+        raise ValueError(f"Unknown piece: {piece}")

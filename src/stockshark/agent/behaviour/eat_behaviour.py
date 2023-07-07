@@ -1,27 +1,23 @@
 from heapq import heappop, heappush
 from typing import Optional
 
-from stockshark.chess_engine.game_engine import GameEngine
-
 from stockshark.agent.behaviour.behaviour import Behaviour
-from stockshark.util.move import Move
+from stockshark.chess_engine.chess_engine import ChessEngine
+from stockshark.piece.piece import Piece
 
 
 class EatBehaviour(Behaviour):
 
-    def gen_move(self, game: GameEngine) -> Optional[Move]:
+    def gen_move(self, engine: ChessEngine) -> Optional[str]:
         actions = []
 
-        pieces_tile = game.get_available_pieces_tiles()
-        board = game.board
-
-        for piece, start_tile in pieces_tile.items():
-            moves = game.get_legal_piece_moves(piece)
-            for move in moves:
-                attacked_piece = board[move.end_tile]
-                if attacked_piece is not None:
-                    prio = -attacked_piece.value
-                    heappush(actions, (prio, move))
+        moves = engine.available_moves
+        for move in moves:
+            attacked_tile = move[2:4]
+            attacked_piece = engine.get_piece_at(attacked_tile)
+            if attacked_piece is not None:
+                prio = - Piece.get_piece_value(attacked_piece)
+                heappush(actions, (prio, move))
 
         if len(actions) == 0:
             return None

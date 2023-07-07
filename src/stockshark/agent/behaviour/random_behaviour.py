@@ -1,18 +1,13 @@
 import random
 from typing import Optional
 
-from stockshark.chess_engine.game_engine import GameEngine
-
 from stockshark.agent.behaviour.behaviour import Behaviour
-from stockshark.util.move import Move
+from stockshark.chess_engine.chess_engine import ChessEngine
 
 
 class RandomBehaviour(Behaviour):
 
-    def gen_move(self, game: GameEngine) -> Optional[Move]:
-        pieces_tile = game.get_available_pieces_tiles()
-        piece = random.choice(list(pieces_tile.keys()))
-
-        moves = game.get_legal_piece_moves(piece)
+    def gen_move(self, engine: ChessEngine) -> Optional[str]:
+        moves = engine.available_moves
         move = random.choice(moves)
         return move

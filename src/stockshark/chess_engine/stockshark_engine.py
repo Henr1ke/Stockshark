@@ -114,13 +114,14 @@ class StocksharkEngine(ChessEngine):
 
     def get_piece_at(self, tile: str) -> Optional[str]:
         try:
-            tile = Tile(tile[0], tile[1])
+            tile = Tile(tile)
             piece = self.__board[tile]
-            return str(piece) if piece is not None else None
+            return None if piece is None else piece.symbol
         except ValueError:
             return None
 
-    def _make_move(self, move: Move) -> None:
+    def _make_move(self, move: str) -> None:
+        move = Move.from_uci(move)
         piece = self.__board[move.start_tile]
 
         eaten_piece = self.__board[move.end_tile]
@@ -149,7 +150,7 @@ class StocksharkEngine(ChessEngine):
         if self.__is_white_turn:
             self.__fullclock += 1
 
-    def _gen_attacked_tiles(self) -> Set[Tile]:
+    def _gen_attacked_tiles(self) -> Set[str]:
         attacked_tiles = set()
 
         pieces = self.__board.pieces_tiles.keys()
@@ -159,9 +160,9 @@ class StocksharkEngine(ChessEngine):
 
             attacked_tiles = attacked_tiles.union(piece.gen_attacked_tiles(self))
 
-        return attacked_tiles
+        return {tile.name for tile in attacked_tiles}
 
-    def _gen_available_moves(self) -> Set[Move]:
+    def _gen_available_moves(self) -> Set[str]:
         moves = set()
 
         pieces = self.__board.pieces_tiles.keys()
@@ -169,7 +170,7 @@ class StocksharkEngine(ChessEngine):
             if piece.is_white != self.__is_white_turn:
                 continue
 
-            pseudo_moves = piece.gen_moves(self)
+            pseudo_moves = {move.to_uci() for move in piece.gen_moves(self)}
 
             moves = moves.union({move for move in pseudo_moves if not self.__leaves_king_under_atk(move)})
 
@@ -200,7 +201,7 @@ class StocksharkEngine(ChessEngine):
                 return True
         return False
 
-    def __leaves_king_under_atk(self, move: Move) -> bool:
+    def __leaves_king_under_atk(self, move: str) -> bool:
         engine_copy = copy(self)
         engine_copy._make_move(move)
         return engine_copy.is_in_check(not engine_copy.__is_white_turn)
