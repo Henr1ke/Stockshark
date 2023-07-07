@@ -9,8 +9,6 @@ import numpy as np
 from numpy import ndarray
 
 from stockshark.art_vis.image_processing import ImageProcessing
-from stockshark.util.move import Move
-from stockshark.util.tile import Tile
 
 
 class Detector:
@@ -132,14 +130,14 @@ class Detector:
         return w_sel_count > thresh_val or b_sel_count > thresh_val
 
     @staticmethod
-    def get_castle_move(tile1: Tile, tile2: Tile) -> Optional[Move]:
-        if tile1.row != tile2.row or tile1.row != 0 and tile1.row != 7:
+    def get_castle_move(tile1: str, tile2: str) -> Optional[str]:
+        if tile1[1] != tile2[1] or tile1[1] != '1' and tile1[1] != '8':
             return None
 
-        start_tile, other_tile = (tile1, tile2) if tile1.col == 4 else (tile2, tile1)
-        end_tile = Tile(2 if other_tile.col == 0 else 6, start_tile.row)
+        start_tile, other_tile = (tile1, tile2) if tile1[0] == 'e' else (tile2, tile1)
+        end_tile = ("c" if other_tile[0] == "a" else "h") + start_tile[1]
 
-        return Move(start_tile, end_tile)
+        return start_tile + end_tile
 
     def get_piece_type(self, board: ndarray, tile: Tile) -> Optional[str]:
         piece_names = (Detector.KNIGHT, Detector.BISHOP, Detector.ROOK, Detector.QUEEN)

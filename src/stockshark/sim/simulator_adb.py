@@ -1,20 +1,20 @@
 from typing import Optional
 
 import numpy as np
-from stockshark.chess_engine.game_engine import GameEngine
 
 from stockshark.adb.dao_adb import DaoADB
 from stockshark.adb.mobile_player import MobilePlayer
 from stockshark.agent.agent import Agent
 from stockshark.agent.agent_random import AgentRandom
 from stockshark.art_vis.detector import Detector
+from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.sim.simulator import Simulator
 from stockshark.sim.visualizer import Visualizer
 
 
 class SimulatorADB(Simulator):
-    def __init__(self, agent: Agent, mobile: MobilePlayer, engine: GameEngine, vis: Optional[Visualizer]) -> None:
+    def __init__(self, agent: Agent, mobile: MobilePlayer, engine: ChessEngine, vis: Optional[Visualizer]) -> None:
         super().__init__(engine, vis)
         self._agent: Agent = agent
         self._mobile: MobilePlayer = mobile

@@ -8,13 +8,12 @@ from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.piece.piece import Piece
 from stockshark.sim.visualizer import Visualizer
-from stockshark.util.move import Move
 
 
 class AgentMinMaxAB(Agent):
     TIMES = []
 
-    def __init__(self, depth: int = 2):
+    def __init__(self, depth: int = 3):
         if depth <= 0:
             raise ValueError("Depth can not be less or equal to zero")
 
@@ -31,7 +30,6 @@ class AgentMinMaxAB(Agent):
         is_white_turn = engine.fen.split()[1] == 'w'
 
         moves = engine.available_moves
-        print(f"move_values = {[(move, AgentMinMaxAB.evaluate_move(engine, move)) for move in moves]}")
         moves.sort(reverse=not is_white_turn, key=lambda move: AgentMinMaxAB.evaluate_move(engine, move))
 
         best_val, best_move = -math.inf if is_white_turn else math.inf, None
@@ -96,6 +94,7 @@ class AgentMinMaxAB(Agent):
         try:
             piece_value = Piece.get_piece_value(eaten_piece)
             value += -piece_value if eaten_piece.isupper() else piece_value
+            return value
         except ValueError:
             return value
 

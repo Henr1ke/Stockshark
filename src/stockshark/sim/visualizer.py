@@ -10,7 +10,6 @@ from stockshark.piece.pawn import Pawn
 from stockshark.piece.piece import Piece
 from stockshark.piece.queen import Queen
 from stockshark.piece.rook import Rook
-from stockshark.util.constants import FILE_LETTERS
 
 
 class Visualizer:

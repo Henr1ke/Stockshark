@@ -10,11 +10,8 @@ from stockshark.util.move import Move
 
 
 def run_random(engine: ChessEngine):
-    moves = []
     for i in range(500):
         print(engine.fen)
-
-        print(f"{engine.attacked_tiles = }")
 
         avail_moves = engine.available_moves
         print(f"{avail_moves = }")
@@ -23,7 +20,6 @@ def run_random(engine: ChessEngine):
             break
 
         m = random.choice(avail_moves)
-        moves.append(m)
         print(m)
 
         engine.play(m)
@@ -32,7 +28,6 @@ def run_random(engine: ChessEngine):
     print()
     print("engine over!")
     print(engine.fen)
-    print(moves)
 
 
 def compare_runs(engineType1: Type[ChessEngine], engineType2: Type[ChessEngine]):
@@ -41,13 +36,6 @@ def compare_runs(engineType1: Type[ChessEngine], engineType2: Type[ChessEngine])
 
     for i in range(1000):
         print(engine1.fen)
-
-        same_attacked_tiles = sorted(engine1.attacked_tiles) == sorted(engine2.attacked_tiles)
-        print(f"{same_attacked_tiles = }")
-        if not same_attacked_tiles:
-            print(f"{engine1.attacked_tiles = }")
-            print(f"{engine2.attacked_tiles = }")
-            break
 
         same_avail_moves = sorted(engine1.available_moves) == sorted(engine2.available_moves)
         print(f"{same_avail_moves = }")
@@ -89,10 +77,10 @@ def move_gen(depth, engine: ChessEngine):
 
 def perft(fen: str, engineType1: Type[ChessEngine], engineType2: Type[ChessEngine]):
     engine1 = engineType1(fen)
-    engine1.play(Move.from_uci("c1d2"))
+    engine1.play("c1d2")
 
     engine2 = engineType2(fen)
-    engine2.play(Move.from_uci("c1d2"))
+    engine2.play("c1d2")
 
     print(engine1.fen)
 
@@ -185,10 +173,10 @@ if __name__ == '__main__':
     pass
 
 #   num_runs = 30
-#   PythonChessEngine = 0.015363949537277221    0.11227319240570069
+#   PythonChessEngine = 0.015363949537277221    0.0600657065709432
 #   StockfishEngine = 11.047215700149536
-#   StocksharkEngine = 1.595009740193685    3.408102591832479
-
+#   StocksharkEngine = 1.595009740193685    3.3955979983011884
+#
 # stockshark perft results test position 5:
 # 1 : 44
 # 2 : 1486

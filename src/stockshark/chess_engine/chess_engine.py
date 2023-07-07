@@ -8,13 +8,9 @@ from typing import List, Optional, Set
 class ChessEngine(ABC):
 
     def __init__(self, fen: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"):
+        self._new_game(fen)
         self.__fen = fen
         self.__played_moves: List[str] = []
-        self.__atacked_tiles: List[str] = []
-        self.__available_moves: List[str] = []
-
-        self._new_game(fen)
-        self.__atacked_tiles = sorted(self._gen_attacked_tiles())
         self.__available_moves = sorted(self._gen_available_moves())
 
     def __copy__(self) -> ChessEngine:
@@ -30,10 +26,6 @@ class ChessEngine(ABC):
 
     @abstractmethod
     def _make_move(self, move: str) -> None:
-        pass
-
-    @abstractmethod
-    def _gen_attacked_tiles(self) -> Set[str]:
         pass
 
     @abstractmethod
@@ -60,7 +52,6 @@ class ChessEngine(ABC):
 
         self.__fen = self._gen_fen()
         self.__played_moves.append(move)
-        self.__atacked_tiles = sorted(self._gen_attacked_tiles())
         self.__available_moves = sorted(self._gen_available_moves())
 
         return True
@@ -82,7 +73,3 @@ class ChessEngine(ABC):
         if halfmove >= 100:
             return []
         return copy(self.__available_moves)
-
-    @property
-    def attacked_tiles(self) -> List[str]:
-        return copy(self.__atacked_tiles)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from copy import copy
-from typing import Optional, Set
+from typing import Optional, Set, List
 
 from stockshark.chess_engine.board import Board
 from stockshark.chess_engine.chess_engine import ChessEngine
@@ -25,6 +25,8 @@ class StocksharkEngine(ChessEngine):
         self.__ep_target: Optional[Tile] = None if fen_fields[3] == "-" else Tile(fen_fields[3])
         self.__halfclock: int = int(fen_fields[4])
         self.__fullclock: int = int(fen_fields[5])
+
+        self.__atacked_tiles = sorted(self._gen_attacked_tiles())
 
     def __copy__(self) -> StocksharkEngine:
         cls = self.__class__
@@ -56,6 +58,10 @@ class StocksharkEngine(ChessEngine):
     @property
     def fullclock(self) -> int:
         return self.__fullclock
+
+    @property
+    def attacked_tiles(self) -> List[str]:
+        return copy(self.__atacked_tiles)
 
     def __pawn_actions(self, move: Move) -> Optional[Tile]:
         piece = self.__board[move.end_tile]
@@ -121,6 +127,10 @@ class StocksharkEngine(ChessEngine):
             return None
 
     def _make_move(self, move: str) -> None:
+        self._make_move_test(move)
+        self.__atacked_tiles = sorted(self._gen_attacked_tiles())
+
+    def _make_move_test(self, move: str) -> None:
         move = Move.from_uci(move)
         piece = self.__board[move.start_tile]
 
@@ -203,5 +213,5 @@ class StocksharkEngine(ChessEngine):
 
     def __leaves_king_under_atk(self, move: str) -> bool:
         engine_copy = copy(self)
-        engine_copy._make_move(move)
+        engine_copy._make_move_test(move)
         return engine_copy.is_in_check(not engine_copy.__is_white_turn)
