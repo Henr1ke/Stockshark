@@ -17,6 +17,5 @@ def debug_show_img(img: ndarray, title: str = "debug") -> None:
 
 
 if __name__ == '__main__':
-
     printscreen()
     pass

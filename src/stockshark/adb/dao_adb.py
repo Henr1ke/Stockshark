@@ -66,7 +66,7 @@ class DaoADB:
         only_name = filename
         slash_idx = only_name.rfind("/")
         if slash_idx >= 0:
-            only_name = only_name[slash_idx+1:]
+            only_name = only_name[slash_idx + 1:]
 
         current_path = pathlib.Path(__file__).parent.resolve()
         self.__device.shell(f'screencap -p /sdcard/{only_name}.png')
@@ -87,4 +87,3 @@ class DaoADB:
         if avd_name == "":
             return self.__device.shell("getprop ro.product.model").strip()
         return avd_name
-

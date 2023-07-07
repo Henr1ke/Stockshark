@@ -7,7 +7,6 @@ from typing import Tuple, List
 from stockshark.agent.agent import Agent
 from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.python_chess_engine import PythonChessEngine
-from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.piece.piece import Piece
 from stockshark.sim.visualizer import Visualizer
 
@@ -117,4 +116,3 @@ if __name__ == '__main__':
 
     # move = "e8e1"
     # print(AgentMinMaxAB.evaluate_move(engine, move))
-

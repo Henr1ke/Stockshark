@@ -21,4 +21,3 @@ class Queen(Piece):
         attacked_tiles = self._gen_slider_attacked_tiles(board, is_diag=True)
         attacked_tiles = attacked_tiles.union(self._gen_slider_attacked_tiles(board, is_diag=False))
         return attacked_tiles
-

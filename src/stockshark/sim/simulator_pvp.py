@@ -5,7 +5,6 @@ from stockshark.agent.agent import Agent
 from stockshark.agent.agent_min_max_ab import AgentMinMaxAB
 from stockshark.agent.agent_random import AgentRandom
 from stockshark.chess_engine.chess_engine import ChessEngine
-from stockshark.chess_engine.python_chess_engine import PythonChessEngine
 from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.sim.simulator import Simulator
 from stockshark.sim.visualizer import Visualizer

@@ -5,8 +5,6 @@ from typing import Type
 
 from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.python_chess_engine import PythonChessEngine
-from stockshark.chess_engine.stockshark_engine import StocksharkEngine
-from stockshark.util.move import Move
 
 
 def run_random(engine: ChessEngine):

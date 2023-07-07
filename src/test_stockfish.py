@@ -10,7 +10,6 @@ move = Move(Tile("a2"), Tile("a4"))
 stockfish.make_moves_from_current_position([str(move)])
 print(stockfish.get_board_visual())
 
-
 stockfish.set_fen_position()
 stockfish.get_fen_position()
 stockfish.make_moves_from_current_position()
@@ -19,4 +18,3 @@ stockfish.get_what_is_on_square()
 stockfish.will_move_be_a_capture()
 stockfish.get_evaluation()
 print(stockfish.get_board_visual())
-
