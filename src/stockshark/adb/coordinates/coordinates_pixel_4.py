@@ -31,9 +31,9 @@ class CoordinatesPixel4(Coordinates):
         if time == 5:
             return 880, 760
         if time == 10:
-            return 200, 1240
+            return 200, 1060
         if time == 30:
-            return 880, 1240
+            return 880, 1060
 
     def player_color_coords(self, is_white: Optional[bool]) -> Tuple[int, int]:
         if is_white is None:

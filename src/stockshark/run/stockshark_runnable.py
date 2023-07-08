@@ -47,11 +47,11 @@ class StockSharkRunnable:
         if board is None:
             return False
 
-        mobile_chess = MobilePlayer(self.__dao_adb, board, center)
+        mobile_player = MobilePlayer(self.__dao_adb, board, center)
 
         vis = None if not show_simulation else Visualizer(Visualizer.CHARSET_LETTER)
 
-        simulator = SimulatorADB(agent, mobile_chess, engine, vis)
+        simulator = SimulatorADB(agent, mobile_player, engine, vis)
         simulator.execute()
 
         return True

@@ -25,24 +25,24 @@ class MenuNavigator:
         self.__dao_adb.open_app("com.chess/.splash.SplashActivity")
         time.sleep(wait_time)
 
-    def vs_friend(self, name: str, on_white_side: Optional[bool] = None, duration: Optional[int] = None,
+    def vs_friend(self, username: str, play_as_whites: Optional[bool] = None, timers_duration: Optional[int] = None,
                   wait_time: float = 2) -> None:
         self.__tap_wait_time = wait_time
-        if duration is not None:
-            assert duration in [1, 3, 5, 10, 30], "O tempo de jogo tem de ser 1, 3, 5, 10 ou 30 minutos"
+        if timers_duration is not None:
+            assert timers_duration in [1, 3, 5, 10, 30], "O tempo de jogo tem de ser 1, 3, 5, 10 ou 30 minutos"
 
         self.__tap_screen(*self.__coordinates.init_screen_play_coords())  # play
         self.__tap_screen(*self.__coordinates.vs_friend_coords())  # vs friend
         self.__tap_screen(*self.__coordinates.search_box_coords())  # search box
-        self.__dao_adb.input_text(name)  # write friend name
+        self.__dao_adb.input_text(username)  # write friend name
         self.__tap_screen(*self.__coordinates.friend_coords())  # friend
-        if duration is not None:
+        if timers_duration is not None:
             self.__tap_screen(*self.__coordinates.time_box_coords())  # time box
-            self.__tap_screen(*self.__coordinates.time_coords(duration))
-        self.__tap_screen(*self.__coordinates.player_color_coords(on_white_side))  # choose color
+            self.__tap_screen(*self.__coordinates.time_coords(timers_duration))
+        self.__tap_screen(*self.__coordinates.player_color_coords(play_as_whites))  # choose color
         self.__tap_screen(*self.__coordinates.bottom_green_btn_coords())  # play
 
-    def vs_computer(self, diff_lvl: int, on_white_side: Optional[bool] = None, wait_time: float = 2) -> None:
+    def vs_computer(self, diff_lvl: int, play_as_whites: Optional[bool] = None, wait_time: float = 2) -> None:
         self.__tap_wait_time = wait_time
         accepted_diff_lvls = [1, 2, 3, 4, 5]
         assert diff_lvl in accepted_diff_lvls, "O nivel de dificuldade não está disponível"
@@ -51,7 +51,7 @@ class MenuNavigator:
         self.__tap_screen(*self.__coordinates.vs_computer_coords())  # vs computer
         self.__tap_screen(*self.__coordinates.computer_coords(diff_lvl))
         self.__tap_screen(*self.__coordinates.bottom_green_btn_coords())  # confirm choosing
-        self.__tap_screen(*self.__coordinates.computer_color_coords(on_white_side))  # choose color
+        self.__tap_screen(*self.__coordinates.computer_color_coords(play_as_whites))  # choose color
         self.__tap_screen(*self.__coordinates.bottom_green_btn_coords())
 
     def __tap_screen(self, x: int, y: int) -> None:
