@@ -198,8 +198,10 @@ class Detector:
                 tile_img = Detector.get_tile_img(board, coord)
 
                 if Detector.is_tile_selected(tile_img):
+                    print(f"Selected tile: {tile}")
                     if Detector.is_tile_empty(tile_img):
                         if start_tile is not None:
+                            print()
                             # Two empty selected tiles found, it's a castle move
                             return Detector.get_castle_move(start_tile, tile)
                         else:
@@ -212,6 +214,7 @@ class Detector:
             if start_tile is not None and end_tile is not None:
                 break
 
+        print()
         if start_tile is None or end_tile is None:
             return None
 
