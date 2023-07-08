@@ -58,8 +58,8 @@ if __name__ == '__main__':
 
     # agent = AgentMinMaxAB(4)
     # agent = AgentRandom()
-    # agent = AgentReactive()
-    agent = AgentHuman()
+    agent = AgentReactive()
+    # agent = AgentHuman()
 
     simulator = SimulatorADB(agent, m, g, v)
     simulator.execute()

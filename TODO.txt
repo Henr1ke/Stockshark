@@ -19,6 +19,7 @@ Perguntas ao stor:
 
 
 --------------------------------------- CODIGO ---------------------------------------------------------------------
+METER O AGENTMINMAX ATUALIZADO COMO NO AGENTMINMAXAB
 
 player:
     -- 5 MinMax
@@ -39,8 +40,6 @@ adb:
     -- 2 Arranjar uma solução para não usar as classes Coordinates (seria o menu detector)
 
 
---------------------------------------- CLI ---------------------------------------------------------------------
-adicionar description
 
 
 
@@ -55,7 +54,7 @@ Random:
     11: W-   D-   L-
 
 Reactive:
-    1: W-   D-1  L-
+    1: W-   D-1  L-9
     3: W-   D-   L-
     5: W-   D-   L-
     7: W-   D-   L-

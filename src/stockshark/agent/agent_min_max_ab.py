@@ -13,7 +13,7 @@ from stockshark.sim.visualizer import Visualizer
 
 
 class AgentMinMaxAB(Agent):
-    CHECK_VALUE = 100
+    CHECK_VALUE = 90
     TIMES = []
 
     def __init__(self, depth: int = 4):
