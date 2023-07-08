@@ -72,4 +72,6 @@ class ChessEngine(ABC):
         halfmove = int(self.__fen.split(" ")[-2])
         if halfmove > 100:
             return []
-        return copy(self.__available_moves)
+        # return copy(self.__available_moves)
+        # Only alows promotion to queen
+        return [move for move in self.__available_moves if move[-1].isdigit() or move[-1] == "q"]
