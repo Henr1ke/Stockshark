@@ -129,7 +129,8 @@ class Detector:
         thresh_val = tile_img.shape[0] * tile_img.shape[1] * 0.05  # 5% of all tile pixels
         w_sel_count = ImageProcessing.get_value_count(tile_img[:, :, 0], Detector.W_TILE_SELECTED_COLOR)
         b_sel_count = ImageProcessing.get_value_count(tile_img[:, :, 2], Detector.B_TILE_SELECTED_COLOR)
-        return w_sel_count > thresh_val or b_sel_count > thresh_val
+        # return w_sel_count > thresh_val or b_sel_count > thresh_val
+        return w_sel_count, b_sel_count
 
     @staticmethod
     def get_castle_move(tile1: str, tile2: str) -> Optional[str]:
@@ -189,6 +190,7 @@ class Detector:
         return tiles
 
     def get_selected_move(self, board: ndarray) -> Optional[str]:
+
         start_tile = None
         end_tile = None
         for row_idx in range(8):
@@ -197,8 +199,11 @@ class Detector:
                 coord = self.tile_to_coord(tile)
                 tile_img = Detector.get_tile_img(board, coord)
 
-                if Detector.is_tile_selected(tile_img):
-                    print(f"Selected tile: {tile}")
+                # if Detector.is_tile_selected(tile_img):
+                thresh_val = tile_img.shape[0] * tile_img.shape[1] * 0.05  # 5% of all tile pixels
+                w_sel_count, b_sel_count = Detector.is_tile_selected(tile_img)
+                if w_sel_count > thresh_val or b_sel_count > thresh_val:
+                    print(f"Selected tile: {tile}; w_sel_count: {w_sel_count}; b_sel_count: {b_sel_count}")
                     if Detector.is_tile_empty(tile_img):
                         if start_tile is not None:
                             print()
