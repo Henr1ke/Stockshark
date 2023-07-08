@@ -7,6 +7,7 @@ from typing import Tuple, List
 from stockshark.agent.agent import Agent
 from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.python_chess_engine import PythonChessEngine
+from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.piece.piece import Piece
 from stockshark.sim.visualizer import Visualizer
 
@@ -15,7 +16,7 @@ class AgentMinMaxAB(Agent):
     CHECK_VALUE = 100
     TIMES = []
 
-    def __init__(self, depth: int = 3):
+    def __init__(self, depth: int = 4):
         if depth <= 0:
             raise ValueError("Depth can not be less or equal to zero")
 
@@ -146,15 +147,16 @@ class AgentMinMaxAB(Agent):
 
 
 if __name__ == '__main__':
+    fen = "6R1/6p1/1P1p1kN1/2Pb1P2/P7/5p2/4p1n1/1n4KR w - - 0 1"
     # fen = "1r2r1k1/5ppp/8/q1b3n1/3P3P/2P2BP1/PPN2P2/3KQ2R w - - 0 1"
     # fen = "k2bn1b1/1p3n1r/8/8/3N4/8/2r5/K7 b - - 0 1"
-    fen = "r1Nbn1bk/1p3n2/8/8/8/3RR3/1r6/7K b - - 0 1"
+    # fen = "r1Nbn1bk/1p3n2/8/8/1B6/2R5/1r6/7K b - - 0 1"
     engine = PythonChessEngine(fen)
 
     vis = Visualizer(Visualizer.CHARSET_LETTER)
     vis.show(engine)
 
-    p_mm = AgentMinMaxAB(6)
+    p_mm = AgentMinMaxAB(4)
     ti = time.time()
     move = p_mm.gen_move(engine)
     print(time.time() - ti)
