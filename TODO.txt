@@ -2,18 +2,10 @@ Prioridades: 1 -> pouca .... 5 -> muita
 
 
 -------------------------------------- RELATORIO --------------------------------------------------------------
-A navegação dos menus só é possivel nos modelos de telemovel q disponibilizámos os clicks hardcoded.
-Será q ensinamos no readme a instalar um emulador do modelo em especifico que é compativel com o nosso programa ou
-Fazer um runnable que salta a navegação nos menus e assume que já se encontra no ecra de jogo
-para dessa forma ser compativel com qualquer modelo
-
-Na conclusão, trabalhos futuros, se for preciso falar de mais cenas, falar sobre melhorar o runnable,
-tanto a iniciar a app como a meter funcionalidades de navegação
-
-
 Perguntas ao stor:
-    - Onde dizer que o nosso programa apenas funciona com modelos de telemovel especificos?
-    - O que são os requisitos não funcuinais
+
+    - O que são os requisitos não funcionais
+    - no readme, como é que
 
 
 
@@ -40,8 +32,27 @@ adb:
     -- 2 Arranjar uma solução para não usar as classes Coordinates (seria o menu detector)
 
 
+------------------------------------ RELATORIO: -------------------------------------
+cap 4:
+    -- MOTOR DE JOGO --
+        Atualizar tudo porque a arquitetura está um pouco diferente e adaptar/melhorar os textos à nova arquitetura
 
+    -- AGENTES --
+        MinMax:
+            -- Juntá-lo com o MinMaxAB e extendê-lo
+            -- Falar sobre a função evaluate_game
+            -- Fazer um diagrama de atividades geral do nosso minmax
+        Problemas relacionados:
+            -- Falar das várias formas que podiamos ter melhorado o Reativo (meter mais comportamentos como proteger, fugir, atacar peças mais valiosas, etc)
+            -- Falar das várias formas que podiamos ter melhorado o MinMax (manter a árvore de pesquisa em memoria para em cada turno não ter de reconstrui-la de raiz, melhorar a função evaluate_game, etc)
 
+    -- SIMULADOR --
+        Retirar o Runnable
+
+cap 5:
+    Interpretar e falar sobre  os resultados dos testes aos motores de jogo e aos agentes
+
+    Meter algo a falar sobre o cli.py algures no relatorio
 
 ------------------------------------ TESTES: -------------------------------------
             WINRATE
