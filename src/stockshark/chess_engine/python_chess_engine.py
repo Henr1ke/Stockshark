@@ -36,4 +36,4 @@ class PythonChessEngine(ChessEngine):
         return attacked_tiles
 
     def is_in_check(self, is_white_side: bool) -> bool:
-        return self._board.is_check() and self._board.turn == chess.WHITE if is_white_side else chess.BLACK
+        return self._board.is_check() and self._board.turn == (chess.WHITE if is_white_side else chess.BLACK)

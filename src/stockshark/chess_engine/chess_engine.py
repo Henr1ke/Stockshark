@@ -70,6 +70,6 @@ class ChessEngine(ABC):
     @property
     def available_moves(self) -> List[str]:
         halfmove = int(self.__fen.split(" ")[-2])
-        if halfmove >= 100:
+        if halfmove > 100:
             return []
         return copy(self.__available_moves)

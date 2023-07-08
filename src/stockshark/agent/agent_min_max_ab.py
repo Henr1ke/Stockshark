@@ -7,6 +7,7 @@ from typing import Tuple, List
 from stockshark.agent.agent import Agent
 from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.python_chess_engine import PythonChessEngine
+from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.piece.piece import Piece
 from stockshark.sim.visualizer import Visualizer
 
@@ -112,12 +113,14 @@ class AgentMinMaxAB(Agent):
 
 
 if __name__ == '__main__':
-    engine = PythonChessEngine("1r2r1k1/5ppp/8/q1b3n1/3P3P/2P2BP1/PPN2P2/3KQ2R w - - 0 1")
+    # fen = "1r2r1k1/5ppp/8/q1b3n1/3P3P/2P2BP1/PPN2P2/3KQ2R w - - 0 1"
+    fen = "r2bn1bk/1p3n2/8/8/3N4/8/1r6/7K b - - 0 1"
+    engine = PythonChessEngine(fen)
 
     vis = Visualizer(Visualizer.CHARSET_LETTER)
     vis.show(engine)
 
-    p_mm = AgentMinMaxAB(5)
+    p_mm = AgentMinMaxAB(3)
     move = p_mm.gen_move(engine)
     print(move)
 
