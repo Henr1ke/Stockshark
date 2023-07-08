@@ -63,40 +63,6 @@ class AgentMinMaxAB(Agent):
 
         return best_val, best_moves
 
-    # def minmax_ab(self, max_depth: int, engine: ChessEngine, curr_depth: int = 0, alpha: float = -math.inf,
-    #               beta: float = math.inf) -> Tuple[float, List[str]]:
-    #     is_white_turn = engine.fen.split()[1] == 'w'
-    #
-    #     moves_info = []
-    #     for move in engine.available_moves:
-    #         engine_copy = copy(engine)
-    #         engine_copy.play(move)
-    #         moves_info.append((move, engine_copy, AgentMinMaxAB.evaluate_game(engine_copy)))
-    #     moves_info.sort(reverse=is_white_turn, key=lambda move_info: move_info[2])
-    #
-    #     best_val, best_moves = -math.inf if is_white_turn else math.inf, []
-    #     for move, engine_copy, value in moves_info:
-    #         if curr_depth + 1 < max_depth:
-    #             value, _ = self.minmax_ab(max_depth, engine_copy, curr_depth + 1, alpha, beta)
-    #
-    #         if value == best_val:
-    #             best_moves.append(move)
-    #         elif is_white_turn:
-    #             if value > best_val:
-    #                 best_val = value
-    #                 alpha = max(alpha, best_val)
-    #                 best_moves = [move]
-    #         else:
-    #             if value < best_val:
-    #                 best_val = value
-    #                 beta = min(beta, best_val)
-    #                 best_moves = [move]
-    #
-    #         if beta <= alpha:
-    #             break
-    #
-    #     return best_val, best_moves
-
     @staticmethod
     def evaluate_game(engine: ChessEngine) -> float:
         value = 0

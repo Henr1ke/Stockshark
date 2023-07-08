@@ -13,11 +13,6 @@ from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 # adb start-server
 # emulator -avd Pixel_4_API_33 -port 5556
 
-# python main2.py --model pixel4 --engine python_chess --agent minmax menu_nav_automatic vs_friend --username Henrike01
-# python main2.py --model pixel4 --engine python_chess --agent minmax menu_nav_automatic vs_computer --diff_lvl 1
-# python main2.py --model pixel4 --engine python_chess --agent minmax menu_nav_manual
-
-
 models_dict = {"pixel4": CoordinatesPixel4, "pixel3": CoordinatesPixel3, "mi8lite": CoordinatesMi8Lite}
 engines_dict = {"python_chess": PythonChessEngine, "stockshark": StocksharkEngine()}
 agents_dict = {"human": AgentHuman, "random": AgentRandom, "reactive": AgentReactive, "minmax": AgentMinMaxAB}
