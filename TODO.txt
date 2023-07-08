@@ -19,15 +19,9 @@ Perguntas ao stor:
 
 
 --------------------------------------- CODIGO ---------------------------------------------------------------------
-    ################# Guardar lista com casas atacadas no stocksharkEngine
-BUGS:
-    Meter o castle bem, a verificar se as casas por onde o rei passa nao estao a ser atacadas
-    O StockShark contém uma lista de posições atacas pelo adversario
-    Verificar o get sel move do Detector pq trocou a ordem do start e end tile
 
 player:
     -- 5 MinMax
-        -- Tornar o game engine mais eficiente
         -- Tornar o algoritmo mais eficiente (outras heuristicas)
         -- 3 melhorar a func de avaliar o move
             -- Usar o mapa de posições das peças
@@ -45,22 +39,33 @@ adb:
     -- 2 Arranjar uma solução para não usar as classes Coordinates (seria o menu detector)
 
 
------------------------------------- VERIFICAR TODOS OS TODOS -------------------------------------
-
-
+--------------------------------------- CLI ---------------------------------------------------------------------
+adicionar description
 
 
 
 ------------------------------------ TESTES: -------------------------------------
-
+            WINRATE
 Random:
-    250: 9.7e7
-    700:
-    1200:
-    1800:
+    1: W-   D-   L-10
+    3: W-   D-   L-
+    5: W-   D-   L-
+    7: W-   D-   L-
+    9: W-   D-   L-
+    11: W-   D-   L-
+
+Reactive:
+    1: W-   D-1  L-
+    3: W-   D-   L-
+    5: W-   D-   L-
+    7: W-   D-   L-
+    9: W-   D-   L-
+    11: W-   D-   L-
 
 MinMax:
-    250:
-    700:
-    1200:
-    1800:
+    1: W-   D-   L-
+    3: W-   D-   L-
+    5: W-   D-   L-
+    7: W-   D-   L-
+    9: W-   D-   L-
+    11: W-   D-   L-

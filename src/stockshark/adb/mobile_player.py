@@ -5,6 +5,7 @@ from numpy import ndarray
 
 from stockshark.adb.dao_adb import DaoADB
 from stockshark.art_vis.detector import Detector
+from stockshark.art_vis.image_processing import ImageProcessing
 from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.piece.piece import Piece
 
@@ -44,13 +45,12 @@ class MobilePlayer:
             if sel_move is not None:
                 if self.__is_promotion_move(engine, sel_move):
                     end_tile = sel_move[2:4]
-                    piece_type = self.__detector.get_piece_type(board, end_tile)
+                    piece_type = self.__detector.get_piece_at_tile(board, end_tile)
                     if piece_type is not None:
                         sel_move = sel_move + piece_type
 
                 played_moves = engine.played_moves
-                played_move = played_moves[-1][:4]
-                if len(played_moves) == 0 or sel_move != played_move:
+                if len(played_moves) == 0 or sel_move != played_moves[-1][:4]:
                     return sel_move
 
             time.sleep(0.5)
@@ -63,3 +63,8 @@ class MobilePlayer:
         return piece is not None and piece.lower() == Piece.PAWN_B and \
             (start_tile[1] == ('7' if piece.isupper() else '2')) and \
             (end_tile[1] == ('8' if piece.isupper() else '1'))
+
+
+
+
+

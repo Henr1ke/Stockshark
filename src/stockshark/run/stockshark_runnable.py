@@ -7,6 +7,7 @@ from stockshark.adb.menu_navigator import MenuNavigator
 from stockshark.adb.mobile_player import MobilePlayer
 from stockshark.agent.agent import Agent
 from stockshark.art_vis.detector import Detector
+from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.sim.simulator_adb import SimulatorADB
 from stockshark.sim.visualizer import Visualizer
@@ -32,7 +33,7 @@ class StockSharkRunnable:
                           wait_time: float = 2):
         self.__menu_navigator.vs_friend(username, on_white_side, duration, wait_time=wait_time)
 
-    def run_game(self, agent: Agent, show_simulation: bool = True) -> bool:
+    def run_game(self, engine: ChessEngine, agent: Agent, show_simulation: bool = True) -> bool:
         board, center = None, None
         for _ in range(60):
             screenshot = self.__dao_adb.screenshot()
@@ -48,7 +49,6 @@ class StockSharkRunnable:
 
         mobile_chess = MobilePlayer(self.__dao_adb, board, center)
 
-        engine = StocksharkEngine()
         vis = None if not show_simulation else Visualizer(Visualizer.CHARSET_LETTER)
 
         simulator = SimulatorADB(agent, mobile_chess, engine, vis)

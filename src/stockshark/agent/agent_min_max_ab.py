@@ -12,6 +12,7 @@ from stockshark.sim.visualizer import Visualizer
 
 
 class AgentMinMaxAB(Agent):
+    CHECK_VALUE = 100
     TIMES = []
 
     def __init__(self, depth: int = 3):
@@ -64,8 +65,14 @@ class AgentMinMaxAB(Agent):
     @staticmethod
     def evaluate_game(engine: ChessEngine) -> float:
         value = 0
-        fen = engine.fen.split(" ")[0].replace("/", "").replace("8", "").replace("7", "").replace("6", ""). \
-            replace("5", "").replace("4", "").replace("3", "").replace("2", "").replace("1", "")
+        is_white_turn = engine.fen.split(" ")[1] == "w"
+        if engine.is_in_check(is_white_turn):
+            if engine.game_finished():
+                return -math.inf if is_white_turn else math.inf
+            else:
+                value += -AgentMinMaxAB.CHECK_VALUE if is_white_turn else AgentMinMaxAB.CHECK_VALUE
+
+        fen = engine.fen.split(" ")[0]
         for char in fen:
             try:
                 piece_value = Piece.get_piece_value(char)

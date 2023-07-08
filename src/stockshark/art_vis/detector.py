@@ -126,7 +126,7 @@ class Detector:
 
     @staticmethod
     def is_tile_selected(tile_img: ndarray) -> bool:
-        thresh_val = tile_img.shape[0] * tile_img.shape[1] * 0.02  # 2% of all tile pixels
+        thresh_val = tile_img.shape[0] * tile_img.shape[1] * 0.05  # 5% of all tile pixels
         w_sel_count = ImageProcessing.get_value_count(tile_img[:, :, 0], Detector.W_TILE_SELECTED_COLOR)
         b_sel_count = ImageProcessing.get_value_count(tile_img[:, :, 2], Detector.B_TILE_SELECTED_COLOR)
         return w_sel_count > thresh_val or b_sel_count > thresh_val
@@ -143,28 +143,23 @@ class Detector:
 
         return Move(start_tile, end_tile).to_uci()
 
-    def get_piece_type(self, board: ndarray, tile: str) -> Optional[str]:
-        piece_names = (Detector.KNIGHT, Detector.BISHOP, Detector.ROOK, Detector.QUEEN)
-        piece_types = (Move.PROMOTE_N, Move.PROMOTE_B, Move.PROMOTE_R, Move.PROMOTE_Q)
+    def get_piece_at_tile(self, board: ndarray, tile: str) -> Optional[str]:
+        fen = self.gen_fen(board)
+        tile_row = 8 - int(tile[1])
+        tile_col = ord(tile[0]) - ord('a')
 
-        coord = self.tile_to_coord(tile)
-        tile_img = Detector.get_tile_img(board, coord)
-
-        if Detector.is_tile_empty(tile_img):
-            return None
-
-        tile_grayscale = ImageProcessing.grayscale(tile_img)
-        tile_grad = ImageProcessing.morph_grad(tile_grayscale)
-
-        diffs = []
-        for piece_name in piece_names:
-            piece_grad = ImageProcessing.read_img(f"chess_components/g_{piece_name}.png", is_grayscale=True)
-            piece_resized = ImageProcessing.resize(piece_grad, tile_grad.shape)
-            diff = np.sum(tile_grad != piece_resized)
-            diffs.append(diff)
-
-        idx = np.argmin(diffs)
-        return piece_types[idx]
+        fen_row = fen.split()[0].split('/')[tile_row]
+        i = 0
+        for char in fen_row:
+            if char.isdigit():
+                i += int(char)
+            else:
+                if i == tile_col:
+                    return char
+                i += 1
+            if i > tile_col:
+                break
+        return None
 
     def tile_to_coord(self, tile: str) -> Tuple[int, int]:
         tile = Tile(tile)

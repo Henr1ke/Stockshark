@@ -34,45 +34,41 @@ def gen_grad_pieces():
 
 
 def get_piece_in_tile():
-    screenshot = ImageProcessing.read_img(f"screenshots/screenshot.png")
+    screenshot = ImageProcessing.read_img(f"screenshots/Screenshot_1.png")
     board_info = Detector.find_board(screenshot)
     if board_info is None:
         return
     board, _ = board_info
     detector = Detector(board)
 
-    piece_names = (Detector.KNIGHT, Detector.BISHOP, Detector.ROOK, Detector.QUEEN)
-
     tiles = [
-        Tile("f8"),
-        Tile("c8"),
-        Tile("b8"),
-        Tile("d7"),
-        Tile("d8")
+        "d1",
+        "e1",
+        "h1",
+        "c2",
+        "a3",
+        "b4",
+        "b8",
+        "d7",
+        "g1",
+        "f1"
     ]
 
     for tile in tiles:
-        coord = detector.tile_to_coord(tile)
-        tile_img = Detector.get_tile_img(board, coord)
-        print(tile)
+        fen = detector.gen_fen(board)
+        tile_row = 8 - int(tile[1])
+        tile_col = ord(tile[0]) - ord('a')
 
-        if detector.is_tile_empty(tile_img):
-            print("Empty")
-
-        tile_grayscale = ImageProcessing.grayscale(tile_img)
-        tile_grad = ImageProcessing.morph_grad(tile_grayscale)
-        ImageProcessing.show(tile_grad)
-
-        diffs = []
-        for piece_name in piece_names:
-            piece_grad = ImageProcessing.read_img(f"chess_components/g_{piece_name}.png", is_grayscale=True)
-            piece_resized = ImageProcessing.resize(piece_grad, tile_grad.shape)
-            diff = np.sum(tile_grad != piece_resized)
-            diffs.append(diff)
-
-        print(diffs)
-        print(piece_names[np.argmin(diffs)])
-        print()
+        fen_row = fen.split()[0].split('/')[tile_row]
+        j = 0
+        for char in fen_row:
+            if char.isdigit():
+                j += int(char)
+            else:
+                if j == tile_col:
+                    print(char)
+                    break
+                j += 1
 
 
 def identify_board():

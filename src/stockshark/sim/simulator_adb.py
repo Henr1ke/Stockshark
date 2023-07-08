@@ -4,6 +4,9 @@ from stockshark.adb.dao_adb import DaoADB
 from stockshark.adb.mobile_player import MobilePlayer
 from stockshark.agent.agent import Agent
 from stockshark.agent.agent_human import AgentHuman
+from stockshark.agent.agent_min_max_ab import AgentMinMaxAB
+from stockshark.agent.agent_random import AgentRandom
+from stockshark.agent.agent_reactive import AgentReactive
 from stockshark.art_vis.detector import Detector
 from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.chess_engine.python_chess_engine import PythonChessEngine
@@ -54,7 +57,9 @@ if __name__ == '__main__':
     v = Visualizer(Visualizer.CHARSET_LETTER)
 
     # agent = AgentMinMaxAB(4)
-    agent = AgentHuman()
+    # agent = AgentRandom()
+    agent = AgentReactive()
+    # agent = AgentHuman()
 
     simulator = SimulatorADB(agent, m, g, v)
     simulator.execute()

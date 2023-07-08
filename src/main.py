@@ -3,6 +3,7 @@ from typing import Optional
 
 from stockshark.adb.coordinates.coordinates import Coordinates
 from stockshark.adb.coordinates.coordinates_mi_8_lite import CoordinatesMi8Lite
+from stockshark.adb.coordinates.coordinates_pixel_3 import CoordinatesPixel3
 from stockshark.adb.coordinates.coordinates_pixel_4 import CoordinatesPixel4
 from stockshark.agent.agent import Agent
 from stockshark.agent.agent_human import AgentHuman
@@ -19,12 +20,13 @@ from stockshark.run.stockshark_runnable import StockSharkRunnable
 # python main.py --agent minmax --model pixel4 computer --diff_lvl 1
 
 def get_coordinates(model: str) -> Optional[Coordinates]:
+    if model.casefold() == "pixel3".casefold():
+        return CoordinatesPixel3()
     if model.casefold() == "pixel4".casefold():
         return CoordinatesPixel4()
     if model.casefold() == "mi8lite".casefold():
         return CoordinatesMi8Lite()
     return None
-
 
 def get_agent(agent: str) -> Optional[Agent]:
     if agent.casefold() == "human".casefold():
