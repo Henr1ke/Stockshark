@@ -1,7 +1,9 @@
 Prioridades: 1 -> pouca .... 5 -> muita
 
+O TESTS/ART_VIS_TESTS FICOU AMARELO, IR BUSCAR O CONTEUDO AO VSCODE E METER LÁ
+RETIRAR O STOCKFISH
 
--------------------------------------- RELATORIO --------------------------------------------------------------
+
 Perguntas ao stor:
 
     - O que são os requisitos não funcionais
@@ -10,26 +12,7 @@ Perguntas ao stor:
 
 
 
---------------------------------------- CODIGO ---------------------------------------------------------------------
-METER O AGENTMINMAX ATUALIZADO COMO NO AGENTMINMAXAB
 
-player:
-    -- 5 MinMax
-        -- Tornar o algoritmo mais eficiente (outras heuristicas)
-        -- 3 melhorar a func de avaliar o move
-            -- Usar o mapa de posições das peças
-        -- 3 melhorar a func de avaliar o jogo
-            -- Verificar os check e os ataques bloqueios de peças
-
-
-    -- 3 refatorizar os behaviours talvez como em IASA
-
-art_vis:
-    -- 1 fazer um menuDetector para navegar nos botoes do menu
-        -- 2 ao selecionar a difficuldade do bot, da scroll ate ao fim e utiliza o slider
-
-adb:
-    -- 2 Arranjar uma solução para não usar as classes Coordinates (seria o menu detector)
 
 
 ------------------------------------ RELATORIO: -------------------------------------
@@ -53,29 +36,3 @@ cap 5:
     Interpretar e falar sobre  os resultados dos testes aos motores de jogo e aos agentes
 
     Meter algo a falar sobre o cli.py algures no relatorio
-
------------------------------------- TESTES: -------------------------------------
-            WINRATE
-Random:
-    1: W-   D-   L-10
-    3: W-   D-   L-
-    5: W-   D-   L-
-    7: W-   D-   L-
-    9: W-   D-   L-
-    11: W-   D-   L-
-
-Reactive:
-    1: W-   D-1  L-9
-    3: W-   D-   L-
-    5: W-   D-   L-
-    7: W-   D-   L-
-    9: W-   D-   L-
-    11: W-   D-   L-
-
-MinMax:
-    1: W-   D-   L-
-    3: W-   D-   L-
-    5: W-   D-   L-
-    7: W-   D-   L-
-    9: W-   D-   L-
-    11: W-   D-   L-
