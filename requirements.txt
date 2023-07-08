@@ -1,3 +1,4 @@
 python-chess
 numpy
 opencv-python
+pure-python-adb 
