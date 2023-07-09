@@ -9,9 +9,9 @@ class ChessEngine(ABC):
 
     def __init__(self, fen: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"):
         self._new_game(fen)
-        self.__fen = fen
+        self.__fen: str = fen
         self.__played_moves: List[str] = []
-        self.__available_moves = sorted(self._gen_available_moves())
+        self.__available_moves: List[str] = sorted(self._gen_available_moves())
 
     def __copy__(self) -> ChessEngine:
         cls = self.__class__

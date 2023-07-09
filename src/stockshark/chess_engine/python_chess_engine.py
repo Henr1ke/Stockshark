@@ -27,13 +27,5 @@ class PythonChessEngine(ChessEngine):
         piece = self._board.piece_at(chess.parse_square(tile))
         return None if piece is None else piece.symbol()
 
-    def _gen_attacked_tiles(self) -> Set[str]:
-        attacking_color = not self._board.turn
-        attacked_tiles = set()
-        for square in chess.SQUARES:
-            if self._board.is_attacked_by(attacking_color, square):
-                attacked_tiles.add(chess.square_name(square))
-        return attacked_tiles
-
     def is_in_check(self, is_white_side: bool) -> bool:
         return self._board.is_check() and self._board.turn == (chess.WHITE if is_white_side else chess.BLACK)

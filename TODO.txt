@@ -7,6 +7,9 @@ RETIRAR O STOCKFISH
 Perguntas ao stor:
 
     - O que são os requisitos não funcionais
+	- Devemos eliminar as partes do projeto que usam o Stockfish?
+	- O AgentMinMax é apenas uma versão exata do agenteMinMaxAB, mas sem o prunning, vale apena eliminar a classe que não tem o pruning?
+	- Não compreendemos o que colocar em cada parte da estrutura das componentes de suporte da avaliação (mostrar a imagem q ta no chat com o afonso)
     - no readme, como é que
 
 
