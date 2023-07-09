@@ -59,7 +59,7 @@ navigate_menus_parser = nav_mode_subparsers.add_parser(navigate_menus,
 navigate_menus_parser.add_argument('--model', choices=models_dict.keys(), required=True,
                                    help='Which smartphone model the ADB connects to')
 
-opponent_type_subparsers = navigate_menus_parser.add_subparsers(dest='oppenent_type', required=True)
+opponent_type_subparsers = navigate_menus_parser.add_subparsers(dest='opponent_type', required=True)
 
 vs_friend_parser = opponent_type_subparsers.add_parser(vs_friend, help='Play against a human friend')
 vs_friend_parser.add_argument('--username', required=True, help='The username of the friend')
@@ -93,11 +93,11 @@ def app_navigate_menus() -> None:
     print("Opening chess.com app...")
     menu_navigator.open_app()
 
-    oppenent_type = args.oppenent_type
-    if oppenent_type is not None:
-        if oppenent_type.casefold() == vs_friend:
+    opponent_type = args.opponent_type
+    if opponent_type is not None:
+        if opponent_type.casefold() == vs_friend:
             navigate_vs_friend(menu_navigator)
-        elif oppenent_type.casefold() == vs_computer:
+        elif opponent_type.casefold() == vs_computer:
             navigate_vs_computer(menu_navigator)
 
 
