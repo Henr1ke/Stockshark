@@ -26,7 +26,7 @@ class StocksharkEngine(ChessEngine):
         self.__halfclock: int = int(fen_fields[4])
         self.__fullclock: int = int(fen_fields[5])
 
-        self.__atacked_tiles = sorted(self._gen_attacked_tiles())
+        self.__attacked_tiles = sorted(self._gen_attacked_tiles())
 
     def __copy__(self) -> StocksharkEngine:
         cls = self.__class__
@@ -61,7 +61,7 @@ class StocksharkEngine(ChessEngine):
 
     @property
     def attacked_tiles(self) -> List[str]:
-        return copy(self.__atacked_tiles)
+        return copy(self.__attacked_tiles)
 
     def __pawn_actions(self, move: Move) -> Optional[Tile]:
         piece = self.__board[move.end_tile]
@@ -128,7 +128,7 @@ class StocksharkEngine(ChessEngine):
 
     def _make_move(self, move: str) -> None:
         self._make_move_test(move)
-        self.__atacked_tiles = sorted(self._gen_attacked_tiles())
+        self.__attacked_tiles = sorted(self._gen_attacked_tiles())
 
     def _make_move_test(self, move: str) -> None:
         move = Move.from_uci(move)
