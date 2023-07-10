@@ -171,9 +171,9 @@ if __name__ == '__main__':
     pass
 
 #   num_runs = 30
-#   PythonChessEngine = 0.015363949537277221    0.0600657065709432
-#   StockfishEngine = 11.047215700149536
-#   StocksharkEngine = 1.595009740193685    3.3955979983011884
+#   PythonChessEngine = 0.0600657065709432
+#   StockfishEngine = 22.747215700149536
+#   StocksharkEngine = 3.3955979983011884
 #
 # stockshark perft results test position 5:
 # 1 : 44
