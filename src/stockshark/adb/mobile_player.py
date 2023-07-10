@@ -5,7 +5,6 @@ from numpy import ndarray
 
 from stockshark.adb.dao_adb import DaoADB
 from stockshark.art_vis.detector import Detector
-from stockshark.art_vis.image_processing import ImageProcessing
 from stockshark.chess_engine.chess_engine import ChessEngine
 from stockshark.piece.piece import Piece
 

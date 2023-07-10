@@ -6,7 +6,6 @@ import numpy as np
 
 from stockshark.art_vis.detector import Detector
 from stockshark.art_vis.image_processing import ImageProcessing
-from stockshark.util.tile import Tile
 
 
 def gen_mean_pieces():

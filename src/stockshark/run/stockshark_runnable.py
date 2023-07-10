@@ -8,7 +8,6 @@ from stockshark.adb.mobile_player import MobilePlayer
 from stockshark.agent.agent import Agent
 from stockshark.art_vis.detector import Detector
 from stockshark.chess_engine.chess_engine import ChessEngine
-from stockshark.chess_engine.stockshark_engine import StocksharkEngine
 from stockshark.sim.simulator_adb import SimulatorADB
 from stockshark.sim.visualizer import Visualizer
 
